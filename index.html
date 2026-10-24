@@ -576,7 +576,7 @@ const bg=new Image();bg.src="assets/bg.webp";
 let p1,p2,mode='ai',st='menu',rd=1,tm=60,ti=0,msg='',endTxt='',mt=0,over=null;
 const menu=document.getElementById('menu'),h1=document.getElementById('h1'),sub=document.getElementById('sub');
 function showMenu(t,s){p1.reset();p2.reset();fx=[];h1.textContent=t;sub.textContent=s;menu.style.display='flex';st='menu'}
-function startRound(){p1.reset();p2.reset();fx=[];ps=[];slow=0;zm=1;tm=60;ti=0;st='intro';mt=100;p1.y=-320;p2.y=-420;aRound()}
+function startRound(){p1.reset();p2.reset();fx=[];ps=[];slow=0;zm=1;tm=60;ti=0;st='intro';mt=rd===1?168:100;p1.y=-320;p2.y=-420;aRound();if(rd===1)sfxUI('start')}
 const FACES=["assets/faces/0.webp","assets/faces/1.webp","assets/faces/2.webp","assets/faces/3.webp","assets/faces/4.webp","assets/faces/5.webp","assets/faces/6.webp","assets/faces/7.webp","assets/faces/8.webp"];
 const ROSTER=['t','k','b','e','q','g','u','c','l'],LAB=['Taka-Shin','Junin-Kai','Bea-Trix','Eslepe-San','Quinhas-Kun','Giu-Lee','Luan-Zin','Cris-Chan','Mestre-Leco'];
 let CH={},pendMode='ai';
@@ -678,6 +678,51 @@ function banner(t,s,age){
  x.strokeStyle='#0f0d1a';x.strokeText(t,W/2,190);x.fillStyle='#f3e9d2';x.fillText(t,W/2,190);
  if(s){x.font='22px "Dela Gothic One",Impact,sans-serif';x.lineWidth=6;x.strokeText(s,W/2,245);x.fillText(s,W/2,245)}
  x.restore()}
+function drawVs(age){
+ /* age: frames into VS splash (0 → ~78) */
+ const fadeIn=Math.min(1,age/10),fadeOut=age>62?Math.max(0,1-(age-62)/16):1,al=fadeIn*fadeOut;
+ if(al<=.01)return;
+ const ease=t=>1-Math.pow(1-Math.min(1,t),3),s=ease(age/16);
+ x.save();
+ x.globalAlpha=al*.72;x.fillStyle='#040716';x.fillRect(0,0,W,H);
+ x.globalAlpha=al;
+ /* faixas de cor */
+ x.fillStyle=p1.col;x.globalAlpha=al*.35;x.beginPath();x.moveTo(0,0);x.lineTo(W*.48,0);x.lineTo(W*.38,H);x.lineTo(0,H);x.fill();
+ x.fillStyle=p2.col;x.beginPath();x.moveTo(W,0);x.lineTo(W*.52,0);x.lineTo(W*.62,H);x.lineTo(W,H);x.fill();
+ x.globalAlpha=al;
+ const face=(f,cx,flip)=>{
+  const r=78,img=f.P.pf;
+  x.save();x.translate(cx,H*.42);x.scale(flip?-1:1,1);
+  x.beginPath();x.arc(0,0,r+6,0,7);x.fillStyle='#000';x.fill();
+  x.beginPath();x.arc(0,0,r,0,7);x.fillStyle='#0f0d1a';x.fill();x.clip();
+  if(img&&img.complete)x.drawImage(img,-r,-r+4,r*2,r*2*270/190);
+  x.restore();
+  x.beginPath();x.arc(cx,H*.42,r,0,7);x.lineWidth=5;x.strokeStyle=f.col;x.stroke();
+  x.beginPath();x.arc(cx,H*.42,r+5,0,7);x.lineWidth=2;x.strokeStyle='#f3e9d2';x.stroke();
+  x.font='italic 22px "Dela Gothic One",Impact,sans-serif';x.textAlign='center';x.textBaseline='top';
+  x.lineWidth=6;x.lineJoin='round';x.strokeStyle='#000';x.strokeText(f.n,cx,H*.42+r+14);
+  x.fillStyle=f.col;x.fillText(f.n,cx,H*.42+r+14);
+ };
+ const lx=-100+(100+155)*s,rx=W+100-(100+155)*s;
+ face(p1,lx,0);face(p2,rx,1);
+ /* VS */
+ const vsT=Math.max(0,age-6),vk=1+Math.pow(1-Math.min(1,vsT/10),2)*1.35,vp=Math.min(1,vsT/8)*al;
+ x.save();x.translate(W/2,H*.4);x.scale(vk,vk);x.globalAlpha=vp;
+ x.font='italic 72px "Dela Gothic One",Impact,sans-serif';x.textAlign='center';x.textBaseline='middle';
+ x.lineWidth=12;x.lineJoin='round';x.strokeStyle='#000';x.strokeText('VS',0,0);
+ const vg=x.createLinearGradient(-40,-30,40,30);vg.addColorStop(0,'#fff');vg.addColorStop(.45,'#6fc2ff');vg.addColorStop(1,'#1448ff');
+ x.fillStyle=vg;x.fillText('VS',0,0);
+ x.restore();
+ /* rodapé */
+ x.globalAlpha=al*.9;x.font='italic 13px "Dela Gothic One",Impact,sans-serif';x.textAlign='center';x.textBaseline='middle';
+ x.fillStyle='#dff0ff';x.fillText('MELHOR DE 3',W/2,H-28);
+ x.restore();
+}
+function introOverlay(){
+ if(rd===1&&mt>90){drawVs(168-mt);return}
+ if(mt>45)banner('Round '+rd,'',(rd===1?90:100)-mt);
+ else banner('Lute!','',45-mt);
+}
 function render(){
  x.setTransform(2,0,0,2,0,0);x.clearRect(0,0,W,H);
  x.save();if(shake>.5)x.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);
@@ -692,7 +737,7 @@ function render(){
   drawVg();bar(24,p1,1);bar(W-324,p2,-1);
   x.fillStyle='rgba(0,0,0,.65)';x.fillRect(W/2-32,21,64,46);x.strokeStyle='#f3e9d2';x.lineWidth=2;x.strokeRect(W/2-32,21,64,46);
   x.save();const pu=tm<=10?1+Math.max(0,1-ti/12)*.35:1;x.translate(W/2,45);x.scale(pu,pu);x.fillStyle=tm<=10?'#ff6b4a':'#f3e9d2';x.font='28px "Dela Gothic One",Impact,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(tm,0,0);x.restore();
-  if(st==='intro')banner(mt>45?'Round '+rd:'Lute!','',mt>45?100-mt:45-mt);
+  if(st==='intro')introOverlay();
   if(st==='end')banner(msg,endTxt,150-mt);
  }
 }

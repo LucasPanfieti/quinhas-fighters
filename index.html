@@ -76,17 +76,23 @@ h1::after{content:'';position:absolute;left:8%;bottom:calc(-.55em);height:clamp(
 .gf{outline:3px solid var(--bone);outline-offset:3px}
 
 /* ---- character select ---- */
-#grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(6px,1.5vw,10px);width:min(440px,100%);padding:2px;flex-shrink:0}
-.card{
-  aspect-ratio:190/270;background-size:cover;background-position:center;border:3px solid #000;border-radius:8px;
+#grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(6px,1.5vw,10px);width:min(440px,100%);padding:2px;flex-shrink:0}
+.card{container-type:inline-size;
+  aspect-ratio:3/4;background-size:cover;background-position:center;border:3px solid #000;border-radius:8px;
   position:relative;overflow:hidden;cursor:pointer;padding:0;min-height:0;
   box-shadow:0 0 0 2px rgba(90,160,255,.6),0 6px 14px rgba(0,0,0,.6);transition:transform .12s,box-shadow .12s
 }
 .card:hover,.card:focus-visible,.card.gf{transform:translateY(-4px) scale(1.04);outline:none;border-color:#000!important;box-shadow:0 0 0 3px #fff,0 0 26px rgba(111,194,255,.95);z-index:2}
-.card span{position:absolute;left:0;right:0;bottom:0;padding:clamp(10px,2.5vh,20px) 3px 4px;background:linear-gradient(transparent,rgba(15,13,26,.92));font:italic clamp(8px,2.2vw,11px)/1.1 'Dela Gothic One',system-ui,sans-serif;color:var(--bone);letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 #000,0 0 6px #000}
+.card span{position:absolute;left:0;right:0;bottom:0;padding:clamp(10px,2.5vh,20px) 3px 4px;background:linear-gradient(transparent,rgba(15,13,26,.92));font:italic 13cqw/1.1 'Dela Gothic One',system-ui,sans-serif;color:var(--bone);letter-spacing:0;white-space:normal;text-wrap:balance;text-align:center;text-shadow:0 1px 0 #000,0 0 6px #000}
 .card[data-id=q] span{background:linear-gradient(transparent,rgba(40,70,200,.9))}
 .card[data-id=e] span{background:linear-gradient(transparent,rgba(170,95,25,.92))}
 .card[data-id=g] span{background:linear-gradient(transparent,rgba(110,50,175,.92))}
+.card[data-id=t] span{background:linear-gradient(transparent,rgba(10,120,118,.92))}
+.card[data-id=k] span{background:linear-gradient(transparent,rgba(190,90,15,.92))}
+.card[data-id=b] span{background:linear-gradient(transparent,rgba(160,115,30,.92))}
+.card[data-id=u] span{background:linear-gradient(transparent,rgba(30,130,60,.92))}
+.card[data-id=c] span{background:linear-gradient(transparent,rgba(200,70,140,.92))}
+.card[data-id=l] span{background:linear-gradient(transparent,rgba(170,30,30,.92))}
 .card.p1::before{content:'P1';position:absolute;top:5px;left:5px;z-index:3;background:var(--ember);color:var(--ink);font:10px 'Dela Gothic One',system-ui,sans-serif;padding:2px 6px;border-radius:4px}
 .card.lock{filter:grayscale(1) brightness(.45);cursor:default}
 .card.lock:hover{transform:none;box-shadow:0 0 0 2px rgba(90,160,255,.6),0 6px 14px rgba(0,0,0,.6)}
@@ -149,9 +155,9 @@ kbd{display:inline-block;min-width:22px;padding:2px 6px;margin:1px;border-radius
 
 /* ---- breakpoints ---- */
 @media (orientation:portrait){#tip{display:block!important}}
-@media (min-width:520px){#grid{grid-template-columns:repeat(3,minmax(0,1fr));width:min(520px,100%)}}
-@media (min-width:700px){#grid{grid-template-columns:repeat(9,minmax(0,1fr));width:min(980px,96vw);gap:8px}.card span{font-size:10px}}
-@media (min-width:900px){.card span{font-size:11px}}
+@media (min-width:520px){#grid{grid-template-columns:repeat(6,minmax(0,1fr));width:min(560px,100%)}}
+@media (min-width:700px){#grid{grid-template-columns:repeat(6,minmax(0,1fr));width:min(660px,96vw);gap:8px}}
+@media (min-width:900px){}
 @media (max-width:420px){
   #ct th:nth-child(4),#ct td:nth-child(4){display:none}
   .go{width:min(280px,94vw);min-height:46px}
@@ -174,8 +180,8 @@ kbd{display:inline-block;min-width:22px;padding:2px 6px;margin:1px;border-radius
 }
 @media (orientation:landscape) and (max-height:430px){
   #menu,#sel,#hp,#op,#pause{justify-content:safe flex-start;padding-top:max(8px,var(--safe-t));gap:6px}
-  #grid{width:min(860px,96vw);grid-template-columns:repeat(9,minmax(0,1fr))}
-  .card span{padding:8px 2px 3px;font-size:8px}
+  #grid{width:min(480px,70vw);grid-template-columns:repeat(6,minmax(0,1fr))}
+  .card span{padding:8px 2px 3px}
   #pad{--bs:clamp(40px,16vh,54px)}
 }
 @media (orientation:portrait) and (max-width:500px){
@@ -202,7 +208,7 @@ kbd{display:inline-block;min-width:22px;padding:2px 6px;margin:1px;border-radius
  #selsub.hint .row{display:none}
  #selsub.hint::before{content:'Toque no 1º lutador (J1) e depois no 2º (J2)';font-style:italic}
 }
-@media (orientation:portrait){#grid{width:min(340px,94vw)}#vs{min-height:0}.pv img{height:clamp(44px,9vh,84px)}}
+@media (orientation:portrait){#grid{width:min(360px,94vw);grid-template-columns:repeat(4,minmax(0,1fr))}#vs{min-height:0}.pv img{height:clamp(44px,9vh,84px)}}
 </style></head><body>
 <div id="app">
  <div id="stage"><canvas id="c"></canvas>
@@ -599,12 +605,12 @@ let p1,p2,mode='ai',st='menu',rd=1,tm=60,ti=0,msg='',endTxt='',mt=0,over=null,LA
 const menu=document.getElementById('menu'),h1=document.getElementById('h1'),sub=document.getElementById('sub');
 function showMenu(t,s){$('brv').style.display='none';p1.reset();p2.reset();fx=[];h1.textContent=t;sub.textContent=s;menu.style.display='flex';st='menu'}
 function startRound(){p1.reset();p2.reset();fx=[];ps=[];slow=0;zm=1;tm=60;ti=0;st='intro';mt=rd===1?168:100;p1.y=-320;p2.y=-420;aRound();if(rd===1)sfxUI('start')}
-const FACES=["assets/faces/0.webp","assets/faces/1.webp","assets/faces/2.webp","assets/faces/3.webp","assets/faces/4.webp","assets/faces/5.webp","assets/faces/6.webp","assets/faces/7.webp","assets/faces/8.webp"];
-const ROSTER=['t','k','b','e','q','g','u','c','l'],LAB=['Taka-Shin','Junin-Kai','Bea-Trix','Eslepe-San','Quinhas-Kun','Giu-Lee','Luan-Zin','Cris-Chan','Mestre-Leco'];
+const FACES=Array.from({length:12},(_,i)=>"assets/faces/"+i+".webp");
+const ROSTER=['b',null,'c','e','g','k','u','l','q',null,'t',null],LAB=['Bea-Trix','Cai-Ren','Cris-Chan','Eslepe-San','Giu-Lee','Junin-Kai','Luan-Zin','Mestre-Leco','Quinhas-Kun','Samu-Kan','Taka-Shin','Yas-Mine'],FACE_OF=id=>FACES[ROSTER.indexOf(id)];
 let CH={},pendMode='ai';
 const selEl=document.getElementById('sel'),grid=document.getElementById('grid');
 FACES.forEach((src,i)=>{const id=ROSTER[i],b=document.createElement('button');b.className='card'+(id?'':' lock');b.style.backgroundImage='url('+src+')';
- b.innerHTML='<span>'+(id?LAB[i]:'Em breve')+'</span>';b.setAttribute('aria-label',id?LAB[i]:'Lutador bloqueado');
+ b.innerHTML='<span>'+LAB[i].replace('-','-<wbr>')+'</span>';b.setAttribute('aria-label',LAB[i]+(id?'':' (em breve)'));
  if(id){b.dataset.id=id;b.onclick=()=>pick(id)}else b.disabled=true;grid.appendChild(b)});
 let pick1=null;
 function selInfo(){
@@ -677,7 +683,7 @@ function bar(px,f,dir){
  x.restore();path();x.strokeStyle=ln;x.lineWidth=2.5;x.lineJoin='round';x.stroke();x.restore();
  const cx=(dir>0?px+pr:px+300-pr)+(hit?Math.sin(T*3)*2:0);
  x.save();x.beginPath();x.arc(cx,cy,pr,0,7);x.fillStyle='#0f0d1a';x.fill();x.clip();
- if(f.P.pf&&f.P.pf.complete)x.drawImage(f.P.pf,cx-pr,cy-pr+1,pr*2,pr*2*270/190);
+ if(f.P.pf&&f.P.pf.complete)x.drawImage(f.P.pf,cx-pr,cy-pr+1,pr*2,pr*2*4/3);
  x.restore();x.beginPath();x.arc(cx,cy,pr,0,7);x.lineWidth=4;x.strokeStyle=f.col;x.stroke();x.beginPath();x.arc(cx,cy,pr+2.5,0,7);x.lineWidth=2;x.strokeStyle=ln;x.stroke();
  x.font='14px "Dela Gothic One",Impact,sans-serif';x.textAlign=dir>0?'left':'right';x.textBaseline='alphabetic';x.lineJoin='round';x.lineWidth=4;x.strokeStyle='#0f0d1a';
  x.strokeText(f.n,x0,64);x.fillStyle='#f3e9d2';x.fillText(f.n,x0,64);
@@ -717,7 +723,7 @@ function drawVs(age){
   x.save();x.translate(cx,H*.42);x.scale(flip?-1:1,1);
   x.beginPath();x.arc(0,0,r+6,0,7);x.fillStyle='#000';x.fill();
   x.beginPath();x.arc(0,0,r,0,7);x.fillStyle='#0f0d1a';x.fill();x.clip();
-  if(img&&img.complete)x.drawImage(img,-r,-r+4,r*2,r*2*270/190);
+  if(img&&img.complete)x.drawImage(img,-r,-r+4,r*2,r*2*4/3);
   x.restore();
   x.beginPath();x.arc(cx,H*.42,r,0,7);x.lineWidth=5;x.strokeStyle=f.col;x.stroke();
   x.beginPath();x.arc(cx,H*.42,r+5,0,7);x.lineWidth=2;x.strokeStyle='#f3e9d2';x.stroke();
@@ -766,8 +772,8 @@ function render(){
 let last=0,acc=0;
 function loop(ts){padMenu();const dt=Math.min(ts-last,100);last=ts;acc+=dt;while(acc>=16.67){acc-=16.67;step()}render();requestAnimationFrame(loop)}
 const ld=async o=>{const r={m:o.m};for(const k of ['id','wk','pu','ki','bl','ht','jp','ko'])r[k]=await load(o[k]);return r};
-Promise.all([ld(SPR.t),ld(SPR.q),ld(SPR.e),ld(SPR.g),ld(SPR.l),ld(SPR.c),ld(SPR.u),ld(SPR.k),ld(SPR.b),new Promise(r=>{if(bg.complete){if(!bg.naturalWidth)LOAD.bad.push('assets/bg.webp');r()}else{bg.onload=r;bg.onerror=()=>{LOAD.bad.push('assets/bg.webp');r()}}})]).then(([it,iq,ie,ig,il,ic,iu,ik,ib])=>{if(loadDone())return;it.sc=.58;it.pf=new Image();it.pf.src=FACES[0];ib.sc=0.661;ib.pf=new Image();ib.pf.src=FACES[2];ik.sc=0.643;ik.pf=new Image();ik.pf.src=FACES[1];iu.sc=0.671;iu.pf=new Image();iu.pf.src=FACES[6];ic.sc=0.663;ic.pf=new Image();ic.pf.src=FACES[7];il.sc=.7;il.pf=new Image();il.pf.src=FACES[8];
- iq.sc=.587;ie.sc=.69;ig.sc=.64;ig.pf=new Image();ig.pf.src=FACES[5];iq.pf=new Image();iq.pf.src=FACES[4];ie.pf=new Image();ie.pf.src=FACES[3];CH={t:{n:'Taka-Shin',P:it,col:'#19c6c0'},q:{n:'Quinhas-Kun',P:iq,col:'#3d6bff'},e:{n:'Eslepe-San',P:ie,col:'#d98a3a'},g:{n:'Giu-Lee',P:ig,col:'#a15cf0'},l:{n:'Mestre-Leco',P:il,col:'#e03a3a'},c:{n:'Cris-Chan',P:ic,col:'#f06ab8'},u:{n:'Luan-Zin',P:iu,col:'#2fbf5a'},k:{n:'Junin-Kai',P:ik,col:'#f08a24'},b:{n:'Bea-Trix',P:ib,col:'#e0b45a'}};p1=new F(CH.q.n,iq,230,CH.q.col);p2=new F(CH.e.n,ie,570,CH.e.col);
+Promise.all([ld(SPR.t),ld(SPR.q),ld(SPR.e),ld(SPR.g),ld(SPR.l),ld(SPR.c),ld(SPR.u),ld(SPR.k),ld(SPR.b),new Promise(r=>{if(bg.complete){if(!bg.naturalWidth)LOAD.bad.push('assets/bg.webp');r()}else{bg.onload=r;bg.onerror=()=>{LOAD.bad.push('assets/bg.webp');r()}}})]).then(([it,iq,ie,ig,il,ic,iu,ik,ib])=>{if(loadDone())return;it.sc=.58;it.pf=new Image();it.pf.src=FACE_OF('t');ib.sc=0.661;ib.pf=new Image();ib.pf.src=FACE_OF('b');ik.sc=0.643;ik.pf=new Image();ik.pf.src=FACE_OF('k');iu.sc=0.671;iu.pf=new Image();iu.pf.src=FACE_OF('u');ic.sc=0.663;ic.pf=new Image();ic.pf.src=FACE_OF('c');il.sc=.7;il.pf=new Image();il.pf.src=FACE_OF('l');
+ iq.sc=.587;ie.sc=.69;ig.sc=.64;ig.pf=new Image();ig.pf.src=FACE_OF('g');iq.pf=new Image();iq.pf.src=FACE_OF('q');ie.pf=new Image();ie.pf.src=FACE_OF('e');CH={t:{n:'Taka-Shin',P:it,col:'#19c6c0'},q:{n:'Quinhas-Kun',P:iq,col:'#3d6bff'},e:{n:'Eslepe-San',P:ie,col:'#d98a3a'},g:{n:'Giu-Lee',P:ig,col:'#a15cf0'},l:{n:'Mestre-Leco',P:il,col:'#e03a3a'},c:{n:'Cris-Chan',P:ic,col:'#f06ab8'},u:{n:'Luan-Zin',P:iu,col:'#2fbf5a'},k:{n:'Junin-Kai',P:ik,col:'#f08a24'},b:{n:'Bea-Trix',P:ib,col:'#e0b45a'}};p1=new F(CH.q.n,iq,230,CH.q.col);p2=new F(CH.e.n,ie,570,CH.e.col);
  showMenu('Quinhas Fighters','Escolha seu lutador · melhor de 3 rounds');menu.style.display='none';
  const title=document.getElementById('title');title.style.display='flex';const goMenu=()=>{if(title.style.display!=='flex')return;title.style.display='none';h1.textContent='Quinhas Fighters';sub.textContent='Escolha seu lutador · melhor de 3 rounds';menu.style.display='flex'};title.onclick=goMenu;
  (document.fonts&&document.fonts.load('20px "Dela Gothic One"')||Promise.resolve()).catch(()=>{}).then(()=>requestAnimationFrame(loop));

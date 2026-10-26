@@ -605,7 +605,7 @@ let p1,p2,mode='ai',st='menu',rd=1,tm=60,ti=0,msg='',endTxt='',mt=0,over=null,LA
 const menu=document.getElementById('menu'),h1=document.getElementById('h1'),sub=document.getElementById('sub');
 function showMenu(t,s){$('brv').style.display='none';p1.reset();p2.reset();fx=[];h1.textContent=t;sub.textContent=s;menu.style.display='flex';st='menu'}
 function startRound(){p1.reset();p2.reset();fx=[];ps=[];slow=0;zm=1;tm=60;ti=0;st='intro';mt=rd===1?168:100;p1.y=-320;p2.y=-420;aRound();if(rd===1)sfxUI('start')}
-const FACES=Array.from({length:12},(_,i)=>"assets/faces/"+i+".webp");
+const FACES=Array.from({length:12},(_,i)=>"assets/faces/"+i+".webp?v=2");
 const ROSTER=['b',null,'c','e','g','k','u','l','q',null,'t',null],LAB=['Bea-Trix','Cai-Ren','Cris-Chan','Eslepe-San','Giu-Lee','Junin-Kai','Luan-Zin','Mestre-Leco','Quinhas-Kun','Samu-Kan','Taka-Shin','Yas-Mine'],FACE_OF=id=>FACES[ROSTER.indexOf(id)];
 let CH={},pendMode='ai';
 const selEl=document.getElementById('sel'),grid=document.getElementById('grid');

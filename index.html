@@ -753,10 +753,29 @@ function updOpt(){const q=v=>Math.round(v*100)+'%';const g=id=>document.getEleme
 function cyc(v){const n=LV.find(x=>x>v+.01);return n===undefined?0:n}
 updOpt();
 
-const ATK={p:{s:6,a:4,n:18,d:6,r:135,vr:96,st:12,kb:4,hy:190},k:{s:10,a:4,n:30,d:11,r:160,st:18,kb:8,hy:165},h:{s:16,a:0,n:38,d:9,r:0,st:16,kb:6,hy:135}};
-const PJ=[];
-function fireball(o){const P=o.P,hb=P.m&&P.m.hb;if(!hb)return;const sc=P.sc||SC;PJ.push({x:o.x+o.face*(hb.dx*sc+6),y:G+o.y-hb.dy*sc,dir:o.face,o,t:0,im:P.hb,m:hb,sc});o.hcd=80;sfxSwing('k');sfxSwing('p')}
-function updPJ(){for(let i=PJ.length-1;i>=0;i--){const p=PJ[i];p.x+=p.dir*8;p.t++;const tg=p.o===p1?p2:p1;let dead=p.x<-100||p.x>W+100;if(!dead&&!tg.ko&&Math.abs(p.x-tg.x)<34&&tg.y>-100){tg.hurt(p.o,ATK.h);dead=true;spark(p.x,p.y,p.dir,10)}if(!dead)for(let j=0;j<PJ.length;j++){const q=PJ[j];if(j!==i&&q.dir!==p.dir&&Math.abs(q.x-p.x)<46){spark(p.x,p.y,p.dir,10);spark(p.x,p.y,-p.dir,10);PJ.splice(j,1);if(j<i)i--;dead=true;break}}if(dead)PJ.splice(PJ.indexOf(p),1)}}
+/* s=startup, a=active, n=duração; r=alcance a partir do centro (visual do soco/chute é maior → a cobre a pose) */
+const ATK={p:{s:4,a:9,n:18,d:6,r:158,vr:110,st:12,kb:4,hy:190},k:{s:8,a:10,n:30,d:11,r:175,st:18,kb:8,hy:165},h:{s:16,a:0,n:38,d:9,r:0,st:16,kb:6,hy:135}};
+const PJ=[],PJ_HIT=56;
+function fireball(o){
+ const P=o.P,hb=P.m&&P.m.hb;if(!hb)return;const sc=P.sc||SC,reach=hb.dx*sc+6,y=G+o.y-hb.dy*sc,tg=o===p1?p2:p1,along=(tg.x-o.x)*o.face;
+ o.hcd=80;sfxSwing('k');sfxSwing('p');
+ /* colado: a esfera nasceria além do oponente (dx~230) — acerta na hora */
+ if(!tg.ko&&along>-28&&along<reach+PJ_HIT&&Math.abs((tg.y||0)-(o.y||0))<110){
+  const hx=o.x+o.face*Math.max(36,Math.min(along,reach));tg.hurt(o,ATK.h);spark(hx,y,o.face,10);return}
+ PJ.push({x:o.x+o.face*reach,y,dir:o.face,o,t:0,im:P.hb,m:hb,sc})
+}
+function updPJ(){
+ for(let i=PJ.length-1;i>=0;i--){
+  const p=PJ[i],tg=p.o===p1?p2:p1,prev=p.x;let dead=false;
+  const overlaps=tx=>!tg.ko&&tg.y>-100&&Math.abs(tx-tg.x)<PJ_HIT;
+  if(overlaps(p.x)){tg.hurt(p.o,ATK.h);dead=true;spark(p.x,p.y,p.dir,10)}
+  else{p.x+=p.dir*8;p.t++;
+   if(!dead&&!tg.ko&&tg.y>-100){const lo=Math.min(prev,p.x)-PJ_HIT,hi=Math.max(prev,p.x)+PJ_HIT;if(tg.x>=lo&&tg.x<=hi){tg.hurt(p.o,ATK.h);dead=true;spark(p.x,p.y,p.dir,10)}}
+   if(!dead)dead=p.x<-100||p.x>W+100}
+  if(!dead)for(let j=0;j<PJ.length;j++){const q=PJ[j];if(j!==i&&q.dir!==p.dir&&Math.abs(q.x-p.x)<46){spark(p.x,p.y,p.dir,10);spark(p.x,p.y,-p.dir,10);PJ.splice(j,1);if(j<i)i--;dead=true;break}}
+  if(dead)PJ.splice(PJ.indexOf(p),1)
+ }
+}
 function drawPJ(){PJ.forEach(p=>{const k=1+Math.sin(T*.9+p.t)*.07,w=p.m.w*p.sc*k,h=p.m.h*p.sc*k;x.save();x.translate(p.x,p.y);x.scale(p.dir,1);x.shadowColor='#4cc3ff';x.shadowBlur=26;x.drawImage(p.im,-w*.45,-h/2,w,h);x.restore()})}
 const HQ=[];const flushHits=()=>HQ.splice(0).forEach(([o,by,a])=>o.hurt(by,a));
 let T=0,fx=[],shake=0,freeze=0,ps=[],slow=0,zm=1;
@@ -803,8 +822,8 @@ class F{
   this.x=Math.max(30,Math.min(W-30,this.x));
  }
  strike(o,a){
-  const d=(o.x-this.x)*this.face;
-  if(st==='fight'&&d>-10&&d<a.r*((this.P.sc||.587)/.587)&&Math.abs(o.y-this.y)<80&&!o.ko){this.landed=true;HQ.push([o,this,a])}
+  const d=(o.x-this.x)*this.face,reach=a.r*((this.P.sc||SC)/SC)+32;
+  if(st==='fight'&&d>-24&&d<reach&&Math.abs(o.y-this.y)<100&&!o.ko){this.landed=true;HQ.push([o,this,a])}
  }
  hurt(by,a){
   const s=Math.random()*6;

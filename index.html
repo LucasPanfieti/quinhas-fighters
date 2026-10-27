@@ -2522,6 +2522,10 @@
           fa: "assets/spr/q/fa.webp?v=8",
           ko: "assets/spr/q/ko.webp?v=8",
           vi: "assets/spr/q/vi.webp?v=8",
+          ck: "assets/spr/q/ck.webp?v=5",
+          cp: "assets/spr/q/cp.webp?v=5",
+          ap: "assets/spr/q/ap.webp?v=5",
+          ak: "assets/spr/q/ak.webp?v=5",
           m: {
             id: { w: 291, h: 418, ax: 151.7 },
             wk: { w: 333, h: 420, ax: 173.2 },
@@ -2536,6 +2540,10 @@
             fa: { w: 420, h: 240, ax: 211.6 },
             ko: { w: 471, h: 112, ax: 235.5 },
             vi: { w: 282, h: 446, ax: 135.5 },
+            ck: { w: 435, h: 280, ax: 105.5 },
+            cp: { w: 429, h: 321, ax: 210.0 },
+            ap: { w: 362, h: 402, ax: 164.5 },
+            ak: { w: 405, h: 323, ax: 99.4 },
           },
         },
         r: {
@@ -2697,8 +2705,8 @@
           ki: "assets/spr/l/ki.webp?v=3",
           bl: "assets/spr/l/bl.webp?v=3",
           ht: "assets/spr/l/ht.webp?v=3",
-          hb: "assets/spr/l/hb.webp?v=3",
-          hd: "assets/spr/l/hd.webp?v=3",
+          hb: "assets/spr/l/hb.webp?v=4",
+          hd: "assets/spr/l/hd.webp?v=4",
           fa: "assets/spr/l/fa.webp?v=3",
           ko: "assets/spr/l/ko.webp?v=3",
           vi: "assets/spr/l/vi.webp?v=3",
@@ -2711,8 +2719,8 @@
             ki: { w: 378, h: 399, ax: 130.1 },
             bl: { w: 296, h: 396, ax: 147.4 },
             ht: { w: 269, h: 395, ax: 136.5 },
-            hb: { w: 173, h: 140, ax: 86.5, dx: 198.6, dy: 233.8, hx: 140.7 },
-            hd: { w: 490, h: 330, ax: 204.6 },
+            hb: { w: 188, h: 152, ax: 93.8, dx: 215.5, dy: 253.6, hx: 152.6 },
+            hd: { w: 532, h: 358, ax: 222.0 },
             fa: { w: 391, h: 233, ax: 201.7 },
             ko: { w: 445, h: 118, ax: 222.5 },
             vi: { w: 259, h: 429, ax: 126.9 },
@@ -4326,6 +4334,11 @@
       const ATK = {
         p: { s: 4, a: 9, n: 18, d: 6, r: 158, vr: 110, st: 12, kb: 4, hy: 190 },
         k: { s: 8, a: 10, n: 30, d: 11, r: 175, st: 18, kb: 8, hy: 165 },
+        /* r base; strike usa alcance do sprite (w-ax) quando a pose existe */
+        cp: { s: 3, a: 10, n: 18, d: 5, r: 120, st: 12, kb: 3, hy: 88 },
+        ck: { s: 5, a: 12, n: 26, d: 9, r: 165, st: 16, kb: 6, hy: 58 },
+        ap: { s: 2, a: 10, n: 16, d: 5, r: 115, st: 10, kb: 3, hy: 140 },
+        ak: { s: 4, a: 11, n: 22, d: 9, r: 155, st: 14, kb: 6, hy: 115 },
         h: { s: 16, a: 0, n: 38, d: 9, r: 0, st: 16, kb: 6, hy: 135 },
       };
       const PJ = [],
@@ -4673,7 +4686,7 @@
           this.atk = k;
           this.t = 0;
           this.landed = false;
-          sfxSwing(k);
+          sfxSwing(k === "k" || k === "ck" || k === "ak" ? "k" : "p");
         }
         up(i, o) {
           this.t++;
@@ -4728,14 +4741,32 @@
                   }
                 }
                 if (i.u && gr && !this.cr) {
-                  this.vy = -15;
+                  this.vy = -16.4;
                   this.jt = 6;
                   dust(this.x, G, 4, 0);
                   sfxJump();
                 }
                 if (i.h && this.P.hd && !this.hcd && gr) this.go("h");
-                else if (i.p) this.go("p");
-                else if (i.k) this.go("k");
+                else if (i.p)
+                  this.go(
+                    !gr
+                      ? this.P.ap
+                        ? "ap"
+                        : "p"
+                      : this.cr && this.P.cp
+                        ? "cp"
+                        : "p",
+                  );
+                else if (i.k)
+                  this.go(
+                    !gr
+                      ? this.P.ak
+                        ? "ak"
+                        : "k"
+                      : this.cr && this.P.ck
+                        ? "ck"
+                        : "k",
+                  );
               }
             }
           }
@@ -4755,14 +4786,31 @@
         }
         strike(o, a) {
           const d = (o.x - this.x) * this.face,
-            reach = a.r * ((this.P.sc || SC) / SC) + 32;
-          if (
-            st === "fight" &&
-            d > -24 &&
-            d < reach &&
-            Math.abs(o.y - this.y) < 100 &&
-            !o.ko
-          ) {
+            sc = this.P.sc || SC,
+            air = this.atk === "ap" || this.atk === "ak",
+            cro = this.atk === "cp" || this.atk === "ck",
+            pose =
+              this.atk === "cp"
+                ? "cp"
+                : this.atk === "ck"
+                  ? "ck"
+                  : this.atk === "ap"
+                    ? "ap"
+                    : this.atk === "ak"
+                      ? "ak"
+                      : null;
+          let reach = a.r * (sc / SC) + 32;
+          if (pose && this.P.m && this.P.m[pose]) {
+            const m = this.P.m[pose];
+            reach = (m.w - m.ax) * sc + 40;
+          }
+          /* agachado não pega quem já está bem no ar; aéreo tolera mais no Y */
+          const yOk = air
+            ? Math.abs(o.y - this.y) < 175
+            : cro
+              ? o.y > -48 && Math.abs(o.y - this.y) < 95
+              : Math.abs(o.y - this.y) < 110;
+          if (st === "fight" && d > -24 && d < reach && yOk && !o.ko) {
             this.landed = true;
             HQ.push([o, this, a]);
           }
@@ -4902,13 +4950,26 @@
               [16, 6],
               [26, 0],
             ]);
-          } else if (this.atk === "p") {
-            pz = t >= 3 && t < 14 ? "pu" : "id";
+          } else if (this.atk === "p" || this.atk === "cp" || this.atk === "ap") {
+            const air = this.atk === "ap",
+              cro = this.atk === "cp";
+            pz =
+              t >= 3 && t < 14
+                ? air
+                  ? "ap"
+                  : cro
+                    ? "cp"
+                    : "pu"
+                : air
+                  ? "jp"
+                  : cro
+                    ? "cr"
+                    : "id";
             tx = kf(t, [
               [0, 0],
               [3, -8],
-              [6, 20],
-              [11, 20],
+              [6, air ? 12 : 20],
+              [11, air ? 12 : 20],
               [18, 0],
             ]);
             rot = kf(t, [
@@ -4930,13 +4991,26 @@
               [6, 0.98],
               [18, 1],
             ]);
-          } else if (this.atk === "k") {
-            pz = t >= 5 && t < 24 ? "ki" : "id";
+          } else if (this.atk === "k" || this.atk === "ck" || this.atk === "ak") {
+            const air = this.atk === "ak",
+              cro = this.atk === "ck";
+            pz =
+              t >= 5 && t < 24
+                ? air
+                  ? "ak"
+                  : cro
+                    ? "ck"
+                    : "ki"
+                : air
+                  ? "jp"
+                  : cro
+                    ? "cr"
+                    : "id";
             tx = kf(t, [
               [0, 0],
               [5, -10],
-              [10, 14],
-              [20, 14],
+              [10, air ? 10 : 14],
+              [20, air ? 10 : 14],
               [30, 0],
             ]);
             rot = kf(t, [
@@ -5903,6 +5977,10 @@
           "hb",
           "fa",
           "vi",
+          "ck",
+          "cp",
+          "ap",
+          "ak",
         ])
           if (o[k]) r[k] = await load(o[k]);
         return r;

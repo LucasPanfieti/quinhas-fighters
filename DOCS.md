@@ -41,14 +41,15 @@ quinhas-fighters/
 ├── tools/              # scripts Python de preparação de sprites (dev)
 │   ├── build_sprites.py, slice.py, …
 │   └── out/*.json      # metadados de poses (alguns versionados)
-└── char-src/           # fontes locais por personagem (gitignored)
-    ├── bea-trix/
+└── char-src/           # fontes locais (gitignored)
+    ├── mapas/          # PNG brutos (mapa-3…); finais em assets/bg*.webp
     ├── quinhas-kun/
+    ├── bea-trix/
     └── …
 ```
 
 **O que sobe pro Git / produção:** `index.html`, `assets/`, `tools/*.py`, `tools/out/*.json`, docs.  
-**O que fica local (gitignore):** `char-src/`, `tools/__pycache__/`, imagens de teste em `tools/out/`.
+**O que fica local (gitignore):** `char-src/` (personagens + mapas fonte), `tools/__pycache__/`, imagens de teste em `tools/out/`.
 
 ---
 
@@ -156,10 +157,13 @@ Cada personagem tem um bloco em `SPR` com URLs das poses + metadados `m`:
 ```text
 id  idle          wk  walk         cr  crouch
 jp  jump          pu  punch        ki  kick
+cp  soco agachado ck  chute agachado
+ap  soco aéreo    ak  chute aéreo
 bl  block         ht  hurt         hd  cast Esfera de Ki
 hb  sprite da esfera (meta dx,dy,hx)   fa  fall
 ko  nocaute       vi  vitória
 ```
+(cp/ck/ap/ak hoje só no Quinhas-Kun; outros caem no pu/ki.)
 
 Cada entrada em `m[pose]` tipicamente:
 
@@ -369,7 +373,7 @@ Ao adicionar personagem novo:
 | Mudar botões do pad físico         | `gin`                                               |
 | Mudar layout/tamanho do pad mobile | CSS `#pad`, `--bs`, `.acts --r`                     |
 | Mudar pause landscape              | media query coarse+landscape `#pause…`              |
-| Novo mapa                          | `MAPS`, imagens `assets/bg*.webp` + thumb `#stgrid` |
+| Novo mapa                          | fonte em `char-src/mapas/`, depois `assets/bg*.webp` + thumb `#stgrid` + `MAPS` |
 | Texto de versão                    | `#tver`, `#ver`                                     |
 | Volumes default                    | `AU.vol` + `qf_au`                                  |
 | Comportamento da IA                | função `ai`                                         |

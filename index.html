@@ -24,7 +24,7 @@ canvas{width:100%;height:100%;object-fit:contain;display:block;touch-action:none
 
 /* ---- overlays / menus ---- */
 #menu,#sel,#hp,#op,#stg,#pause{
-  position:absolute;inset:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  position:absolute;inset:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
   display:flex;flex-direction:column;align-items:center;justify-content:safe center;gap:var(--ui-gap);text-align:center;
   padding:max(16px,var(--safe-t)) max(16px,var(--safe-r)) max(16px,var(--safe-b)) max(16px,var(--safe-l));
   background:radial-gradient(ellipse at 50% 40%,rgba(35,100,255,.3),rgba(4,7,22,.93) 72%),repeating-linear-gradient(112deg,transparent 0 38px,rgba(120,180,255,.035) 38px 44px,transparent 44px 90px);
@@ -122,7 +122,7 @@ h1::after{content:'';position:absolute;left:8%;bottom:calc(-.55em);height:clamp(
 #sel:not([data-m="2p"]) #vs{display:none}
 #vs{display:flex;align-items:flex-end;justify-content:center;gap:clamp(8px,4vw,48px);width:min(760px,100%);min-height:clamp(72px,18vh,190px)}
 .pv{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;flex:1}
-.pv img{height:clamp(64px,18vh,180px);width:auto;max-width:100%;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.65))}
+.pv img{height:calc(clamp(64px,18vh,180px)*var(--hs,1));width:auto;max-width:none;object-fit:contain;object-position:bottom;transform-origin:bottom center;filter:drop-shadow(0 6px 10px rgba(0,0,0,.65))}
 #pv2 img{transform:scaleX(-1)}
 .pv b{font:italic clamp(12px,3vw,15px) 'Dela Gothic One',Impact,sans-serif;text-shadow:0 2px 0 #000;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pv small{letter-spacing:.1em;text-transform:uppercase;font-size:clamp(9px,2.4vw,11px);opacity:.9}
@@ -151,9 +151,9 @@ kbd{display:inline-block;min-width:22px;padding:2px 6px;margin:1px;border-radius
 #title::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(2,4,14,.55));z-index:1}
 #lname{font:italic clamp(22px,6vw,40px)/1.1 'Dela Gothic One',Impact,sans-serif;margin:0;transform:skewX(-7deg);background:linear-gradient(#fff 0 42%,#cfeaff 50%,#4d9bff 62%,#1448ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(2px 0 0 #000) drop-shadow(-2px 0 0 #000) drop-shadow(0 2px 0 #000) drop-shadow(0 0 18px rgba(47,123,255,.8))}
 .card.lock span::before{content:'EM BREVE';display:block;font:italic 600 .55em/1.2 system-ui,sans-serif;letter-spacing:.14em;color:#ffe08a;margin-bottom:2px}
-#sel>#fi,#sel>#fi2{position:absolute;left:max(2%,var(--safe-l));bottom:0;width:min(18vw,250px);height:100%;display:none;flex-direction:column;align-items:center;justify-content:flex-end;pointer-events:none;--c:#6fc2ff;opacity:0;transition:opacity .25s}
+#sel>#fi,#sel>#fi2{position:absolute;left:max(2%,var(--safe-l));bottom:0;width:min(22vw,280px);height:100%;display:none;flex-direction:column;align-items:center;justify-content:flex-end;pointer-events:none;overflow:hidden;--c:#6fc2ff;opacity:0;transition:opacity .25s}
 #sel>#fi.on,#sel>#fi2.on{opacity:1}
-#fi img,#fi2 img{height:min(58vh,430px);max-width:100%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 0 3px var(--c)) drop-shadow(0 0 26px var(--c));animation:fin .35s cubic-bezier(.2,.8,.3,1)}
+#fi img,#fi2 img{height:calc(min(58vh,430px)*var(--hs,1));width:auto;max-width:none;object-fit:contain;object-position:bottom;transform-origin:bottom center;filter:drop-shadow(0 0 3px var(--c)) drop-shadow(0 0 26px var(--c));animation:fin .35s cubic-bezier(.2,.8,.3,1)}
 #fi b,#fi2 b{font:italic clamp(20px,2.6vw,34px)/1.1 'Dela Gothic One',Impact,sans-serif;color:#fff;margin:8px 0 clamp(14px,5vh,48px);-webkit-text-stroke:3px #000;paint-order:stroke fill;text-shadow:0 0 18px var(--c);transform:skewX(-7deg)}
 @keyframes fin{from{opacity:0;translate:-26px 0}to{opacity:1;translate:0 0}}
 @media (min-width:1000px) and (min-height:560px){#sel:not([data-m="2p"]) #fi{display:flex}}
@@ -211,7 +211,7 @@ kbd{display:inline-block;min-width:22px;padding:2px 6px;margin:1px;border-radius
 @media (max-height:420px){
   #sel h1,#hp h1,#op h1,#stg h1,#pause h1{display:none}
   #menu h1{font-size:clamp(16px,4vw,22px);margin-bottom:6px}
-  #vs{min-height:20vh}.pv img{height:min(22vh,120px)}
+  #vs{min-height:20vh}.pv img{height:calc(min(22vh,120px)*var(--hs,1))}
   #ct th,#ct td{padding:4px 6px}
   #help{display:none}
   #pad{--bs:clamp(42px,18vh,58px);padding-top:4px;background:linear-gradient(transparent,rgba(4,7,22,.35) 45%)}
@@ -226,7 +226,7 @@ kbd{display:inline-block;min-width:22px;padding:2px 6px;margin:1px;border-radius
   #sel[data-m="2p"] #grid{order:2}
   #sel[data-m="2p"] #vs{order:1;min-height:auto;margin-bottom:4px}
   #sel[data-m="2p"] #back{order:3}
-  #sel[data-m="2p"] .pv img{height:clamp(56px,16vh,110px)}
+  #sel[data-m="2p"] .pv img{height:calc(clamp(56px,16vh,110px)*var(--hs,1))}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -246,7 +246,7 @@ kbd{display:inline-block;min-width:22px;padding:2px 6px;margin:1px;border-radius
  #selsub.hint .row{display:none}
  #selsub.hint::before{content:'Toque no 1º lutador (P1) e depois no 2º (P2)';font-style:italic}
 }
-@media (orientation:portrait){#grid{width:min(360px,94vw);grid-template-columns:repeat(4,minmax(0,1fr))}#vs{min-height:0}.pv img{height:clamp(44px,9vh,84px)}}
+@media (orientation:portrait){#grid{width:min(360px,94vw);grid-template-columns:repeat(4,minmax(0,1fr))}#vs{min-height:0}.pv img{height:calc(clamp(44px,9vh,84px)*var(--hs,1))}}
 
 /* ================= visual v2: estilo jogo de luta ================= */
 :root{--ui:'Rajdhani','Oswald','Arial Narrow',system-ui,sans-serif}
@@ -386,6 +386,7 @@ function s2render(){
  grid.querySelectorAll('.card[data-id]').forEach(c=>{const i=av.indexOf(c.dataset.id);[0,1].forEach(n=>{c.toggleAttribute('data-c'+(n+1),s2.c[n]===i);c.toggleAttribute('data-l'+(n+1),s2.lk[n]===c.dataset.id)})});
  [0,1].forEach(n=>{const id=av[s2.c[n]],pv=document.getElementById('pv'+(n+1)),im=pv.querySelector('img'),src=CH[id].P.id.src;
   if(im.getAttribute('src')!==src)im.src=src;
+  pv.style.setProperty('--hs',((CH[id].P.sc||SC)/.621).toFixed(3));
   pv.querySelector('b').textContent=CH[id].n;
   pv.querySelector('small').textContent=(n?'P2':'P1')+(s2.lk[n]!=null?' · pronto!':' · escolhendo…');
   pv.classList.toggle('ready',s2.lk[n]!=null)});
@@ -964,7 +965,7 @@ Promise.all([ld(SPR.t),ld(SPR.q),ld(SPR.e),ld(SPR.g),ld(SPR.l),ld(SPR.c),ld(SPR.
 
  {const fiSet=(f,id,tag,ready)=>{const img=f.querySelector('img'),nm=f.querySelector('b'),sm=f.querySelector('small');
    if(!id||!SPR[id]||!CH[id]){f.classList.remove('on');f._id=null;return}
-   if(f._id!==id){f._id=id;img.style.animation='none';void img.offsetWidth;img.style.animation='';img.src=SPR[id].id;nm.textContent=CH[id].n;f.style.setProperty('--c',CH[id].col)}
+   if(f._id!==id){f._id=id;img.style.animation='none';void img.offsetWidth;img.style.animation='';img.src=SPR[id].id;nm.textContent=CH[id].n;f.style.setProperty('--c',CH[id].col);f.style.setProperty('--hs',((CH[id].P.sc||SC)/.621).toFixed(3))}
    sm.textContent=tag||'';f.classList.toggle('rdy',!!ready);f.classList.add('on')};window.fiSet=fiSet;
   const f1=$('fi'),f2=$('fi2'),show=id=>{if(pendMode==='2p')return;fiSet(f1,id,'');fiSet(f2,null)};
   const upd=()=>{if(pendMode==='2p')return;const c=grid.querySelector('.card.gf[data-id]')||grid.querySelector('.card:hover[data-id]');show(c?c.dataset.id:null)};

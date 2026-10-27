@@ -2522,10 +2522,10 @@
           fa: "assets/spr/q/fa.webp?v=8",
           ko: "assets/spr/q/ko.webp?v=8",
           vi: "assets/spr/q/vi.webp?v=8",
-          ck: "assets/spr/q/ck.webp?v=5",
-          cp: "assets/spr/q/cp.webp?v=5",
-          ap: "assets/spr/q/ap.webp?v=5",
-          ak: "assets/spr/q/ak.webp?v=5",
+          ck: "assets/spr/q/ck.webp?v=6",
+          cp: "assets/spr/q/cp.webp?v=6",
+          ap: "assets/spr/q/ap.webp?v=6",
+          ak: "assets/spr/q/ak.webp?v=7",
           m: {
             id: { w: 291, h: 418, ax: 151.7 },
             wk: { w: 333, h: 420, ax: 173.2 },
@@ -2540,10 +2540,10 @@
             fa: { w: 420, h: 240, ax: 211.6 },
             ko: { w: 471, h: 112, ax: 235.5 },
             vi: { w: 282, h: 446, ax: 135.5 },
-            ck: { w: 435, h: 280, ax: 105.5 },
-            cp: { w: 429, h: 321, ax: 210.0 },
-            ap: { w: 362, h: 402, ax: 164.5 },
-            ak: { w: 405, h: 323, ax: 99.4 },
+            ck: { w: 411, h: 281, ax: 103.7 },
+            cp: { w: 405, h: 318, ax: 196.0 },
+            ap: { w: 347, h: 397, ax: 158.8 },
+            ak: { w: 426, h: 344, ax: 100.6 },
           },
         },
         r: {
@@ -4332,12 +4332,12 @@
 
       /* s=startup, a=active, n=duração; r=alcance a partir do centro (visual do soco/chute é maior → a cobre a pose) */
       const ATK = {
-        p: { s: 4, a: 9, n: 18, d: 6, r: 158, vr: 110, st: 12, kb: 4, hy: 190 },
+        p: { s: 4, a: 9, n: 18, d: 6, r: 158, vr: 132, st: 12, kb: 4, hy: 190 },
         k: { s: 8, a: 10, n: 30, d: 11, r: 175, st: 18, kb: 8, hy: 165 },
         /* r base; strike usa alcance do sprite (w-ax) quando a pose existe */
-        cp: { s: 3, a: 10, n: 18, d: 5, r: 120, st: 12, kb: 3, hy: 88 },
+        cp: { s: 3, a: 10, n: 18, d: 5, r: 120, vr: 118, st: 12, kb: 3, hy: 128 },
         ck: { s: 5, a: 12, n: 26, d: 9, r: 165, st: 16, kb: 6, hy: 58 },
-        ap: { s: 2, a: 10, n: 16, d: 5, r: 115, st: 10, kb: 3, hy: 140 },
+        ap: { s: 2, a: 10, n: 16, d: 5, r: 115, vr: 108, st: 10, kb: 3, hy: 186 },
         ak: { s: 4, a: 11, n: 22, d: 9, r: 155, st: 14, kb: 6, hy: 115 },
         h: { s: 16, a: 0, n: 38, d: 9, r: 0, st: 16, kb: 6, hy: 135 },
       };
@@ -5013,6 +5013,8 @@
               [20, air ? 10 : 14],
               [30, 0],
             ]);
+            /* chute aéreo: bbox tem o pé em cima — sobe o desenho pra não parecer no chão */
+            ty = air && pz === "ak" ? -36 : 0;
             rot = kf(t, [
               [0, 0],
               [5, -0.09],
@@ -5089,23 +5091,38 @@
           x.translate(this.x, G + this.y);
           x.scale(this.face, 1);
           x.translate(tx, ty);
+          x.rotate(rot);
+          x.scale(sx, sy);
           if (a && this.atk !== "h" && t >= a.s - 3 && t < a.s + a.a + 5) {
-            const p = (t - a.s + 3) / (a.a + 8);
+            const p = (t - a.s + 3) / (a.a + 8),
+              punch =
+                this.atk === "p" || this.atk === "cp" || this.atk === "ap",
+              kick =
+                this.atk === "k" || this.atk === "ck" || this.atk === "ak";
             x.save();
             x.globalAlpha = Math.max(0, 1 - p) * 0.9;
             x.lineCap = "round";
             x.strokeStyle = this.col;
             x.lineWidth = 7;
-            if (this.atk === "p") {
+            if (punch) {
+              const reach = (m.w - m.ax) * sc,
+                y0 = -a.hy,
+                x0 = Math.max(18, reach * 0.22),
+                x1 = reach + 6,
+                vr = a.vr || x1;
               for (let i = 0; i < 3; i++) {
+                const yy = y0 + i * 9 - 6;
                 x.beginPath();
-                x.moveTo(30, -a.hy + i * 10 - 8);
-                x.lineTo(a.vr + 14 - i * 8, -a.hy + i * 10 - 8);
+                x.moveTo(x0, yy);
+                x.lineTo(Math.min(vr, x1) + 8 - i * 6, yy);
                 x.stroke();
               }
-            } else {
+            } else if (kick) {
+              const cy =
+                  this.atk === "ck" ? -70 : this.atk === "ak" ? -120 : -150,
+                rad = this.atk === "ck" ? 88 : this.atk === "ak" ? 100 : 112;
               x.beginPath();
-              x.arc(0, -150, 112, 0.05, 1.05);
+              x.arc(0, cy, rad, 0.05, 1.05);
               x.stroke();
               x.strokeStyle = "#f3e9d2";
               x.lineWidth = 3;
@@ -5113,8 +5130,6 @@
             }
             x.restore();
           }
-          x.rotate(rot);
-          x.scale(sx, sy);
           if (this.atk) {
             x.shadowColor = this.col;
             x.shadowBlur = 20;

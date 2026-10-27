@@ -108,6 +108,6 @@ def frames_from(im,cols,rows,n):
     return out
 
 if __name__=='__main__':
-    root='C:/Users/lukin/OneDrive/Documentos/LAMP-13/quinhas-fighters/quinhas-kun/'
+    root='C:/Users/lukin/OneDrive/Documentos/LAMP-13/quinhas-fighters/char-src/quinhas-kun/'
     for a,s in QUINHAS.items():
         print(a,[(f[0].size) for f in frames(root,s)])

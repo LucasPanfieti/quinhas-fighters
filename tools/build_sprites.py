@@ -1,11 +1,11 @@
-"""Monta o atlas de animacao de um personagem a partir das tiras em quinhas-kun/.
+"""Monta o atlas de animacao de um personagem a partir das tiras em char-src/quinhas-kun/.
 Saida: assets/spr/<id>/sheet.webp + tools/out/<id>.json (metadados dos quadros) + previa de conferencia."""
 import json, os, sys
 from PIL import Image, ImageDraw
 import slice as S
 
 ROOT='C:/Users/lukin/OneDrive/Documentos/LAMP-13/quinhas-fighters/'
-SRC=ROOT+'quinhas-kun/'
+SRC=ROOT+'char-src/quinhas-kun/'
 CID='q'
 IDLE_H=500            # altura final do personagem parado (px do atlas)
 # fator de escala por acao (normaliza o tamanho da cabeca entre as tiras)

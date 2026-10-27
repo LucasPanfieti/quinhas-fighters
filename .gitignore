@@ -1,0 +1,11 @@
+# fontes locais dos personagens (sprites finais ficam em assets/spr/)
+char-src/
+
+# python
+__pycache__/
+*.py[cod]
+
+# saídas/testes do tools (mantém os *.json de poses já versionados)
+tools/out/*
+!tools/out/*.json
+tools/poses_teste.jpg

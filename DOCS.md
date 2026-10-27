@@ -1,6 +1,6 @@
 # Quinhas Fighters — documentação técnica
 
-Documento de referência do jogo (v1.3.1+). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
+Documento de referência do jogo (v1.3.2+). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
 
 ---
 
@@ -8,14 +8,14 @@ Documento de referência do jogo (v1.3.1+). Serve para humanos e para IAs: descr
 
 **Quinhas Fighters** é um fighting game 2D no navegador (estilo arcade, melhor de 3). Roda sem build step: abrir `index.html` (ou servir a pasta por HTTP) basta.
 
-| Aspecto | Detalhe |
-|--------|---------|
-| Runtime | Um único `index.html` (~CSS + HTML de UI + JS) |
-| Render | `<canvas id="c">` em resolução lógica **800×450**, buffer interno **1600×900** (`devicePixelRatio` fixo ×2) |
-| Loop | `requestAnimationFrame` + step fixo ~**60 Hz** (`16.67 ms`) |
-| Áudio | 100% sintetizado (Web Audio API), sem arquivos de som |
-| Persistência | `localStorage` chave `qf_au` (volumes / mute) |
-| Idioma da UI | Português |
+| Aspecto      | Detalhe                                                                                                     |
+| ------------ | ----------------------------------------------------------------------------------------------------------- |
+| Runtime      | Um único `index.html` (~CSS + HTML de UI + JS)                                                              |
+| Render       | `<canvas id="c">` em resolução lógica **800×450**, buffer interno **1600×900** (`devicePixelRatio` fixo ×2) |
+| Loop         | `requestAnimationFrame` + step fixo ~**60 Hz** (`16.67 ms`)                                                 |
+| Áudio        | 100% sintetizado (Web Audio API), sem arquivos de som                                                       |
+| Persistência | `localStorage` chave `qf_au` (volumes / mute)                                                               |
+| Idioma da UI | Português                                                                                                   |
 
 Não há framework, bundler nem TypeScript. Mudanças de gameplay/UI entram direto em `index.html`.
 
@@ -34,8 +34,9 @@ quinhas-fighters/
 │   ├── logo.png, favicon*.png
 │   ├── bg.webp         # mapa 0 — Templo da Montanha
 │   ├── bg2.webp        # mapa 1 — Colégio Leila Guedes
+│   ├── bg3.webp … bg5.webp  # casas Quinhas / Junin / Bea
 │   ├── faces/0..11.webp
-│   ├── stg/1.webp, 2.webp   # thumbs da seleção de estágio
+│   ├── stg/1.webp … 5.webp  # thumbs da seleção de estágio
 │   └── spr/<id>/*.webp      # poses por personagem (ver §5)
 ├── tools/              # scripts Python de preparação de sprites (dev)
 │   ├── build_sprites.py, slice.py, …
@@ -62,19 +63,19 @@ loading → title → menu ⇄ sel → stg → (luta: intro/fight/end)
               luta ⇄ pause ⇄ hp
 ```
 
-| ID DOM | Tela | Notas |
-|--------|------|-------|
-| `#loading` | Boot | Barra de progresso; lista erros se asset falhar |
-| `#title` | Título | Clique / qualquer tecla / botão de pad → menu |
-| `#menu` | Menu principal | Um jogador, Versus, Controles, Áudio, Título; Revanche aparece pós-partida |
-| `#sel` | Seleção de lutador | Grade `#grid`; previews `#fi`/`#fi2` (1P) ou `#vs` (2P) |
-| `#stg` | Seleção de cenário | 2 mapas + Aleatório |
-| `#hp` | Controles | Tabela `#ct` preenchida por `buildHints` |
-| `#op` | Áudio | Cicla música / SFX / mute |
-| `#pause` | Pause (só em luta) | Continuar, Controles, Reiniciar, etc. |
-| `#pad` | Gamepad virtual | Só em `scr()==='game'` + classe `.on` |
-| `#pb` | Botão Pausar | Só durante a luta |
-| `#prompts` | Dicas de navegação | Teclado vs ícones de pad |
+| ID DOM     | Tela               | Notas                                                                      |
+| ---------- | ------------------ | -------------------------------------------------------------------------- |
+| `#loading` | Boot               | Barra de progresso; lista erros se asset falhar                            |
+| `#title`   | Título             | Clique / qualquer tecla / botão de pad → menu                              |
+| `#menu`    | Menu principal     | Um jogador, Versus, Controles, Áudio, Título; Revanche aparece pós-partida |
+| `#sel`     | Seleção de lutador | Grade `#grid`; previews `#fi`/`#fi2` (1P) ou `#vs` (2P)                    |
+| `#stg`     | Seleção de cenário | 5 mapas + Aleatório                                                        |
+| `#hp`      | Controles          | Tabela `#ct` preenchida por `buildHints`                                   |
+| `#op`      | Áudio              | Cicla música / SFX / mute                                                  |
+| `#pause`   | Pause (só em luta) | Continuar, Controles, Reiniciar, etc.                                      |
+| `#pad`     | Gamepad virtual    | Só em `scr()==='game'` + classe `.on`                                      |
+| `#pb`      | Botão Pausar       | Só durante a luta                                                          |
+| `#prompts` | Dicas de navegação | Teclado vs ícones de pad                                                   |
 
 ### 3.1 Modos de seleção (`pendMode`)
 
@@ -101,12 +102,12 @@ loop(ts)
 
 ### 4.1 Variável `st` (estado de luta)
 
-| Valor | Comportamento |
-|-------|----------------|
-| `menu` | Fora de luta (ou pós-partida no menu HTML) |
+| Valor   | Comportamento                                                         |
+| ------- | --------------------------------------------------------------------- |
+| `menu`  | Fora de luta (ou pós-partida no menu HTML)                            |
 | `intro` | Queda dos lutadores + VS splash / “Round N” / “Lute!”; `mt` countdown |
-| `fight` | Input ativo, timer `tm` (60s), hits, projéteis |
-| `end` | Banner K.O./Tempo; se ninguém fechou o BO3, `rd++` e novo round |
+| `fight` | Input ativo, timer `tm` (60s), hits, projéteis                        |
+| `end`   | Banner K.O./Tempo; se ninguém fechou o BO3, `rd++` e novo round       |
 
 Pause: `paused=true` → `step()` retorna cedo (luta “congelada”, UI de pause aberta).
 
@@ -130,20 +131,20 @@ Pause: `paused=true` → `step()` retorna cedo (luta “congelada”, UI de paus
 
 Ordem da grade = `ROSTER` + `LAB` + `assets/faces/<i>.webp`:
 
-| Índice face | ID | Nome | Cor (`col`) | Escala típica `P.sc` |
-|-------------|----|------|-------------|----------------------|
-| 0 | `b` | Bea-Trix | `#e0b45a` | 0.537 |
-| 1 | `r` | Cai-Ren | `#8a9bb8` | 0.587 |
-| 2 | `c` | Cris-Chan | `#f06ab8` | 0.553 |
-| 3 | `e` | Eslepe-San | `#d98a3a` | 0.621 |
-| 4 | `g` | Giu-Lee | `#a15cf0` | 0.553 |
-| 5 | `k` | Junin-Kai | `#f08a24` | 0.621 |
-| 6 | `u` | Luan-Zin | `#2fbf5a` | 0.570 |
-| 7 | `l` | Mestre-Leco | `#e03a3a` | 0.587 |
-| 8 | `q` | Quinhas-Kun | `#3d6bff` | 0.587 |
-| 9 | `s` | Samu-Kan | `#e8c84a` | 0.587 |
-| 10 | `t` | Taka-Shin | `#19c6c0` | 0.570 |
-| 11 | `y` | Yas-Mine | `#c45a8c` | 0.537 |
+| Índice face | ID  | Nome        | Cor (`col`) | Escala típica `P.sc` |
+| ----------- | --- | ----------- | ----------- | -------------------- |
+| 0           | `b` | Bea-Trix    | `#e0b45a`   | 0.537                |
+| 1           | `r` | Cai-Ren     | `#8a9bb8`   | 0.587                |
+| 2           | `c` | Cris-Chan   | `#f06ab8`   | 0.553                |
+| 3           | `e` | Eslepe-San  | `#d98a3a`   | 0.621                |
+| 4           | `g` | Giu-Lee     | `#a15cf0`   | 0.553                |
+| 5           | `k` | Junin-Kai   | `#f08a24`   | 0.621                |
+| 6           | `u` | Luan-Zin    | `#2fbf5a`   | 0.570                |
+| 7           | `l` | Mestre-Leco | `#e03a3a`   | 0.587                |
+| 8           | `q` | Quinhas-Kun | `#3d6bff`   | 0.587                |
+| 9           | `s` | Samu-Kan    | `#e8c84a`   | 0.587                |
+| 10          | `t` | Taka-Shin   | `#19c6c0`   | 0.570                |
+| 11          | `y` | Yas-Mine    | `#c45a8c`   | 0.537                |
 
 `CH[id] = { n, P, col }` é montado **depois** do load das imagens.  
 `hsRatio(sc)` normaliza altura nas UIs de seleção (maior `sc` do elenco = 1.0).
@@ -171,7 +172,7 @@ Cache-bust: query `?v=N` nas URLs (incrementar ao trocar arte).
 ### 5.3 Boot / load
 
 1. `LOAD.total` ≈ personagens×8 + 2 fundos (estimativa da barra).
-2. `Promise.all` carrega poses via `ld(SPR.*)` + `bg`/`bg2`.
+2. `Promise.all` carrega poses via `ld(SPR.*)` + `bg`…`bg5`.
 3. Atribui `sc`, `pf` (face Image) e preenche `CH`.
 4. Instancia `p1`/`p2` dummy, mostra título, inicia `loop`.
 5. Se algum arquivo falhar → tela de erro listando paths (lembrar: pasta `assets/` precisa acompanhar o HTML).
@@ -183,7 +184,7 @@ Cache-bust: query `?v=N` nas URLs (incrementar ao trocar arte).
 ## 6. Classe `F` (lutador)
 
 ```js
-new F(nome, P, startX, cor)
+new F(nome, P, startX, cor);
 ```
 
 ### 6.1 Estado importante (`reset`)
@@ -208,11 +209,11 @@ Física: gravidade `vy += 0.85`, chão `y=0`, clamp X `[30, W-30]`.
 
 ### 6.3 Ataques `ATK`
 
-| Key | Significado | Campos relevantes |
-|-----|-------------|-------------------|
-| `p` | Soco | `s` startup, `a` active, `n` duração total, `d` dano, `r` alcance, `st` stun, `kb` knockback, `hy` altura FX |
-| `k` | Chute | maior alcance/dano |
-| `h` | Esfera de Ki | no frame `s` chama `fireball`; hitbox corpo `r:0` (dano via projétil) |
+| Key | Significado  | Campos relevantes                                                                                            |
+| --- | ------------ | ------------------------------------------------------------------------------------------------------------ |
+| `p` | Soco         | `s` startup, `a` active, `n` duração total, `d` dano, `r` alcance, `st` stun, `kb` knockback, `hy` altura FX |
+| `k` | Chute        | maior alcance/dano                                                                                           |
+| `h` | Esfera de Ki | no frame `s` chama `fireball`; hitbox corpo `r:0` (dano via projétil)                                        |
 
 Hit: `strike` enfileira em `HQ`; `flushHits()` aplica `hurt` depois (evita ordem P1/P2 no mesmo frame).
 
@@ -256,16 +257,16 @@ Não é pathfinding — máquina de estados simples o suficiente para “parecer
 
 ### 9.1 Teclado (luta)
 
-| Ação | P1 | P2 |
-|------|----|----|
-| Mover | WASD | Setas |
-| Soco | J | Numpad 4 |
-| Chute | I | Numpad 8 |
-| Esfera de Ki | L | Numpad 6 |
-| Defesa | Espaço | Numpad 0 |
-| Especial | K (UI “Em breve”; sem efeito de luta) | Numpad 5 |
-| Pause | Esc / P | Esc / P |
-| Mute global | M | M |
+| Ação         | P1                                    | P2       |
+| ------------ | ------------------------------------- | -------- |
+| Mover        | WASD                                  | Setas    |
+| Soco         | J                                     | Numpad 4 |
+| Chute        | I                                     | Numpad 8 |
+| Esfera de Ki | L                                     | Numpad 6 |
+| Defesa       | Espaço                                | Numpad 0 |
+| Especial     | K (UI “Em breve”; sem efeito de luta) | Numpad 5 |
+| Pause        | Esc / P                               | Esc / P  |
+| Mute global  | M                                     | M        |
 
 Menus: setas/WASD navegam, Enter confirma, Esc volta. Em seleção 2P há bindings dedicados (`s2in`).
 
@@ -273,15 +274,15 @@ Menus: setas/WASD navegam, Enter confirma, Esc volta. Em seleção 2P há bindin
 
 Mapeamento **intencional estilo PlayStation / face buttons remapeados**:
 
-| Ação | Botão padrão (índice) | Ícone PS na UI |
-|------|----------------------|----------------|
-| Soco | 2 | □ |
-| Chute | 3 | △ |
-| Esfera de Ki | 1 | ○ |
-| Defesa | 5 (R1) | R1 |
-| Confirmar menu | 0 | ✕ |
-| Voltar menu | 1 | ○ |
-| Start/Pause | 9 | — |
+| Ação           | Botão padrão (índice) | Ícone PS na UI |
+| -------------- | --------------------- | -------------- |
+| Soco           | 2                     | □              |
+| Chute          | 3                     | △              |
+| Esfera de Ki   | 1                     | ○              |
+| Defesa         | 5 (R1)                | R1             |
+| Confirmar menu | 0                     | ✕              |
+| Voltar menu    | 1                     | ○              |
+| Start/Pause    | 9                     | —              |
 
 D-pad 12–15 + eixos 0/1.  
 `padKind(g)`: DualShock/DualSense/etc. → ícones PS (`p`); senão Xbox (`x`).
@@ -361,33 +362,33 @@ Ao adicionar personagem novo:
 
 ## 14. Checklist para quem for editar
 
-| Quero… | Onde |
-|--------|------|
-| Mudar dano/frames de golpe | `ATK` |
-| Mudar controles teclado/luta | `in1`/`in2` + `KB` |
-| Mudar botões do pad físico | `gin` |
-| Mudar layout/tamanho do pad mobile | CSS `#pad`, `--bs`, `.acts --r` |
-| Mudar pause landscape | media query coarse+landscape `#pause…` |
-| Novo mapa | `MAPS`, imagens `assets/bg*.webp` + thumb `#stgrid` |
-| Texto de versão | `#tver`, `#ver` |
-| Volumes default | `AU.vol` + `qf_au` |
-| Comportamento da IA | função `ai` |
-| Animação de pose | `F.draw` + arquivos em `SPR` |
+| Quero…                             | Onde                                                |
+| ---------------------------------- | --------------------------------------------------- |
+| Mudar dano/frames de golpe         | `ATK`                                               |
+| Mudar controles teclado/luta       | `in1`/`in2` + `KB`                                  |
+| Mudar botões do pad físico         | `gin`                                               |
+| Mudar layout/tamanho do pad mobile | CSS `#pad`, `--bs`, `.acts --r`                     |
+| Mudar pause landscape              | media query coarse+landscape `#pause…`              |
+| Novo mapa                          | `MAPS`, imagens `assets/bg*.webp` + thumb `#stgrid` |
+| Texto de versão                    | `#tver`, `#ver`                                     |
+| Volumes default                    | `AU.vol` + `qf_au`                                  |
+| Comportamento da IA                | função `ai`                                         |
+| Animação de pose                   | `F.draw` + arquivos em `SPR`                        |
 
 ---
 
 ## 15. Glossário rápido
 
-| Termo | Significado |
-|-------|-------------|
-| `P` | Pacote de imagens + `m` + `sc` + `pf` do personagem |
-| `pz` | Pose atual (string chave de `SPR`) |
-| `SC` | Escala de referência 0.587 |
-| `G` | Y do chão no canvas lógico |
-| `HQ` | Fila de hits do frame |
-| `PJ` | Projéteis de Ki |
-| `LASTM` | Última luta (revanche) |
-| `gf` | Classe “foco” de navegação por teclado/pad nos botões |
+| Termo   | Significado                                           |
+| ------- | ----------------------------------------------------- |
+| `P`     | Pacote de imagens + `m` + `sc` + `pf` do personagem   |
+| `pz`    | Pose atual (string chave de `SPR`)                    |
+| `SC`    | Escala de referência 0.587                            |
+| `G`     | Y do chão no canvas lógico                            |
+| `HQ`    | Fila de hits do frame                                 |
+| `PJ`    | Projéteis de Ki                                       |
+| `LASTM` | Última luta (revanche)                                |
+| `gf`    | Classe “foco” de navegação por teclado/pad nos botões |
 
 ---
 
@@ -395,10 +396,10 @@ Ao adicionar personagem novo:
 
 **Local:** servir a pasta (ex. `python -m http.server`) e abrir no browser. Abrir o `file://` do HTML pode falhar em alguns browsers por CORS/load de assets — preferir HTTP.
 
-**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.3.1** (atualizar strings ao shipar).
+**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.3.2** (atualizar strings ao shipar).
 
 **Git:** commits só com o que for pedido; `.gitignore` impede pastas fonte e lixo de `tools/out` (exceto `*.json`).
 
 ---
 
-*Última revisão alinhada ao código em `index.html` (v1.3.1: hitboxes de soco/Ki). Se o código divergir deste doc, o código manda — atualize esta página.*
+_Última revisão alinhada ao código em `index.html` (v1.3.2: casas Quinhas/Junin/Bea). Se o código divergir deste doc, o código manda — atualize esta página._

@@ -1,6 +1,10 @@
 # fontes locais dos personagens (sprites finais ficam em assets/spr/)
 char-src/
 
+# fontes brutas de mapa (versões finais: assets/bg*.webp)
+mapa-*.png
+mapa-*.jpg
+
 # python
 __pycache__/
 *.py[cod]

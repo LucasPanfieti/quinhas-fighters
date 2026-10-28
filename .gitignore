@@ -1,6 +1,10 @@
 # fontes locais (personagens + mapas brutos; finais em assets/)
 char-src/
 
+# fontes brutas de título (final: assets/title.webp)
+titulo-*.png
+titulo-*.jpg
+
 # python
 __pycache__/
 *.py[cod]

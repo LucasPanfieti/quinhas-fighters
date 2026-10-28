@@ -31,4 +31,4 @@ Tudo o que importa para entender ou modificar o jogo (arquitetura, roster, comba
 
 ## Versão
 
-**v1.3.2** — ver `#tver` / `#ver` em `index.html`.
+**v1.3.3** — ver `#tver` / `#ver` em `index.html`.

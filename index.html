@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"
     />
-    <title>Quinhas Fighters</title>
+<title>Quinhas Fighters</title>
     <meta
       name="description"
       content="Quinhas Fighters — jogo de luta 2D. Escolha seu lutador, enfrente a IA ou jogue com um amigo."
@@ -31,7 +31,7 @@
       href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Rajdhani:wght@600;700&display=swap"
       rel="stylesheet"
     />
-    <style>
+<style>
       :root {
         --ink: #0f0d1a;
         --dusk: #2b1f4a;
@@ -90,11 +90,23 @@
         width: 100%;
         height: 100%;
         object-fit: contain;
+        object-position: center;
         display: block;
         touch-action: none;
       }
+      /* menus com fundo do menu: cobre a tela (pode cortar). Luta/pausa ficam contain */
+      #stage:has(
+          #menu[style*="flex"],
+          #sel[style*="flex"],
+          #hp[style*="flex"],
+          #op[style*="flex"],
+          #stg[style*="flex"]
+        )
+        canvas {
+        object-fit: cover;
+      }
 
-      /* ---- overlays / menus ---- */
+/* ---- overlays / menus ---- */
       #menu,
       #sel,
       #hp,
@@ -374,11 +386,24 @@
         font-size: 11px;
       }
       #ver {
-        font-size: 11px;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        opacity: 0.45;
-        margin-top: 4px;
+        position: absolute;
+        left: max(12px, var(--safe-l));
+        bottom: max(10px, var(--safe-b));
+        z-index: 2;
+        margin: 0;
+        padding: 0.2em 0.45em;
+        font:
+          700 12px/1.2 system-ui,
+          sans-serif;
+        letter-spacing: 0.14em;
+        color: #fff;
+        opacity: 0.92;
+        background: rgba(0, 0, 0, 0.45);
+        border-radius: 3px;
+        text-shadow:
+          0 1px 0 #000,
+          0 0 8px rgba(0, 0, 0, 0.8);
+        pointer-events: none;
       }
       #tip {
         display: none;
@@ -498,7 +523,7 @@
         outline-offset: 3px;
       }
 
-      /* ---- character select ---- */
+/* ---- character select ---- */
       #grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -764,7 +789,7 @@
         filter: drop-shadow(0 0 14px rgba(47, 123, 255, 0.9));
       }
 
-      /* ---- controls table ---- */
+/* ---- controls table ---- */
       #ct-wrap {
         width: min(720px, 100%);
         max-width: 100%;
@@ -857,7 +882,7 @@
         color: var(--bone);
       }
 
-      /* ---- title / pause btn ---- */
+/* ---- title / pause btn ---- */
       #title {
         container-type: size;
         position: absolute;
@@ -887,21 +912,34 @@
       }
       #tp {
         position: absolute;
-        left: 0;
-        right: 0;
-        top: 82%;
-        padding: 0 12px;
+        left: 50%;
+        right: auto;
+        bottom: max(14px, calc(var(--safe-b) + 8px));
+        top: auto;
+        translate: -50%;
+        width: max-content;
+        max-width: calc(100% - 24px);
+        margin: 0;
+        padding: 0.5em 1em;
         text-align: center;
         font:
-          italic clamp(11px, 3vw, 13px)/1.3 system-ui,
+          italic clamp(13px, 2.8vw, 18px)/1.25 system-ui,
           sans-serif;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: var(--bone);
+        color: #fff;
+        background: rgba(8, 10, 22, 0.82);
+        border: 1px solid rgba(111, 194, 255, 0.45);
+        border-radius: 4px;
+        -webkit-text-stroke: 0.35px #000;
         text-shadow:
+          0 1px 0 #000,
           0 2px 0 #000,
-          0 0 10px rgba(47, 123, 255, 0.9);
-        animation: bl 1.4s ease-in-out infinite;
+          0 0 14px rgba(47, 123, 255, 0.9);
+        animation: bl 1.6s ease-in-out infinite;
+        z-index: 2;
+        box-sizing: border-box;
+        pointer-events: none;
       }
       #fs {
         position: absolute;
@@ -935,13 +973,20 @@
         position: absolute;
         left: max(12px, var(--safe-l));
         bottom: max(10px, var(--safe-b));
+        z-index: 2;
+        margin: 0;
+        padding: 0.2em 0.45em;
         font:
-          11px system-ui,
+          700 12px/1.2 system-ui,
           sans-serif;
-        letter-spacing: 0.12em;
-        color: var(--bone);
-        opacity: 0.5;
-        text-shadow: 0 1px 0 #000;
+        letter-spacing: 0.14em;
+        color: #fff;
+        opacity: 0.92;
+        background: rgba(0, 0, 0, 0.45);
+        border-radius: 3px;
+        text-shadow:
+          0 1px 0 #000,
+          0 0 8px rgba(0, 0, 0, 0.8);
       }
       #title::after {
         content: "";
@@ -1055,7 +1100,7 @@
       }
       @keyframes bl {
         50% {
-          opacity: 0.25;
+          opacity: 0.72;
         }
       }
       #pb {
@@ -1391,10 +1436,16 @@
         }
       }
 
-      /* ---- breakpoints ---- */
+/* ---- breakpoints ---- */
       @media (orientation: portrait) {
         #tip {
           display: block !important;
+        }
+        /* canto de baixo fica com a dica / prompt — versão sobe */
+        #menu #ver,
+        #title #tver {
+          top: max(10px, var(--safe-t));
+          bottom: auto;
         }
       }
       @media (min-width: 520px) {
@@ -1541,9 +1592,9 @@
           animation-iteration-count: 1 !important;
           transition-duration: 0.01ms !important;
         }
-      }
+}
 
-      /* ---- carregamento ---- */
+/* ---- carregamento ---- */
       #loading {
         position: absolute;
         inset: 0;
@@ -1675,7 +1726,6 @@
           display: none;
         }
         #help,
-        #ver,
         #tip {
           display: none;
         }
@@ -2038,11 +2088,11 @@
       }
       #ver {
         font-family: var(--ui);
-        font-weight: 700;
-        letter-spacing: 0.3em;
-        opacity: 0.5;
-        font-size: 12px;
-        margin-top: clamp(6px, 2vh, 16px);
+        font-size: clamp(12px, 1.5cqw, 15px);
+        letter-spacing: 0.14em;
+        opacity: 0.92;
+        margin-top: 0;
+        text-transform: none;
       }
       #tip {
         font-family: var(--ui);
@@ -2089,7 +2139,13 @@
         #prompts {
         opacity: 0.9;
       }
-      @media (hover: none), (max-height: 520px) {
+      /* touch / mobile: menu é toque — sem dicas de teclado */
+      @media (pointer: coarse), (hover: none) {
+        #prompts {
+          display: none !important;
+        }
+      }
+      @media (max-height: 520px) {
         #prompts {
           display: none;
         }
@@ -2098,9 +2154,13 @@
         font-family: var(--ui);
         font-weight: 700;
         font-style: normal;
-        letter-spacing: 0.22em;
-        font-size: clamp(10px, 1.9cqw, 21px);
+        letter-spacing: 0.16em;
+        font-size: clamp(14px, 2.2cqw, 24px);
         white-space: nowrap;
+      }
+      #tver {
+        font-family: var(--ui);
+        font-size: clamp(12px, 1.5cqw, 15px);
       }
       .card {
         border-radius: 4px;
@@ -2258,7 +2318,7 @@
     </style>
   </head>
   <body>
-    <div id="app">
+<div id="app">
       <div id="stage">
         <canvas id="c"></canvas>
         <div id="loading">
@@ -2269,11 +2329,11 @@
         </div>
         <div id="title">
           <div id="tbox">
-            <img alt="Quinhas Fighters" src="assets/title.webp?v=3" />
-            <p id="tp">Toque na tela ou aperte qualquer tecla</p>
+            <img alt="Quinhas Fighters" src="assets/title.webp?v=4" />
           </div>
+          <p id="tp">Toque na tela ou aperte qualquer tecla</p>
           <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
-          <p id="tver">v1.3.2</p>
+          <p id="tver">v1.3.3</p>
         </div>
         <div id="prompts">
           <span><kbd>↑</kbd><kbd>↓</kbd>Navegar</span
@@ -2286,12 +2346,12 @@
           <button class="go" id="brv" style="display: none">Revanche</button>
           <button class="go" id="bai">Um jogador</button>
           <button class="go alt" id="b2p">Versus · 2 jogadores</button>
-          <button class="go alt" id="bhp">Controles</button>
-          <button class="go alt" id="bop">Áudio</button>
+   <button class="go alt" id="bhp">Controles</button>
+   <button class="go alt" id="bop">Áudio</button>
           <button class="go alt" id="btt">Voltar ao título</button>
-          <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">Quinhas Fighters · v1.3.2</p>
-        </div>
+   <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
+          <p id="ver">v1.3.3</p>
+  </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>
           <p id="selsub"></p>
@@ -2383,23 +2443,23 @@
         </div>
         <div id="op">
           <h1>Áudio</h1>
-          <button class="go alt" id="om"></button>
-          <button class="go alt" id="os"></button>
-          <button class="go alt" id="omu"></button>
+  <button class="go alt" id="om"></button>
+  <button class="go alt" id="os"></button>
+  <button class="go alt" id="omu"></button>
           <button class="go alt" id="oback">Voltar</button>
         </div>
         <div id="pause">
           <h1>Pausado</h1>
           <p id="psub"></p>
-          <button class="go" id="pcont">Continuar</button>
+  <button class="go" id="pcont">Continuar</button>
           <button class="go alt" id="php">Controles</button>
-          <button class="go alt" id="prest">Reiniciar luta</button>
-          <button class="go alt" id="psel">Escolher lutador</button>
-          <button class="go alt" id="pmenu">Menu principal</button>
+  <button class="go alt" id="prest">Reiniciar luta</button>
+  <button class="go alt" id="psel">Escolher lutador</button>
+  <button class="go alt" id="pmenu">Menu principal</button>
           <button class="go alt" id="ptit">Voltar ao título</button>
         </div>
-        <button id="pb" aria-label="Pausar">❚❚</button>
-        <div id="pad" aria-hidden="true">
+ <button id="pb" aria-label="Pausar">❚❚</button>
+ <div id="pad" aria-hidden="true">
           <div
             class="stick"
             id="stick"
@@ -2409,8 +2469,8 @@
             <div class="stick-base">
               <div class="stick-knob" id="stickKnob"></div>
             </div>
-          </div>
-          <div class="acts">
+  </div>
+  <div class="acts">
             <button type="button" class="b" data-k="vK" aria-label="Chute">
               <svg class="psi" viewBox="0 0 24 24" aria-hidden="true">
                 <path
@@ -2472,11 +2532,11 @@
             <button type="button" class="b" data-k="vB" aria-label="Defesa">
               R1
             </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script>
+  </div>
+ </div>
+ </div>
+</div>
+<script>
       const SPR = {
         t: {
           id: "assets/spr/t/id.webp?v=2",
@@ -3223,37 +3283,44 @@
           pk = has[0] ? k0 : has[1] ? k1 : "b";
         const tag = (n) =>
           '<i class="tg p' + (n + 1) + '">P' + (n + 1) + "</i>";
-        const pr = document.getElementById("prompts");
-        if (pr) {
-          if (IN === "pad" && (has[0] || has[1])) {
-            pr.innerHTML = two
-              ? "<span>" +
-                gI("move", k0) +
-                'Navegar</span><span class="pg">' +
-                tag(0) +
-                gI("ok", k0) +
-                "Confirmar " +
-                gI("back", k0) +
-                'Voltar</span><span class="pg">' +
-                tag(1) +
-                gI("ok", k1) +
-                "Confirmar " +
-                gI("back", k1) +
-                "Voltar</span>"
-              : "<span>" +
-                gI("move", pk) +
-                "Navegar</span><span>" +
-                gI("ok", pk) +
-                "Confirmar</span><span>" +
-                gI("back", pk) +
-                "Voltar</span>";
-          } else
-            pr.innerHTML =
-              "<span><kbd>↑</kbd><kbd>↓</kbd>Navegar</span><span><kbd>Enter</kbd>Confirmar</span><span><kbd>Esc</kbd>Voltar</span>";
-        }
         const coarse =
           window.matchMedia &&
-          matchMedia("(hover:none) and (pointer:coarse)").matches;
+          (matchMedia("(pointer:coarse)").matches ||
+            matchMedia("(hover:none)").matches);
+        const pr = document.getElementById("prompts");
+        if (pr) {
+          if (coarse) {
+            pr.hidden = true;
+            pr.innerHTML = "";
+          } else {
+            pr.hidden = false;
+            if (IN === "pad" && (has[0] || has[1])) {
+              pr.innerHTML = two
+                ? "<span>" +
+                  gI("move", k0) +
+                  'Navegar</span><span class="pg">' +
+                  tag(0) +
+                  gI("ok", k0) +
+                  "Confirmar " +
+                  gI("back", k0) +
+                  'Voltar</span><span class="pg">' +
+                  tag(1) +
+                  gI("ok", k1) +
+                  "Confirmar " +
+                  gI("back", k1) +
+                  "Voltar</span>"
+                : "<span>" +
+                  gI("move", pk) +
+                  "Navegar</span><span>" +
+                  gI("ok", pk) +
+                  "Confirmar</span><span>" +
+                  gI("back", pk) +
+                  "Voltar</span>";
+            } else
+              pr.innerHTML =
+                "<span><kbd>↑</kbd><kbd>↓</kbd>Navegar</span><span><kbd>Enter</kbd>Confirmar</span><span><kbd>Esc</kbd>Voltar</span>";
+          }
+        }
         const padOn = coarse || (IN === "pad" && (has[0] || has[1]));
         const kind = (i) => (ks[i] !== "-" ? ks[i] : coarse ? "p" : pk);
         document.querySelectorAll("#ct td[data-ct]").forEach((td) => {
@@ -3277,13 +3344,11 @@
           }
         }
         const ks = [gpad(0), gpad(1)].map((g) => (g ? padKind(g) : "-")),
-          sig =
-            IN +
-            ks.join("") +
-            (window.matchMedia &&
-            matchMedia("(hover:none) and (pointer:coarse)").matches
-              ? "c"
-              : "");
+          touchy =
+            window.matchMedia &&
+            (matchMedia("(pointer:coarse)").matches ||
+              matchMedia("(hover:none)").matches),
+          sig = IN + ks.join("") + (touchy ? "c" : "");
         if (sig === hSig) return;
         hSig = sig;
         buildHints(ks);
@@ -3542,8 +3607,8 @@
           });
           if (typeof stickEnd === "function") stickEnd();
         }
-        aSync(s);
-      }
+ aSync(s);
+}
       function padMenu() {
         if (p1 && scr() === "sel" && pendMode === "2p") {
           for (let i = 0; i < 2; i++) {
@@ -3571,7 +3636,7 @@
             pm2[i] = d;
           }
           pm = Object.assign({}, pm2[0] || {});
-          uiTick();
+ uiTick();
           return;
         }
         const gs = [gpad(0), gpad(1)].filter(Boolean);
@@ -3677,8 +3742,8 @@
           if (!e.repeat) press("ok");
           return;
         }
-        press(k);
-      });
+ press(k);
+});
       addEventListener("pointerdown", () => {
         kb = false;
       });
@@ -3711,7 +3776,7 @@
           b: keys.Numpad0 || g.b,
         };
       };
-      /* ===== AUDIO (tudo gerado por codigo) ===== */
+/* ===== AUDIO (tudo gerado por codigo) ===== */
       const AU = {
         ctx: null,
         vol: { m: 0.6, s: 0.8, v: 1, mute: false },
@@ -3732,7 +3797,7 @@
           localStorage.setItem("qf_au", JSON.stringify(AU.vol));
         } catch (e) {}
       }
-      let ac;
+let ac;
       function aInit() {
         if (AU.ctx) return AU.ctx;
         try {
@@ -3973,7 +4038,7 @@
         nz(t, 0.3, 0.5, { f: 600, to: 3000, q: 0.7 });
         tone(80, t, 0.3, "sine", 0.8, { to: 35 });
       }
-      /* locutor */
+/* locutor */
       const ANNOUNCER = false;
       function speak(txt, o) {
         if (
@@ -4024,7 +4089,7 @@
         if (w) setTimeout(() => speak(w.n + " vence!"), 2000);
         if (ov) setTimeout(sfxWin, 1100);
       }
-      /* musica */
+/* musica */
       const NM = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
       const mid = (s) => {
         const m = /^([A-G])(#|b)?(\d)$/.exec(s);
@@ -4328,7 +4393,7 @@
         const n = LV.find((x) => x > v + 0.01);
         return n === undefined ? 0 : n;
       }
-      updOpt();
+updOpt();
 
       /* s=startup, a=active, n=duração; r=alcance a partir do centro (visual do soco/chute é maior → a cobre a pose) */
       const ATK = {
@@ -4689,7 +4754,7 @@
           sfxSwing(k === "k" || k === "ck" || k === "ak" ? "k" : "p");
         }
         up(i, o) {
-          this.t++;
+  this.t++;
           if (this.hcd > 0) this.hcd--;
           if (this.gh > this.hp) this.gh -= 0.35;
           if (this.jt > 0) this.jt--;
@@ -5085,7 +5150,7 @@
               o.m.w * o.sc,
               o.m.h * o.sc,
             );
-            x.restore();
+  x.restore();
           });
           x.save();
           x.translate(this.x, G + this.y);
@@ -5766,19 +5831,19 @@
         x.restore();
       }
       function drawVs(age) {
-        /* age: frames into VS splash (0 → ~78) */
+ /* age: frames into VS splash (0 → ~78) */
         const fadeIn = Math.min(1, age / 10),
           fadeOut = age > 62 ? Math.max(0, 1 - (age - 62) / 16) : 1,
           al = fadeIn * fadeOut;
         if (al <= 0.01) return;
         const ease = (t) => 1 - Math.pow(1 - Math.min(1, t), 3),
           s = ease(age / 16);
-        x.save();
+ x.save();
         x.globalAlpha = al * 0.72;
         x.fillStyle = "#040716";
         x.fillRect(0, 0, W, H);
         x.globalAlpha = al;
-        /* faixas de cor */
+ /* faixas de cor */
         x.fillStyle = p1.col;
         x.globalAlpha = al * 0.35;
         x.beginPath();
@@ -5812,7 +5877,7 @@
           x.clip();
           if (img && img.complete)
             x.drawImage(img, -r, -r + 4, r * 2, (r * 2 * 4) / 3);
-          x.restore();
+  x.restore();
           x.beginPath();
           x.arc(cx, H * 0.42, r, 0, 7);
           x.lineWidth = 5;
@@ -5837,7 +5902,7 @@
           rx = W + 100 - (100 + 155) * s;
         face(p1, lx, 0);
         face(p2, rx, 1);
-        /* VS */
+ /* VS */
         const vsT = Math.max(0, age - 6),
           vk = 1 + Math.pow(1 - Math.min(1, vsT / 10), 2) * 1.35,
           vp = Math.min(1, vsT / 8) * al;
@@ -5858,16 +5923,16 @@
         vg.addColorStop(1, "#1448ff");
         x.fillStyle = vg;
         x.fillText("VS", 0, 0);
-        x.restore();
-        /* rodapé */
+ x.restore();
+ /* rodapé */
         x.globalAlpha = al * 0.9;
         x.font = 'italic 13px "Dela Gothic One",Impact,sans-serif';
         x.textAlign = "center";
         x.textBaseline = "middle";
         x.fillStyle = "#dff0ff";
         x.fillText("MELHOR DE 3", W / 2, H - 28);
-        x.restore();
-      }
+ x.restore();
+}
       function introOverlay() {
         if (rd === 1 && mt > 90) {
           drawVs(168 - mt);
@@ -5916,7 +5981,7 @@
             x.beginPath();
             x.arc(0, 0, 6 + p * 42, 0, 7);
             x.stroke();
-            x.restore();
+ x.restore();
             x.strokeStyle = "#fff3b0";
             x.lineWidth = 4;
             x.lineCap = "round";

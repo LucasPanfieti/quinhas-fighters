@@ -2,6 +2,7 @@
 char-src/
 
 # fontes brutas de título (final: assets/title.webp)
+char-src/title/
 titulo-*.png
 titulo-*.jpg
 

@@ -1,6 +1,6 @@
 # Quinhas Fighters — documentação técnica
 
-Documento de referência do jogo (v1.3.3+). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
+Documento de referência do jogo (v1.3.4+). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
 
 ---
 
@@ -400,10 +400,10 @@ Ao adicionar personagem novo:
 
 **Local:** servir a pasta (ex. `python -m http.server`) e abrir no browser. Abrir o `file://` do HTML pode falhar em alguns browsers por CORS/load de assets — preferir HTTP.
 
-**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.3.3** (atualizar strings ao shipar).
+**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.3.4** (atualizar strings ao shipar).
 
 **Git:** commits só com o que for pedido; `.gitignore` impede pastas fonte e lixo de `tools/out` (exceto `*.json`).
 
 ---
 
-_Última revisão alinhada ao código em `index.html` (v1.3.3: título novo e UI mobile). Se o código divergir deste doc, o código manda — atualize esta página._
+_Última revisão alinhada ao código em `index.html` (v1.3.4: sliders de áudio e SFX de título). Se o código divergir deste doc, o código manda — atualize esta página._

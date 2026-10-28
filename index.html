@@ -413,6 +413,143 @@
         line-height: 1.4;
         padding: 0 8px;
       }
+      .arow {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+        width: min(360px, 92vw);
+        min-height: clamp(46px, 7vh, 58px);
+        box-sizing: border-box;
+        padding: 10px 22px 12px 30px;
+        border: 0;
+        border-radius: 3px;
+        text-align: left;
+        transform: skewX(-6deg);
+        background: linear-gradient(
+          90deg,
+          rgba(18, 28, 76, 0.94),
+          rgba(8, 12, 38, 0.94)
+        );
+        box-shadow:
+          inset 0 0 0 1px rgba(111, 194, 255, 0.38),
+          inset 6px 0 0 #2f7bff,
+          0 6px 16px rgba(0, 0, 0, 0.5);
+      }
+      .arow.gf,
+      .arow:hover {
+        background: linear-gradient(90deg, #ff7a2f, #ffb04a);
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+          inset 6px 0 0 #fff,
+          0 0 28px rgba(255, 140, 50, 0.85),
+          0 6px 16px rgba(0, 0, 0, 0.5);
+        outline: none;
+        transform: skewX(-6deg) translateX(8px) scale(1.03);
+      }
+      .arow.gf .alab,
+      .arow:hover .alab {
+        color: #1a0d00;
+        text-shadow: none;
+      }
+      .arow.gf .alab b,
+      .arow:hover .alab b {
+        color: #1a0d00;
+      }
+      .arow .alab {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        transform: skewX(6deg);
+        font: italic 700 clamp(15px, 3.3vw, 20px)/1.15 var(--ui, system-ui),
+          sans-serif;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #e8f4ff;
+        text-shadow: 0 2px 0 rgba(0, 0, 0, 0.7);
+      }
+      .arow .alab b {
+        font-style: italic;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.08em;
+        color: #9fd0ff;
+      }
+      .arow input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 22px;
+        margin: 0;
+        background: transparent;
+        cursor: pointer;
+        touch-action: pan-x;
+        transform: skewX(6deg);
+        -webkit-user-select: auto;
+        user-select: auto;
+      }
+      .arow input[type="range"]::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 2px;
+        background: linear-gradient(
+          90deg,
+          #6fc2ff,
+          #2f7bff var(--pct, 100%),
+          rgba(0, 0, 0, 0.45) var(--pct, 100%)
+        );
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55);
+      }
+      .arow.gf input[type="range"]::-webkit-slider-runnable-track,
+      .arow:hover input[type="range"]::-webkit-slider-runnable-track {
+        background: linear-gradient(
+          90deg,
+          #fff,
+          rgba(255, 255, 255, 0.85) var(--pct, 100%),
+          rgba(0, 0, 0, 0.35) var(--pct, 100%)
+        );
+      }
+      .arow input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        margin-top: -6px;
+        border-radius: 2px;
+        border: 2px solid #000;
+        background: #fff;
+        box-shadow: 0 2px 0 #000;
+      }
+      .arow.gf input[type="range"]::-webkit-slider-thumb,
+      .arow:hover input[type="range"]::-webkit-slider-thumb {
+        background: #1a0d00;
+        border-color: #fff;
+      }
+      .arow input[type="range"]::-moz-range-track {
+        height: 6px;
+        border-radius: 2px;
+        background: rgba(0, 0, 0, 0.45);
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55);
+      }
+      .arow input[type="range"]::-moz-range-progress {
+        height: 6px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, #6fc2ff, #2f7bff);
+      }
+      .arow.gf input[type="range"]::-moz-range-progress,
+      .arow:hover input[type="range"]::-moz-range-progress {
+        background: #fff;
+      }
+      .arow input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 2px;
+        border: 2px solid #000;
+        background: #fff;
+        box-shadow: 0 2px 0 #000;
+      }
+      #op.muted .arow {
+        opacity: 0.45;
+      }
       .go {
         width: var(--go-w);
         min-height: 44px;
@@ -2333,7 +2470,7 @@
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
           <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
-          <p id="tver">v1.3.3</p>
+          <p id="tver">v1.3.4</p>
         </div>
         <div id="prompts">
           <span><kbd>↑</kbd><kbd>↓</kbd>Navegar</span
@@ -2350,7 +2487,7 @@
    <button class="go alt" id="bop">Áudio</button>
           <button class="go alt" id="btt">Voltar ao título</button>
    <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">v1.3.3</p>
+          <p id="ver">v1.3.4</p>
   </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>
@@ -2443,10 +2580,34 @@
         </div>
         <div id="op">
           <h1>Áudio</h1>
-  <button class="go alt" id="om"></button>
-  <button class="go alt" id="os"></button>
-  <button class="go alt" id="omu"></button>
-          <button class="go alt" id="oback">Voltar</button>
+          <div class="arow" id="omrow" data-vol="m" tabindex="-1">
+            <div class="alab">
+              <span>Música</span><b id="omv">100%</b>
+            </div>
+            <input
+              id="om"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              aria-label="Volume da música"
+            />
+          </div>
+          <div class="arow" id="osrow" data-vol="s" tabindex="-1">
+            <div class="alab">
+              <span>Efeitos</span><b id="osv">100%</b>
+            </div>
+            <input
+              id="os"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              aria-label="Volume dos efeitos"
+            />
+          </div>
+          <button class="go alt" id="omu" type="button"></button>
+          <button class="go alt" id="oback" type="button">Voltar</button>
         </div>
         <div id="pause">
           <h1>Pausado</h1>
@@ -3399,7 +3560,7 @@
           ),
         sel: () => [...grid.querySelectorAll(".card:not(.lock)"), $("back")],
         help: () => [$("hback")],
-        opt: () => [$("om"), $("os"), $("omu"), $("oback")],
+        opt: () => [$("omrow"), $("osrow"), $("omu"), $("oback")],
         pause: () => [...$("pause").querySelectorAll(".go")],
         stage: () => [...$("stg").querySelectorAll(".stc"), $("stback")],
       };
@@ -3497,19 +3658,22 @@
         $("op").style.display = "none";
         menu.style.display = "flex";
       };
-      $("om").onclick = () => {
-        AU.vol.m = cyc(AU.vol.m);
+      function setVol(key, v, preview) {
+        AU.vol[key] = Math.max(0, Math.min(1, v));
         aSave();
         aVol();
         updOpt();
-      };
-      $("os").onclick = () => {
-        AU.vol.s = cyc(AU.vol.s);
-        aSave();
-        aVol();
-        updOpt();
-        sfxHit(true);
-      };
+        if (preview && key === "s" && !AU.vol.mute) sfxUI("ok");
+      }
+      function bindVolSlider(id, key) {
+        const el = $(id);
+        if (!el) return;
+        el.addEventListener("input", () => setVol(key, +el.value / 100, false));
+        el.addEventListener("change", () => setVol(key, +el.value / 100, true));
+        el.addEventListener("pointerdown", (e) => e.stopPropagation());
+      }
+      bindVolSlider("om", "m");
+      bindVolSlider("os", "s");
       $("omu").onclick = () => {
         AU.vol.mute = !AU.vol.mute;
         aSave();
@@ -3547,10 +3711,27 @@
         if (!L || !L.length) return;
         let i = Math.min(mi, L.length - 1);
         if (k === "ok" || k === "st") {
+          if (L[i].dataset && L[i].dataset.vol) {
+            if (L[i].dataset.vol === "s" && !AU.vol.mute) sfxUI("ok");
+            return;
+          }
           L[i].click();
           return;
         }
         const n = L.length;
+        if (s === "opt") {
+          const row = L[i];
+          if ((k === "l" || k === "r") && row && row.dataset && row.dataset.vol) {
+            const step = k === "r" ? 0.05 : -0.05;
+            setVol(row.dataset.vol, AU.vol[row.dataset.vol] + step, true);
+            return;
+          }
+          if (k === "l" || k === "r") return;
+          i = (i + (k === "u" ? -1 : 1) + n) % n;
+          if (mi !== i) sfxUI("move");
+          mi = i;
+          return;
+        }
         if (s === "sel") {
           const cards = n - 1,
             cur = L[i],
@@ -4395,20 +4576,24 @@ let ac;
         if (b && b !== lastHv) sfxUI("move");
         lastHv = b || null;
       });
-      const LV = [0, 0.25, 0.5, 0.75, 1];
       function updOpt() {
         const q = (v) => Math.round(v * 100) + "%";
         const g = (id) => document.getElementById(id);
-        if (!g("om")) return;
-        g("om").textContent = "Música: " + q(AU.vol.m);
-        g("os").textContent = "Efeitos: " + q(AU.vol.s);
-        g("omu").textContent = "Som: " + (AU.vol.mute ? "desligado" : "ligado");
+        const om = g("om"),
+          os = g("os");
+        if (!om || !os) return;
+        const mp = Math.round(AU.vol.m * 100),
+          sp = Math.round(AU.vol.s * 100);
+        om.value = String(mp);
+        os.value = String(sp);
+        om.style.setProperty("--pct", mp + "%");
+        os.style.setProperty("--pct", sp + "%");
+        if (g("omv")) g("omv").textContent = q(AU.vol.m);
+        if (g("osv")) g("osv").textContent = q(AU.vol.s);
+        g("omu").textContent = AU.vol.mute ? "Som: desligado" : "Som: ligado";
+        g("op").classList.toggle("muted", !!AU.vol.mute);
       }
-      function cyc(v) {
-        const n = LV.find((x) => x > v + 0.01);
-        return n === undefined ? 0 : n;
-      }
-updOpt();
+      updOpt();
 
       /* s=startup, a=active, n=duração; r=alcance a partir do centro (visual do soco/chute é maior → a cobre a pose) */
       const ATK = {

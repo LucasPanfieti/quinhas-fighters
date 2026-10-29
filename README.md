@@ -1,4 +1,4 @@
-# Quinhas Fighters
+# Quinhas Ball Fighters
 
 Fighting game 2D no navegador (melhor de 3). Um único `index.html` + pasta `assets/`.
 
@@ -31,4 +31,4 @@ Tudo o que importa para entender ou modificar o jogo (arquitetura, roster, comba
 
 ## Versão
 
-**v1.3.4** — ver `#tver` / `#ver` em `index.html`.
+**v1.3.5** — ver `#tver` / `#ver` em `index.html`.

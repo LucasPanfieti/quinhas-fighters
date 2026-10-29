@@ -212,60 +212,106 @@
         );
         clip-path: polygon(40% 0, 100% 0, 100% 100%, 0 100%);
       }
-      #menu > *,
-      #sel > *,
-      #hp > *,
-      #op > *,
-      #stg > *,
-      #pause > * {
-        animation: pin 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) backwards;
+      /* entrada em cascata — só com o painel visível (reinicia a cada tela) */
+      #menu[style*="flex"] > *,
+      #sel[style*="flex"] > *,
+      #hp[style*="flex"] > *,
+      #op[style*="flex"] > *,
+      #stg[style*="flex"] > *,
+      #pause[style*="flex"] > * {
+        animation: pin 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
       }
-      #menu > :nth-child(2),
-      #sel > :nth-child(2),
-      #hp > :nth-child(2),
-      #op > :nth-child(2),
-      #stg > :nth-child(2),
-      #pause > :nth-child(2) {
-        animation-delay: 0.05s;
+      #stg[style*="flex"] .stc {
+        animation: pin 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
       }
-      #menu > :nth-child(3),
-      #sel > :nth-child(3),
-      #hp > :nth-child(3),
-      #op > :nth-child(3),
-      #stg > :nth-child(3),
-      #pause > :nth-child(3) {
+      #menu[style*="flex"] > :nth-child(1),
+      #sel[style*="flex"] > :nth-child(1),
+      #hp[style*="flex"] > :nth-child(1),
+      #op[style*="flex"] > :nth-child(1),
+      #stg[style*="flex"] > :nth-child(1),
+      #pause[style*="flex"] > :nth-child(1) {
+        animation-delay: 0.02s;
+      }
+      #menu[style*="flex"] > :nth-child(2),
+      #sel[style*="flex"] > :nth-child(2),
+      #hp[style*="flex"] > :nth-child(2),
+      #op[style*="flex"] > :nth-child(2),
+      #stg[style*="flex"] > :nth-child(2),
+      #pause[style*="flex"] > :nth-child(2),
+      #stg[style*="flex"] .stc:nth-child(1) {
+        animation-delay: 0.06s;
+      }
+      #menu[style*="flex"] > :nth-child(3),
+      #sel[style*="flex"] > :nth-child(3),
+      #hp[style*="flex"] > :nth-child(3),
+      #op[style*="flex"] > :nth-child(3),
+      #stg[style*="flex"] > :nth-child(3),
+      #pause[style*="flex"] > :nth-child(3),
+      #stg[style*="flex"] .stc:nth-child(2) {
         animation-delay: 0.1s;
       }
-      #menu > :nth-child(4),
-      #sel > :nth-child(4),
-      #hp > :nth-child(4),
-      #op > :nth-child(4),
-      #stg > :nth-child(4),
-      #pause > :nth-child(4) {
-        animation-delay: 0.15s;
+      #menu[style*="flex"] > :nth-child(4),
+      #sel[style*="flex"] > :nth-child(4),
+      #hp[style*="flex"] > :nth-child(4),
+      #op[style*="flex"] > :nth-child(4),
+      #stg[style*="flex"] > :nth-child(4),
+      #pause[style*="flex"] > :nth-child(4),
+      #stg[style*="flex"] .stc:nth-child(3) {
+        animation-delay: 0.14s;
       }
-      #menu > :nth-child(5),
-      #pause > :nth-child(5) {
-        animation-delay: 0.2s;
+      #menu[style*="flex"] > :nth-child(5),
+      #sel[style*="flex"] > :nth-child(5),
+      #hp[style*="flex"] > :nth-child(5),
+      #op[style*="flex"] > :nth-child(5),
+      #pause[style*="flex"] > :nth-child(5),
+      #stg[style*="flex"] .stc:nth-child(4) {
+        animation-delay: 0.18s;
       }
-      #menu > :nth-child(6),
-      #pause > :nth-child(6) {
-        animation-delay: 0.25s;
+      #menu[style*="flex"] > :nth-child(6),
+      #sel[style*="flex"] > :nth-child(6),
+      #op[style*="flex"] > :nth-child(6),
+      #pause[style*="flex"] > :nth-child(6),
+      #stg[style*="flex"] .stc:nth-child(5) {
+        animation-delay: 0.22s;
       }
-      #pause > :nth-child(7) {
+      #menu[style*="flex"] > :nth-child(7),
+      #pause[style*="flex"] > :nth-child(7),
+      #stg[style*="flex"] .stc:nth-child(6) {
+        animation-delay: 0.26s;
+      }
+      #menu[style*="flex"] > :nth-child(8),
+      #pause[style*="flex"] > :nth-child(8) {
         animation-delay: 0.3s;
       }
-      #pause > :nth-child(8) {
-        animation-delay: 0.35s;
+      #menu[style*="flex"] > :nth-child(9) {
+        animation-delay: 0.34s;
+      }
+      #menu[style*="flex"] > :nth-child(10) {
+        animation-delay: 0.38s;
+      }
+      #menu[style*="flex"] > :nth-child(11),
+      #menu[style*="flex"] > :nth-child(12) {
+        animation-delay: 0.42s;
       }
       @keyframes pin {
         from {
           opacity: 0;
-          translate: 0 14px;
+          translate: 0 12px;
         }
         to {
           opacity: 1;
           translate: 0 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #menu[style*="flex"] > *,
+        #sel[style*="flex"] > *,
+        #hp[style*="flex"] > *,
+        #op[style*="flex"] > *,
+        #stg[style*="flex"] > *,
+        #pause[style*="flex"] > *,
+        #stg[style*="flex"] .stc {
+          animation: none !important;
         }
       }
 
@@ -1807,7 +1853,7 @@
         max-width: min(560px, 92vw);
         word-break: break-all;
       }
-      /* ---- celular: sem scroll — tudo cabe na viewport ---- */
+      /* ---- celular: overlays full-bleed; conteúdo interno limitado ---- */
       @media (hover: none) and (pointer: coarse) {
         html,
         body {
@@ -1833,42 +1879,66 @@
         #op,
         #stg,
         #pause {
-          overflow: hidden;
-          overscroll-behavior: none;
-          -webkit-overflow-scrolling: auto;
-          justify-content: center;
-          gap: clamp(4px, 1.1vh, 10px);
-          padding: max(8px, var(--safe-t)) max(10px, var(--safe-r))
-            max(8px, var(--safe-b)) max(10px, var(--safe-l));
+          left: 0;
+          right: 0;
+          width: auto;
+          max-width: none;
+          margin-inline: 0;
+          box-sizing: border-box;
+          overflow-x: hidden;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          justify-content: safe center;
+          align-items: center;
+          gap: clamp(6px, 1.4vh, 12px);
+          padding: max(10px, var(--safe-t))
+            max(18px, calc(var(--safe-r) + 10px), 4vw)
+            max(10px, var(--safe-b))
+            max(18px, calc(var(--safe-l) + 10px), 4vw);
         }
         :root {
-          --ui-gap: clamp(4px, 1.1vh, 10px);
+          --ui-gap: clamp(6px, 1.4vh, 12px);
           --title-size: clamp(18px, 5vh, 34px);
-          --go-w: min(300px, 86vw);
+          --go-w: min(300px, calc(100vw - 48px));
         }
         h1 {
           margin-bottom: clamp(4px, 1vh, 12px);
-          max-width: min(12em, 90vw);
+          max-width: min(14em, calc(100vw - 48px));
         }
         h1::after {
           height: clamp(4px, 0.7vh, 8px);
           bottom: calc(-0.4em);
         }
         .go {
-          min-height: clamp(40px, 6.2vh, 50px);
-          font-size: clamp(13px, 2.6vh, 17px);
-          padding: 0 16px 0 24px;
+          width: var(--go-w);
+          max-width: 100%;
+          min-height: clamp(42px, 6.5vh, 52px);
+          font-size: clamp(13px, 2.8vh, 17px);
+          padding: 0 18px 0 22px;
+          box-sizing: border-box;
+        }
+        .arow {
+          width: min(360px, calc(100vw - 48px));
+          max-width: 100%;
+        }
+        #menu .mlogo {
+          width: min(420px, calc(100vw - 48px));
+          max-height: min(24vh, 180px);
+        }
+        #menu .winrow {
+          width: min(480px, calc(100vw - 48px));
         }
         #grid {
-          width: min(400px, 90vw);
+          width: min(400px, calc(100vw - 48px));
           max-height: min(54dvh, 440px);
           gap: clamp(4px, 1vw, 8px);
           flex-shrink: 1;
           min-height: 0;
         }
         #ct-wrap {
-          overflow: hidden;
-          width: min(620px, 94vw);
+          overflow: auto;
+          width: min(620px, calc(100vw - 48px));
           flex-shrink: 1;
           min-height: 0;
           max-height: min(62dvh, 480px);
@@ -1900,6 +1970,7 @@
         #sub {
           margin: 0;
           font-size: clamp(11px, 2.2vh, 14px);
+          max-width: min(520px, calc(100vw - 48px));
         }
         #menu::before,
         #sel::before,
@@ -1916,24 +1987,25 @@
           display: none;
         }
         #stgrid {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          align-items: stretch;
           justify-content: center;
-          flex-wrap: nowrap;
-          gap: clamp(8px, 1.6vh, 12px);
-          width: min(360px, 88vw);
+          gap: clamp(6px, 1.2vh, 10px);
+          width: min(360px, calc(100vw - 48px));
           max-height: none;
           overflow: visible;
+          flex: 0 1 auto;
+          min-height: 0;
         }
         .stc {
           width: 100%;
-          flex: 0 0 auto;
           aspect-ratio: 16/9;
-          max-height: min(11dvh, 96px);
+          max-height: min(13dvh, 96px);
+          height: auto;
         }
         .stc b {
-          padding: 10px 6px 4px;
+          padding: 8px 6px 4px;
           font-size: clamp(9px, 2.2vw, 12px);
           white-space: nowrap;
           overflow: hidden;
@@ -1946,18 +2018,28 @@
         #vs {
           min-height: 0;
           gap: clamp(4px, 2vw, 16px);
+          width: min(520px, calc(100vw - 48px));
         }
         .pv img {
           height: calc(clamp(40px, 8vh, 72px) * var(--hs, 1));
         }
+        #fi .nplate,
+        #fi2 .nplate,
+        .pv .nplate {
+          max-width: min(100%, 280px);
+        }
         #prompts {
+          display: none !important;
+        }
+        /* versus local precisa de 2 controles — esconde no toque */
+        #b2p {
           display: none !important;
         }
       }
       @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
         :root {
           --title-size: clamp(16px, 6.5vh, 28px);
-          --go-w: min(240px, 42vw);
+          --go-w: min(260px, 38vw);
         }
         #menu,
         #sel,
@@ -1965,9 +2047,11 @@
         #op,
         #stg,
         #pause {
-          gap: clamp(3px, 1vh, 8px);
-          padding: max(6px, var(--safe-t)) max(12px, var(--safe-r))
-            max(6px, var(--safe-b)) max(12px, var(--safe-l));
+          gap: clamp(4px, 1.2vh, 10px);
+          padding: max(8px, var(--safe-t))
+            max(20px, calc(var(--safe-r) + 12px), 4vw)
+            max(8px, var(--safe-b))
+            max(20px, calc(var(--safe-l) + 12px), 4vw);
         }
         #sel h1,
         #hp h1,
@@ -1980,70 +2064,125 @@
           font-size: clamp(18px, 7vh, 32px);
           margin-bottom: 4px;
         }
+        #menu .mlogo {
+          max-height: min(20vh, 100px);
+          width: min(340px, 42vw);
+          margin-bottom: 2px;
+        }
+        #menu .winrow .nplate {
+          height: clamp(26px, 6.5vh, 40px);
+        }
+        /* menu landscape: coluna única central (sem grade torta) */
+        #menu[style*="flex"] {
+          display: flex !important;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: clamp(6px, 1.8vh, 12px);
+        }
+        #menu .go {
+          width: min(280px, 46vw);
+          max-width: 100%;
+        }
         #grid {
           grid-template-columns: repeat(6, minmax(0, 1fr));
-          width: min(560px, 72vw);
-          max-height: min(58dvh, 320px);
+          width: min(620px, 78vw);
+          max-height: min(62dvh, 340px);
         }
         .go {
-          min-height: clamp(34px, 8.5vh, 46px);
-          font-size: clamp(12px, 3.2vh, 15px);
+          min-height: clamp(36px, 9vh, 48px);
+          font-size: clamp(12px, 3.2vh, 16px);
+        }
+        #op[style*="flex"] {
+          gap: clamp(6px, 1.6vh, 12px);
+        }
+        #op .arow {
+          width: min(420px, 70vw);
+        }
+        #op .go {
+          width: min(240px, 36vw);
+        }
+        #hp[style*="flex"] {
+          gap: clamp(6px, 1.6vh, 12px);
+        }
+        #hp .go {
+          width: min(240px, 36vw);
         }
         #pause[style*="flex"] {
           display: grid !important;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: minmax(0, 250px) minmax(0, 250px);
           grid-auto-rows: auto;
           align-content: center;
           justify-items: stretch;
           justify-content: center;
-          width: min(640px, 92vw);
-          margin-inline: auto;
-          column-gap: clamp(12px, 2.5vw, 22px);
+          column-gap: clamp(14px, 3vw, 28px);
           row-gap: clamp(10px, 2.4vh, 14px);
-          padding-left: max(16px, var(--safe-l));
-          padding-right: max(16px, var(--safe-r));
-        }
-        #pause h1 {
-          display: none;
         }
         #pause #psub {
           grid-column: 1/-1;
-          width: 100%;
-          margin: 0 0 2px;
+          width: min(520px, 100%);
+          max-width: 100%;
+          margin: 0 auto 2px;
           font-size: clamp(13px, 3.4vh, 16px);
           letter-spacing: 0.12em;
+          justify-self: center;
+        }
+        #pause #psub .nplate {
+          height: clamp(22px, 5.5vh, 34px);
+          max-width: min(36vw, 180px);
         }
         #pause .go {
           width: 100%;
-          min-height: clamp(46px, 11vh, 56px);
-          font-size: clamp(16px, 4.4vh, 20px);
+          max-width: 100%;
+          min-height: clamp(44px, 10.5vh, 54px);
+          font-size: clamp(15px, 4.2vh, 19px);
           letter-spacing: 0.08em;
-          padding: 0 14px 0 18px;
+          padding: 0 16px 0 20px;
         }
         #pause #pcont,
         #pause #ptit {
           grid-column: 1/-1;
-          width: min(340px, 56vw);
+          width: min(300px, 44vw);
+          max-width: 100%;
           justify-self: center;
         }
         #ct-wrap {
-          max-height: min(70dvh, 340px);
+          max-height: min(72dvh, 360px);
+          width: min(720px, 86vw);
         }
         #stg {
-          gap: clamp(10px, 2.5vh, 16px);
+          gap: clamp(8px, 2vh, 14px);
         }
         #stgrid {
+          display: flex;
           flex-direction: row;
           flex-wrap: wrap;
-          width: min(960px, 96vw);
-          gap: clamp(6px, 1.2vw, 10px);
+          align-items: stretch;
+          width: min(720px, 88vw);
+          gap: clamp(8px, 1.4vw, 12px);
           justify-content: center;
         }
         .stc {
-          width: min(150px, 28vw);
+          width: min(160px, 26vw);
           flex: 0 1 auto;
           min-width: 0;
-          max-height: min(22vh, 110px);
+          max-height: min(24vh, 120px);
+        }
+        #stg .go {
+          width: min(240px, 36vw);
+        }
+        #sel .go {
+          width: min(220px, 34vw);
+        }
+        #sel {
+          gap: clamp(8px, 2.2vh, 16px);
+          padding-bottom: max(14px, calc(var(--safe-b) + 12px));
+        }
+        #sel #back {
+          margin-top: clamp(6px, 2vh, 14px);
+        }
+        #sel:not([data-m="2p"]) #grid {
+          margin-bottom: clamp(4px, 1.2vh, 10px);
         }
         #pad {
           --bs: clamp(46px, 15.5vh, 62px);
@@ -2063,17 +2202,57 @@
         }
       }
       @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+        :root {
+          --go-w: min(300px, calc(100vw - 56px));
+        }
+        #menu,
+        #sel,
+        #hp,
+        #op,
+        #stg,
+        #pause {
+          padding: max(10px, var(--safe-t))
+            max(18px, calc(var(--safe-r) + 10px), 4.5vw)
+            max(10px, var(--safe-b))
+            max(18px, calc(var(--safe-l) + 10px), 4.5vw);
+          overflow: hidden;
+        }
         #grid {
-          width: min(360px, 90vw);
-          max-height: min(56dvh, 460px);
+          width: min(360px, calc(100vw - 56px));
+          max-height: min(52dvh, 440px);
+        }
+        /* cenário: 2 colunas, tudo na tela, sem scroll */
+        #stg {
+          gap: clamp(6px, 1.2vh, 10px);
+          justify-content: center;
+        }
+        #stg h1 {
+          font-size: clamp(15px, 3.8vh, 22px);
+          margin-bottom: 2px;
+        }
+        #stgrid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          width: min(340px, calc(100vw - 48px));
+          max-height: none;
+          overflow: visible;
+          gap: clamp(6px, 1.1vh, 10px);
+        }
+        #stg .stc {
+          width: 100%;
+          max-height: min(12.5dvh, 88px);
+        }
+        #stg #stback {
+          margin-top: 2px;
+          min-height: clamp(40px, 6vh, 48px);
+          flex-shrink: 0;
+        }
+        #menu .mlogo {
+          max-height: min(22vh, 160px);
         }
         #pad {
           bottom: clamp(8px, 2vh, 20px);
           --lift: clamp(16px, 3.5vh, 28px);
-        }
-        #stg h1 {
-          font-size: clamp(16px, 4.5vh, 26px);
-          margin-bottom: 6px;
         }
       }
 
@@ -2122,6 +2301,29 @@
             rgba(120, 180, 255, 0.035) 38px 44px,
             transparent 44px 90px
           );
+      }
+      /* touch: fundos opacos nas bordas (sem faixa transparente cortando) */
+      @media (hover: none) and (pointer: coarse) {
+        #menu {
+          background:
+            linear-gradient(transparent 58%, rgba(2, 4, 14, 0.92)),
+            radial-gradient(
+              ellipse at 50% 35%,
+              rgba(35, 100, 255, 0.34),
+              rgba(2, 5, 20, 0.96) 72%
+            );
+        }
+        #sel,
+        #hp,
+        #op,
+        #stg,
+        #pause {
+          background: radial-gradient(
+            ellipse at 50% 40%,
+            rgba(18, 50, 150, 0.4),
+            rgba(3, 5, 16, 0.96) 74%
+          );
+        }
       }
       #menu .mlogo {
         display: none;
@@ -2588,7 +2790,7 @@
             <img alt="Quinhas Ball Fighters" src="assets/title.webp?v=5" />
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
-          <p id="tver">v1.3.6</p>
+          <p id="tver">v1.3.7</p>
         </div>
         <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
         <div id="prompts">
@@ -2616,7 +2818,7 @@
           <button class="go alt" id="bop">Áudio</button>
           <button class="go alt" id="btt">Voltar ao título</button>
           <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">v1.3.6</p>
+          <p id="ver">v1.3.7</p>
         </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>
@@ -3704,7 +3906,7 @@
       const LS = {
         menu: () =>
           [$("brv"), $("bai"), $("b2p"), $("bhp"), $("bop"), $("btt")].filter(
-            (e) => e.style.display !== "none",
+            (e) => vis(e),
           ),
         sel: () => [...grid.querySelectorAll(".card:not(.lock)"), $("back")],
         help: () => [$("hback")],

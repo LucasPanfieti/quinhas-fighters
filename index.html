@@ -867,7 +867,7 @@
         min-width: 0;
         flex: 1;
       }
-      .pv img {
+      .pv > img:first-of-type {
         height: calc(clamp(64px, 18vh, 180px) * var(--hs, 1));
         width: auto;
         max-width: 100%;
@@ -876,7 +876,7 @@
         transform-origin: bottom center;
         filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.65));
       }
-      #pv2 img {
+      #pv2 > img:first-of-type {
         transform: scaleX(-1);
       }
       .pv b {
@@ -1092,7 +1092,7 @@
         font-size: 20px;
         line-height: 1;
         cursor: pointer;
-        z-index: 2;
+        z-index: 7;
         box-shadow:
           0 0 0 2px rgba(90, 160, 255, 0.55),
           0 3px 0 #000;
@@ -1180,8 +1180,8 @@
       #sel > #fi2.on {
         opacity: 1;
       }
-      #fi img,
-      #fi2 img {
+      #fi > img:first-of-type,
+      #fi2 > img:first-of-type {
         height: calc(min(58vh, 430px) * var(--hs, 1));
         width: auto;
         max-width: 100%;
@@ -1203,6 +1203,36 @@
         paint-order: stroke fill;
         text-shadow: 0 0 18px var(--c);
         transform: skewX(-7deg);
+      }
+      #fi .nplate,
+      #fi2 .nplate,
+      .pv .nplate {
+        display: block;
+        /* mesma altura visual pra todos (largura acompanha) */
+        height: clamp(34px, 6.5vh, 52px);
+        width: auto;
+        max-width: min(100%, 340px);
+        object-fit: contain;
+        object-position: center;
+        margin: 6px 0 clamp(12px, 4vh, 40px);
+        filter: drop-shadow(0 2px 0 #000) drop-shadow(0 0 12px var(--c, #6fc2ff));
+        pointer-events: none;
+      }
+      .pv .nplate {
+        height: clamp(24px, 4.8vh, 36px);
+        max-width: min(100%, 220px);
+        margin: 2px 0 0;
+        filter: drop-shadow(0 2px 0 #000);
+      }
+      #fi b.hide,
+      #fi2 b.hide,
+      .pv b.hide {
+        display: none;
+      }
+      #fi .nplate.hide,
+      #fi2 .nplate.hide,
+      .pv .nplate.hide {
+        display: none;
       }
       @keyframes fin {
         from {
@@ -2118,6 +2148,65 @@
         white-space: nowrap;
         border: 0;
       }
+      #menu .winrow {
+        display: none;
+        justify-content: center;
+        width: min(520px, 86vw);
+        margin: 0 0 clamp(2px, 0.8vh, 8px);
+      }
+      #menu.win .winrow {
+        display: flex;
+      }
+      #menu.win .mlogo {
+        display: none;
+      }
+      #menu .winrow .nplate {
+        height: clamp(40px, 8vh, 64px);
+        max-width: min(100%, 420px);
+        width: auto;
+        margin: 0;
+        filter: drop-shadow(0 3px 0 #000) drop-shadow(0 0 16px rgba(255, 180, 60, 0.45));
+      }
+      #psub.psub {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 8px 10px;
+        max-width: min(520px, 92vw);
+      }
+      #psub .nplate {
+        height: clamp(26px, 5vh, 40px);
+        max-width: min(42vw, 200px);
+        width: auto;
+        margin: 0;
+        filter: drop-shadow(0 2px 0 #000);
+      }
+      #psub .nplate.hide {
+        display: none;
+      }
+      #psub .px {
+        font: italic 700 clamp(16px, 3vw, 22px)/1 var(--ui, system-ui), sans-serif;
+        color: #9fd0ff;
+        opacity: 0.85;
+      }
+      #psub #prd {
+        flex-basis: 100%;
+        text-align: center;
+        font: italic 800 clamp(15px, 3.2vw, 20px)/1.2 var(--ui, system-ui),
+          sans-serif;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #fff;
+        -webkit-text-stroke: 0.4px #000;
+        text-shadow:
+          0 1px 0 #000,
+          0 2px 0 #000,
+          1px 0 0 #000,
+          -1px 0 0 #000,
+          0 0 12px rgba(0, 0, 0, 0.85);
+        opacity: 1;
+      }
       @media (min-height: 521px) {
         #menu h1 {
           font-size: clamp(34px, min(8vw, 11vh), 76px);
@@ -2363,7 +2452,7 @@
         right: max(2%, var(--safe-r));
         --c: #38c8ff;
       }
-      #fi2 img {
+      #fi2 > img:first-of-type {
         transform: scaleX(-1);
         animation: fin2 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
       }
@@ -2499,9 +2588,9 @@
             <img alt="Quinhas Ball Fighters" src="assets/title.webp?v=5" />
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
-          <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
           <p id="tver">v1.3.5</p>
         </div>
+        <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
         <div id="prompts">
           <span><kbd>↑</kbd><kbd>↓</kbd>Navegar</span
           ><span><kbd>Enter</kbd>Confirmar</span
@@ -2515,6 +2604,9 @@
             src="assets/logo.webp?v=2"
             draggable="false"
           />
+          <div id="winrow" class="winrow" hidden>
+            <img id="winplate" class="nplate" alt="" draggable="false" />
+          </div>
           <h1 id="h1"></h1>
           <p id="sub"></p>
           <button class="go" id="brv" style="display: none">Revanche</button>
@@ -2530,12 +2622,24 @@
           <h1>Escolha seu lutador</h1>
           <p id="selsub"></p>
           <div id="grid"></div>
-          <div id="fi"><img alt="" /><small></small><b></b></div>
-          <div id="fi2"><img alt="" /><small></small><b></b></div>
+          <div id="fi">
+            <img alt="" /><small></small
+            ><img class="nplate hide" alt="" /><b></b>
+          </div>
+          <div id="fi2">
+            <img alt="" /><small></small
+            ><img class="nplate hide" alt="" /><b></b>
+          </div>
           <div id="vs">
-            <div class="pv" id="pv1"><img alt="" /><b></b><small></small></div>
+            <div class="pv" id="pv1">
+              <img alt="" /><img class="nplate hide" alt="" /><b></b
+              ><small></small>
+            </div>
             <div id="vsx">VS</div>
-            <div class="pv" id="pv2"><img alt="" /><b></b><small></small></div>
+            <div class="pv" id="pv2">
+              <img alt="" /><img class="nplate hide" alt="" /><b></b
+              ><small></small>
+            </div>
           </div>
           <button class="go alt" id="back">Voltar</button>
         </div>
@@ -2644,7 +2748,14 @@
         </div>
         <div id="pause">
           <h1>Pausado</h1>
-          <p id="psub"></p>
+          <p id="psub" class="psub">
+            <img class="nplate hide" id="pp1" alt="" draggable="false" /><span
+              class="px"
+              >×</span
+            ><img class="nplate hide" id="pp2" alt="" draggable="false" /><span
+              id="prd"
+            ></span>
+          </p>
           <button class="go" id="pcont">Continuar</button>
           <button class="go alt" id="php">Controles</button>
           <button class="go alt" id="prest">Reiniciar luta</button>
@@ -3109,7 +3220,11 @@
       let G = 362;
       cv.width = W * 2;
       cv.height = H * 2;
-      const LOAD = { d: 0, bad: [], total: Object.keys(SPR).length * 8 + 5 };
+      const LOAD = {
+        d: 0,
+        bad: [],
+        total: Object.keys(SPR).length * 8 + 5 + 12,
+      };
       const load = (s) =>
         new Promise((r) => {
           const i = new Image();
@@ -3299,7 +3414,7 @@
             src = CH[id].P.id.src;
           if (im.getAttribute("src") !== src) im.src = src;
           pv.style.setProperty("--hs", hsRatio(CH[id].P.sc));
-          pv.querySelector("b").textContent = CH[id].n;
+          setNamePlate(pv, id);
           pv.querySelector("small").textContent =
             (n ? "P2" : "P1") +
             (s2.lk[n] != null ? " · pronto!" : " · escolhendo…");
@@ -3618,7 +3733,26 @@
         }
         paused = on;
         $("pause").style.display = on ? "flex" : "none";
-        if (on) $("psub").textContent = p1.n + " x " + p2.n + " · Round " + rd;
+        if (on) {
+          const a = p1.cid && NAMES[p1.cid],
+            b = p2.cid && NAMES[p2.cid],
+            pp1 = $("pp1"),
+            pp2 = $("pp2"),
+            prd = $("prd");
+          if (a && a.naturalWidth && b && b.naturalWidth) {
+            pp1.src = a.src;
+            pp1.alt = p1.n;
+            pp1.classList.remove("hide");
+            pp2.src = b.src;
+            pp2.alt = p2.n;
+            pp2.classList.remove("hide");
+            prd.textContent = "Round " + rd;
+          } else {
+            pp1.classList.add("hide");
+            pp2.classList.add("hide");
+            prd.textContent = p1.n + " × " + p2.n + " · Round " + rd;
+          }
+        }
       }
       function toTitle() {
         $("brv").style.display = "none";
@@ -3815,6 +3949,11 @@
           L[mi].scrollIntoView({ block: "nearest" });
         }
         $("pb").style.display = s === "game" ? "block" : "none";
+        {
+          const fsb = $("fs");
+          if (fsb && !fsb._noFs)
+            fsb.style.display = s === "title" || s === "menu" ? "" : "none";
+        }
         const pad = $("pad"),
           showPad = s === "game";
         pad.classList.toggle("on", showPad);
@@ -5558,21 +5697,38 @@
         ti = 0,
         msg = "",
         endTxt = "",
+        endWin = null,
         mt = 0,
         over = null,
         LASTM = null;
       const menu = document.getElementById("menu"),
         h1 = document.getElementById("h1"),
         sub = document.getElementById("sub");
-      function showMenu(t, s) {
+      function showMenu(t, s, winCid) {
         $("brv").style.display = "none";
         p1.reset();
         p2.reset();
         fx = [];
-        const brand = t === "Quinhas Ball Fighters";
+        const brand = t === "Quinhas Ball Fighters",
+          win = !!(winCid && NAMES[winCid] && NAMES[winCid].naturalWidth);
         menu.classList.toggle("brand", brand);
+        menu.classList.toggle("win", win);
+        const wr = $("winrow"),
+          wp = $("winplate");
+        if (wr && wp) {
+          if (win) {
+            wr.hidden = false;
+            if (wp.getAttribute("src") !== NAMES[winCid].src)
+              wp.src = NAMES[winCid].src;
+            wp.alt = (CH[winCid] && CH[winCid].n) || "";
+          } else {
+            wr.hidden = true;
+            wp.removeAttribute("src");
+            wp.alt = "";
+          }
+        }
         h1.textContent = t;
-        sub.textContent = s;
+        sub.textContent = s || "";
         menu.style.display = "flex";
         st = "menu";
       }
@@ -5626,8 +5782,42 @@
           "Yas-Mine",
         ],
         FACE_OF = (id) => FACES[ROSTER.indexOf(id)];
+      const NAMES = {};
       let CH = {},
         pendMode = "ai";
+      function setNamePlate(root, id) {
+        if (!root) return;
+        const plate = root.querySelector(".nplate"),
+          b = root.querySelector("b");
+        if (id && NAMES[id] && NAMES[id].naturalWidth) {
+          if (plate) {
+            if (plate.getAttribute("src") !== NAMES[id].src)
+              plate.src = NAMES[id].src;
+            plate.alt = (CH[id] && CH[id].n) || "";
+            plate.classList.remove("hide");
+          }
+          if (b) {
+            b.textContent = (CH[id] && CH[id].n) || "";
+            b.classList.add("hide");
+          }
+        } else {
+          if (plate) plate.classList.add("hide");
+          if (b) {
+            b.classList.remove("hide");
+            b.textContent = (id && CH[id] && CH[id].n) || "";
+          }
+        }
+      }
+      function drawNamePlate(img, cx, y, maxH, maxW) {
+        if (!img || !img.naturalWidth) return false;
+        maxH = maxH || 36;
+        maxW = maxW || 240;
+        const sc = Math.min(maxH / img.naturalHeight, maxW / img.naturalWidth),
+          w = img.naturalWidth * sc,
+          h = img.naturalHeight * sc;
+        x.drawImage(img, cx - w / 2, y, w, h);
+        return true;
+      }
       const selEl = document.getElementById("sel"),
         grid = document.getElementById("grid");
       FACES.forEach((src, i) => {
@@ -5761,6 +5951,8 @@
         mode = m;
         p1 = new F(CH[a].n, CH[a].P, 230, CH[a].col);
         p2 = new F(CH[b].n, CH[b].P, 570, CH[b].col);
+        p1.cid = a;
+        p2.cid = b;
         selEl.style.display = "none";
         aInit();
         rd = 1;
@@ -5900,7 +6092,8 @@
               p2.wins++;
             }
             msg = p1.ko || p2.ko ? "K.O." : "Tempo!";
-            endTxt = w ? w.n + " vence o round" : "Empate";
+            endWin = w || null;
+            endTxt = w ? "vence o round" : "Empate";
             over =
               (p1.wins >= 2 || p2.wins >= 2) && p1.wins !== p2.wins
                 ? p1.wins > p2.wins
@@ -5932,8 +6125,9 @@
           if (--mt <= 0) {
             if (over) {
               showMenu(
-                over === "draw" ? "Empate!" : over.n + " venceu!",
+                over === "draw" ? "Empate!" : "venceu!",
                 "Placar final " + p1.wins + " a " + p2.wins + ".",
+                over === "draw" ? null : over.cid,
               );
               $("brv").style.display = "flex";
             } else {
@@ -6059,7 +6253,6 @@
         x.lineJoin = "round";
         x.strokeStyle = "#0f0d1a";
         x.strokeText(f.n, nx, 64);
-        x.fillStyle = "#f3e9d2";
         x.fillText(f.n, nx, 64);
         for (let i = 0; i < 2; i++) {
           x.fillStyle = i < f.wins ? "#f0c040" : "rgba(243,233,210,.25)";
@@ -6092,10 +6285,21 @@
         x.fillStyle = "#f3e9d2";
         x.fillText(t, W / 2, 190);
         if (s) {
-          x.font = '22px "Dela Gothic One",Impact,sans-serif';
-          x.lineWidth = 6;
-          x.strokeText(s, W / 2, 245);
-          x.fillText(s, W / 2, 245);
+          const plate = endWin && endWin.cid && NAMES[endWin.cid];
+          if (plate && plate.naturalWidth && s !== "Empate") {
+            drawNamePlate(plate, W / 2, 220, 40, 320);
+            x.font = '22px "Dela Gothic One",Impact,sans-serif';
+            x.lineWidth = 6;
+            x.strokeStyle = "#0f0d1a";
+            x.strokeText(s, W / 2, 275);
+            x.fillStyle = "#f3e9d2";
+            x.fillText(s, W / 2, 275);
+          } else {
+            x.font = '22px "Dela Gothic One",Impact,sans-serif';
+            x.lineWidth = 6;
+            x.strokeText(s, W / 2, 245);
+            x.fillText(s, W / 2, 245);
+          }
         }
         x.restore();
       }
@@ -6157,15 +6361,19 @@
           x.lineWidth = 2;
           x.strokeStyle = "#f3e9d2";
           x.stroke();
-          x.font = 'italic 22px "Dela Gothic One",Impact,sans-serif';
-          x.textAlign = "center";
-          x.textBaseline = "top";
-          x.lineWidth = 6;
-          x.lineJoin = "round";
-          x.strokeStyle = "#000";
-          x.strokeText(f.n, cx, H * 0.42 + r + 14);
-          x.fillStyle = f.col;
-          x.fillText(f.n, cx, H * 0.42 + r + 14);
+          const ny = H * 0.42 + r + 10,
+            plate = f.cid && NAMES[f.cid];
+          if (!drawNamePlate(plate, cx, ny, 34, 230)) {
+            x.font = 'italic 22px "Dela Gothic One",Impact,sans-serif';
+            x.textAlign = "center";
+            x.textBaseline = "top";
+            x.lineWidth = 6;
+            x.lineJoin = "round";
+            x.strokeStyle = "#000";
+            x.strokeText(f.n, cx, ny + 4);
+            x.fillStyle = f.col;
+            x.fillText(f.n, cx, ny + 4);
+          }
         };
         const lx = -100 + (100 + 155) * s,
           rx = W + 100 - (100 + 155) * s;
@@ -6334,6 +6542,12 @@
           if (o[k]) r[k] = await load(o[k]);
         return r;
       };
+      const nameLoads = ROSTER.map((id) =>
+        load("assets/names/" + id + ".webp?v=2").then((img) => {
+          NAMES[id] = img;
+          return img;
+        }),
+      );
       Promise.all([
         ld(SPR.t),
         ld(SPR.q),
@@ -6347,6 +6561,7 @@
         ld(SPR.r),
         ld(SPR.s),
         ld(SPR.y),
+        ...nameLoads,
         new Promise((r) => {
           if (bg.complete) {
             if (!bg.naturalWidth) LOAD.bad.push("assets/bg.webp");
@@ -6462,6 +6677,8 @@
           };
           p1 = new F(CH.q.n, iq, 230, CH.q.col);
           p2 = new F(CH.e.n, ie, 570, CH.e.col);
+          p1.cid = "q";
+          p2.cid = "e";
           showMenu("Quinhas Ball Fighters", "");
           menu.style.display = "none";
           const title = document.getElementById("title");
@@ -6483,6 +6700,7 @@
               if (!id || !SPR[id] || !CH[id]) {
                 f.classList.remove("on");
                 f._id = null;
+                setNamePlate(f, null);
                 return;
               }
               if (f._id !== id) {
@@ -6491,10 +6709,10 @@
                 void img.offsetWidth;
                 img.style.animation = "";
                 img.src = SPR[id].id;
-                nm.textContent = CH[id].n;
+                setNamePlate(f, id);
                 f.style.setProperty("--c", CH[id].col);
                 f.style.setProperty("--hs", hsRatio(CH[id].P.sc));
-              }
+              } else setNamePlate(f, id);
               sm.textContent = tag || "";
               f.classList.toggle("rdy", !!ready);
               f.classList.add("on");
@@ -6533,8 +6751,10 @@
           }
           const fsb = $("fs"),
             de = document.documentElement;
-          if (!(de.requestFullscreen || de.webkitRequestFullscreen))
+          if (!(de.requestFullscreen || de.webkitRequestFullscreen)) {
+            fsb._noFs = true;
             fsb.style.display = "none";
+          }
           fsb.onclick = (e) => {
             e.stopPropagation();
             try {

@@ -707,18 +707,69 @@
         outline-offset: 3px;
       }
 
-      /* ---- character select ---- */
+      /* ---- character select ----
+         16 slots (12 + 3 em breve + aleatório) → sempre 4×4 ou 8×2 */
       #grid {
+        --gc: 4;
+        --gr: 4;
+        --gmaxh: min(58dvh, 520px);
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: clamp(6px, 1.5vw, 10px);
-        width: min(440px, 100%);
+        grid-template-columns: repeat(var(--gc), minmax(0, 1fr));
+        grid-template-rows: repeat(var(--gr), minmax(0, 1fr));
+        gap: clamp(5px, 1.2vw, 9px);
+        /* cabe na largura E na altura sem sobrar slot / sem cortar */
+        width: min(
+          420px,
+          92vw,
+          calc(var(--gmaxh) * var(--gc) * 3 / (var(--gr) * 4))
+        );
+        max-width: 100%;
+        height: auto;
+        max-height: var(--gmaxh);
+        aspect-ratio: calc(var(--gc) * 3) / calc(var(--gr) * 4);
         padding: 2px;
-        flex-shrink: 0;
+        flex: 0 1 auto;
+        min-height: 0;
+        align-content: stretch;
+        justify-content: stretch;
+      }
+      @media (orientation: landscape) {
+        #grid {
+          --gc: 8;
+          --gr: 2;
+          --gmaxh: min(46dvh, 280px);
+          width: min(
+            760px,
+            90vw,
+            calc(var(--gmaxh) * var(--gc) * 3 / (var(--gr) * 4))
+          );
+        }
+      }
+      @media (orientation: landscape) and (max-height: 420px) {
+        #grid {
+          --gc: 8;
+          --gr: 2;
+          --gmaxh: min(52dvh, 220px);
+          width: min(
+            680px,
+            92vw,
+            calc(var(--gmaxh) * var(--gc) * 3 / (var(--gr) * 4))
+          );
+          gap: 4px;
+        }
+        #grid .card {
+          border-width: 2px;
+        }
+        #grid .card span {
+          padding: 6px 2px 2px;
+          font-size: 11cqw;
+        }
       }
       .card {
-        container-type: inline-size;
-        aspect-ratio: 3/4;
+        container-type: size;
+        aspect-ratio: auto;
+        width: 100%;
+        height: 100%;
         background-size: cover;
         background-position: center;
         border: 3px solid #000;
@@ -728,6 +779,7 @@
         cursor: pointer;
         padding: 0;
         min-height: 0;
+        min-width: 0;
         box-shadow:
           0 0 0 2px rgba(90, 160, 255, 0.6),
           0 6px 14px rgba(0, 0, 0, 0.6);
@@ -802,6 +854,24 @@
       .card[data-id="y"] span {
         background: linear-gradient(transparent, rgba(180, 60, 120, 0.92));
       }
+      .card.lock[data-soon="a"] span {
+        background: linear-gradient(transparent, rgba(249, 107, 91, 0.88));
+      }
+      .card.lock[data-soon="x"] span {
+        background: linear-gradient(transparent, rgba(44, 57, 63, 0.92));
+      }
+      .card.lock[data-soon="v"] span {
+        background: linear-gradient(transparent, rgba(180, 178, 185, 0.9));
+      }
+      .card.rnd {
+        background-color: #0c0c12;
+        background-size: cover;
+        background-position: center;
+      }
+      .card.rnd span {
+        background: linear-gradient(transparent, rgba(8, 8, 14, 0.94));
+        color: #e8e8ec;
+      }
       .card.p1::before {
         content: "P1";
         position: absolute;
@@ -818,22 +888,32 @@
         border-radius: 4px;
       }
       .card.lock {
-        filter: grayscale(1) brightness(0.65);
+        filter: grayscale(1) brightness(0.58);
         cursor: default;
+        pointer-events: none;
       }
-      .card.lock:hover {
+      .card.lock:hover,
+      .card.lock.gf {
         transform: none;
         box-shadow:
-          0 0 0 2px rgba(90, 160, 255, 0.6),
+          0 0 0 2px rgba(90, 160, 255, 0.45),
           0 6px 14px rgba(0, 0, 0, 0.6);
+        border-color: #000 !important;
       }
       .card.lock::after {
-        content: "🔒";
+        content: "";
         position: absolute;
         top: 5px;
         right: 5px;
-        font-size: 12px;
-        opacity: 0.75;
+        z-index: 4;
+        width: 22px;
+        height: 22px;
+        border-radius: 5px;
+        border: 1.5px solid rgba(255, 224, 138, 0.7);
+        background: rgba(8, 8, 14, 0.85)
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffe08a'%3E%3Cpath d='M7 10V8a5 5 0 0 1 10 0v2h1.5A1.5 1.5 0 0 1 20 11.5v8A1.5 1.5 0 0 1 18.5 21h-13A1.5 1.5 0 0 1 4 19.5v-8A1.5 1.5 0 0 1 5.5 10H7zm2 0h6V8a3 3 0 0 0-6 0v2zm3 4.2a1.6 1.6 0 0 0-.8 3v1.3h1.6V17.2a1.6 1.6 0 0 0-.8-3z'/%3E%3C/svg%3E")
+          center / 13px 13px no-repeat;
+        box-shadow: 0 2px 0 #000;
       }
       .card[data-c1]::before,
       .card[data-c2]::after {
@@ -1387,19 +1467,7 @@
         transform: scale(1.07);
       }
       .stc.rnd {
-        background: radial-gradient(circle at 50% 45%, #27409c, #070b22 75%);
-      }
-      .stc.rnd i {
-        position: absolute;
-        inset: 0 0 18px 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font: italic 900 clamp(44px, 9vw, 76px)/1 var(--ui);
-        color: #ffb04a;
-        text-shadow:
-          0 3px 0 #000,
-          0 0 22px rgba(255, 150, 50, 0.7);
+        background: #0a0a10;
       }
       /* ---- mobile pad (layout tipo gamepad: stick L + losango R, zona do polegar) ---- */
       #pad {
@@ -1653,20 +1721,18 @@
           bottom: auto;
         }
       }
-      @media (min-width: 520px) {
+      @media (min-width: 900px) and (min-height: 640px) and (orientation: landscape) {
         #grid {
-          grid-template-columns: repeat(6, minmax(0, 1fr));
-          width: min(560px, 100%);
-        }
-      }
-      @media (min-width: 700px) {
-        #grid {
-          grid-template-columns: repeat(6, minmax(0, 1fr));
-          width: min(780px, 96vw, calc((100dvh - 250px) * 2.1));
+          --gc: 8;
+          --gr: 2;
+          --gmaxh: min(42dvh, 300px);
+          width: min(
+            820px,
+            86vw,
+            calc(var(--gmaxh) * var(--gc) * 3 / (var(--gr) * 4))
+          );
           gap: 10px;
         }
-      }
-      @media (min-width: 900px) {
       }
       @media (max-width: 420px) {
         .go {
@@ -1757,11 +1823,17 @@
           gap: 6px;
         }
         #grid {
-          width: min(480px, 70vw);
-          grid-template-columns: repeat(6, minmax(0, 1fr));
+          --gc: 8;
+          --gr: 2;
+          --gmaxh: min(50dvh, 200px);
+          width: min(
+            640px,
+            88vw,
+            calc(var(--gmaxh) * var(--gc) * 3 / (var(--gr) * 4))
+          );
         }
         .card span {
-          padding: 8px 2px 3px;
+          padding: 6px 2px 2px;
         }
         #pad {
           --bs: clamp(44px, 17vh, 58px);
@@ -1930,11 +2002,13 @@
           width: min(480px, calc(100vw - 48px));
         }
         #grid {
-          width: min(400px, calc(100vw - 48px));
-          max-height: min(54dvh, 440px);
+          --gmaxh: min(56dvh, 460px);
+          width: min(
+            400px,
+            calc(100vw - 48px),
+            calc(var(--gmaxh) * var(--gc) * 3 / (var(--gr) * 4))
+          );
           gap: clamp(4px, 1vw, 8px);
-          flex-shrink: 1;
-          min-height: 0;
         }
         #ct-wrap {
           overflow: auto;
@@ -2011,10 +2085,6 @@
           overflow: hidden;
           text-overflow: ellipsis;
         }
-        .stc.rnd i {
-          font-size: clamp(22px, 6vw, 36px);
-          inset: 0 0 12px 0;
-        }
         #vs {
           min-height: 0;
           gap: clamp(4px, 2vw, 16px);
@@ -2085,9 +2155,14 @@
           max-width: 100%;
         }
         #grid {
-          grid-template-columns: repeat(6, minmax(0, 1fr));
-          width: min(620px, 78vw);
-          max-height: min(62dvh, 340px);
+          --gc: 8;
+          --gr: 2;
+          --gmaxh: min(48dvh, 260px);
+          width: min(
+            700px,
+            86vw,
+            calc(var(--gmaxh) * var(--gc) * 3 / (var(--gr) * 4))
+          );
         }
         .go {
           min-height: clamp(36px, 9vh, 48px);
@@ -2191,8 +2266,14 @@
       }
       @media (orientation: portrait) {
         #grid {
-          width: min(360px, 94vw);
-          grid-template-columns: repeat(4, minmax(0, 1fr));
+          --gc: 4;
+          --gr: 4;
+          --gmaxh: min(56dvh, 480px);
+          width: min(
+            380px,
+            92vw,
+            calc(var(--gmaxh) * var(--gc) * 3 / (var(--gr) * 4))
+          );
         }
         #vs {
           min-height: 0;
@@ -2218,8 +2299,14 @@
           overflow: hidden;
         }
         #grid {
-          width: min(360px, calc(100vw - 56px));
-          max-height: min(52dvh, 440px);
+          --gc: 4;
+          --gr: 4;
+          --gmaxh: min(54dvh, 460px);
+          width: min(
+            360px,
+            calc(100vw - 48px),
+            calc(var(--gmaxh) * var(--gc) * 3 / (var(--gr) * 4))
+          );
         }
         /* cenário: 2 colunas, tudo na tela, sem scroll */
         #stg {
@@ -2790,7 +2877,7 @@
             <img alt="Quinhas Ball Fighters" src="assets/title.webp?v=5" />
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
-          <p id="tver">v1.3.7</p>
+          <p id="tver">v1.3.8</p>
         </div>
         <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
         <div id="prompts">
@@ -2818,7 +2905,7 @@
           <button class="go alt" id="bop">Áudio</button>
           <button class="go alt" id="btt">Voltar ao título</button>
           <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">v1.3.7</p>
+          <p id="ver">v1.3.8</p>
         </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>
@@ -2864,7 +2951,7 @@
               <img src="assets/stg/5.webp" alt="" /><b>Casa da Bea</b>
             </button>
             <button type="button" class="stc rnd" data-i="r">
-              <i>?</i><b>Aleatório</b>
+              <img src="assets/stg/r.webp?v=1" alt="" /><b>Aleatório</b>
             </button>
           </div>
           <button class="go alt" id="stback">Voltar</button>
@@ -3597,9 +3684,22 @@
         };
       };
       let s2 = { c: [0, 0], lk: [null, null], go: false },
-        pm2 = [null, null];
+        pm2 = [null, null],
+        s2StageT = 0;
+      const clearS2Stage = () => {
+        if (s2StageT) {
+          clearTimeout(s2StageT);
+          s2StageT = 0;
+        }
+      };
       const AV = () =>
-        [...grid.querySelectorAll(".card[data-id]")].map((c) => c.dataset.id);
+        [...grid.querySelectorAll(".card[data-id]")]
+          .map((c) => c.dataset.id)
+          .filter((id) => id && id !== "?");
+      const randFighter = (exclude) => {
+        const o = Object.keys(CH).filter((k) => k !== exclude);
+        return o[(Math.random() * o.length) | 0];
+      };
       function s2render() {
         const av = AV();
         grid.querySelectorAll(".card[data-id]").forEach((c) => {
@@ -3649,7 +3749,14 @@
           if (s2.lk[0] != null && s2.lk[1] != null) {
             s2.go = true;
             snd(880, 0.2, "square", 0.07);
-            setTimeout(() => askStage("2p", s2.lk[0], s2.lk[1]), 900);
+            const a = s2.lk[0],
+              b = s2.lk[1];
+            clearS2Stage();
+            s2StageT = setTimeout(() => {
+              s2StageT = 0;
+              if (!a || !b || !CH[a] || !CH[b]) return;
+              askStage("2p", a, b);
+            }, 900);
           }
           return;
         }
@@ -3957,11 +4064,14 @@
         }
       }
       function toTitle() {
+        clearS2Stage();
+        s2.go = false;
         $("brv").style.display = "none";
         menu.style.display = "none";
         selEl.style.display = "none";
         $("hp").style.display = "none";
         $("op").style.display = "none";
+        $("stg").style.display = "none";
         $("title").style.display = "flex";
       }
       function leaveFight() {
@@ -5952,8 +6062,8 @@
         if (rd === 1) sfxUI("start");
       }
       const FACES = Array.from(
-        { length: 12 },
-        (_, i) => "assets/faces/" + i + ".webp?v=2",
+        { length: 15 },
+        (_, i) => "assets/faces/" + i + ".webp?v=3",
       );
       const ROSTER = [
           "b",
@@ -5968,6 +6078,9 @@
           "s",
           "t",
           "y",
+          "",
+          "",
+          "",
         ],
         LAB = [
           "Bea-Trix",
@@ -5982,7 +6095,12 @@
           "Samu-Kan",
           "Taka-Shin",
           "Yas-Mine",
+          "Agui-El",
+          "Ale-Xan",
+          "Vito-Sama",
         ],
+        SOON = { 12: "a", 13: "x", 14: "v" },
+        SOON_COL = { a: "#F96B5B", x: "#2C393F", v: "#F2F0F2" },
         FACE_OF = (id) => FACES[ROSTER.indexOf(id)];
       const NAMES = {};
       let CH = {},
@@ -6024,7 +6142,8 @@
         grid = document.getElementById("grid");
       FACES.forEach((src, i) => {
         const id = ROSTER[i],
-          b = document.createElement("button");
+          b = document.createElement("button"),
+          soon = SOON[i];
         b.className = "card" + (id ? "" : " lock");
         b.style.backgroundImage = "url(" + src + ")";
         b.innerHTML = "<span>" + LAB[i].replace("-", "-<wbr>") + "</span>";
@@ -6032,9 +6151,25 @@
         if (id) {
           b.dataset.id = id;
           b.onclick = () => pick(id);
-        } else b.disabled = true;
+        } else {
+          b.disabled = true;
+          if (soon) {
+            b.dataset.soon = soon;
+            if (SOON_COL[soon]) b.style.setProperty("--c", SOON_COL[soon]);
+          }
+        }
         grid.appendChild(b);
       });
+      {
+        const rnd = document.createElement("button");
+        rnd.className = "card rnd";
+        rnd.dataset.id = "?";
+        rnd.style.backgroundImage = "url(assets/faces/rnd.webp?v=1)";
+        rnd.innerHTML = "<span>Aleatório</span>";
+        rnd.setAttribute("aria-label", "Lutador aleatório");
+        rnd.onclick = () => pick("?");
+        grid.appendChild(rnd);
+      }
       let pick1 = null;
       function selInfo() {
         const el = document.getElementById("selsub");
@@ -6088,6 +6223,13 @@
           );
       }
       function pick(id) {
+        if (id === "?") {
+          if (pendMode === "2p") {
+            const excl =
+              s2.lk[0] == null ? s2.lk[1] : s2.lk[0];
+            id = randFighter(excl);
+          } else id = randFighter(pick1);
+        }
         if (pendMode === "2p") {
           s2click(id);
           return;
@@ -6108,6 +6250,7 @@
         askStage("2p", a, id);
       }
       function openSel(m) {
+        clearS2Stage();
         pendMode = m;
         pick1 = null;
         if (m !== "2p")
@@ -6143,6 +6286,8 @@
           selInfo();
           return;
         }
+        clearS2Stage();
+        s2.go = false;
         selEl.style.display = "none";
         menu.style.display = "flex";
       };
@@ -6837,7 +6982,7 @@
           if (o[k]) r[k] = await load(o[k]);
         return r;
       };
-      const nameLoads = ROSTER.map((id) =>
+      const nameLoads = ROSTER.filter(Boolean).map((id) =>
         load("assets/names/" + id + ".webp?v=2").then((img) => {
           NAMES[id] = img;
           return img;

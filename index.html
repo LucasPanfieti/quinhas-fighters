@@ -2588,7 +2588,7 @@
             <img alt="Quinhas Ball Fighters" src="assets/title.webp?v=5" />
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
-          <p id="tver">v1.3.5</p>
+          <p id="tver">v1.3.6</p>
         </div>
         <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
         <div id="prompts">
@@ -2616,7 +2616,7 @@
           <button class="go alt" id="bop">Áudio</button>
           <button class="go alt" id="btt">Voltar ao título</button>
           <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">v1.3.5</p>
+          <p id="ver">v1.3.6</p>
         </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>
@@ -6137,8 +6137,24 @@
           }
         }
       }
+      function mixHex(a, b, t) {
+        const p = (h) => {
+          h = (h || "#888").replace("#", "");
+          if (h.length === 3)
+            h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+          return [
+            parseInt(h.slice(0, 2), 16) || 0,
+            parseInt(h.slice(2, 4), 16) || 0,
+            parseInt(h.slice(4, 6), 16) || 0,
+          ];
+        };
+        const A = p(a),
+          B = p(b),
+          m = (i) => Math.round(A[i] + (B[i] - A[i]) * t);
+        return "rgb(" + m(0) + "," + m(1) + "," + m(2) + ")";
+      }
       function bar(px, f, dir) {
-        const pr = 27,
+        const pr = 28,
           bw = 244,
           bh = 22,
           y = 26,
@@ -6146,45 +6162,110 @@
           cy = y + bh / 2 + 4,
           x0 = dir > 0 ? px + pr * 2 + 6 : px + 300 - pr * 2 - 6,
           hit = f.hf > 0,
-          ln = hit ? "#ff6b4a" : "#f3e9d2";
+          cream = "#f3e9d2",
+          outer = hit ? "#ff6b4a" : cream,
+          crit = f.hp > 0 && f.hp < 30,
+          critPulse = 0.55 + 0.12 * Math.sin(T / 5),
+          fillCol = crit ? mixHex(f.col, "#ff2a1a", critPulse) : f.col;
+        const para = (ox, oy, w, h, s) => {
+          x.beginPath();
+          x.moveTo(ox, oy);
+          x.lineTo(ox + w, oy);
+          x.lineTo(ox + w - s, oy + h);
+          x.lineTo(ox - s, oy + h);
+          x.closePath();
+        };
         x.save();
         x.translate(x0, 0);
         x.scale(dir, 1);
-        const path = () => {
-          x.beginPath();
-          x.moveTo(0, y);
-          x.lineTo(bw, y);
-          x.lineTo(bw - sk, y + bh);
-          x.lineTo(-sk, y + bh);
-          x.closePath();
-        };
-        path();
-        x.fillStyle = "rgba(8,6,20,.78)";
+        /* placa externa */
+        const pad = 4;
+        para(-pad, y - pad, bw + pad * 2, bh + pad * 2, sk);
+        x.fillStyle = "rgba(4,3,12,.94)";
         x.fill();
-        x.save();
-        path();
-        x.clip();
-        x.fillStyle = "#f0c040";
-        x.fillRect(-sk, y, (bw * f.gh) / 100 + sk, bh);
-        const hw = (bw * f.hp) / 100;
-        x.fillStyle = f.col;
-        x.fillRect(-sk, y, hw + sk, bh);
-        x.fillStyle = "rgba(255,255,255,.25)";
-        x.fillRect(-sk, y, hw + sk, bh * 0.45);
-        if (f.hp > 0 && f.hp < 30) {
-          x.fillStyle =
-            "rgba(255,60,40," + (0.15 + 0.15 * Math.sin(T / 5)) + ")";
-          x.fillRect(-sk, y, bw + sk, bh);
-        }
-        x.restore();
-        path();
-        x.strokeStyle = ln;
-        x.lineWidth = 2.5;
+        x.strokeStyle = "#000";
+        x.lineWidth = 3.5;
         x.lineJoin = "round";
         x.stroke();
+        /* calha */
+        para(0, y, bw, bh, sk);
+        x.fillStyle = "#14121f";
+        x.fill();
+        /* ghost + HP: paralelogramo (corte no mesmo ângulo da moldura) */
+        const gw = Math.max(0, (bw * f.gh) / 100),
+          hw = Math.max(0, (bw * f.hp) / 100),
+          slice = (w, h, col) => {
+            if (w <= 0.5 || h <= 0.5) return;
+            para(0, y, w, h, sk * (h / bh));
+            x.fillStyle = col;
+            x.fill();
+          };
+        slice(gw, bh, "#f5c42e");
+        if (hw > 0.5) {
+          slice(hw, bh, fillCol);
+          slice(hw, Math.max(3, bh * 0.28), "rgba(255,255,255,.34)");
+          {
+            const sh = bh * 0.36,
+              sy = y + bh - sh;
+            x.beginPath();
+            x.moveTo((-sk * (sy - y)) / bh, sy);
+            x.lineTo(hw - (sk * (sy - y)) / bh, sy);
+            x.lineTo(hw - sk, y + bh);
+            x.lineTo(-sk, y + bh);
+            x.closePath();
+            x.fillStyle = "rgba(0,0,0,.28)";
+            x.fill();
+          }
+          if (crit) {
+            slice(
+              hw,
+              bh,
+              "rgba(255,36,24," + (0.14 + 0.2 * Math.sin(T / 5)) + ")",
+            );
+          }
+        }
+        /* ticks 25/50/75 (paralelos ao corte) */
+        x.save();
+        para(0, y, bw, bh, sk);
+        x.clip();
+        for (let t = 1; t < 4; t++) {
+          const tx = (bw * t) / 4;
+          x.beginPath();
+          x.moveTo(tx, y + 1);
+          x.lineTo(tx - sk, y + bh - 1);
+          x.strokeStyle = "rgba(0,0,0,.4)";
+          x.lineWidth = 2;
+          x.stroke();
+          x.beginPath();
+          x.moveTo(tx + 1, y + 1);
+          x.lineTo(tx - sk + 1, y + bh - 1);
+          x.strokeStyle = "rgba(255,255,255,.16)";
+          x.lineWidth = 1;
+          x.stroke();
+        }
         x.restore();
+        /* filete duplo */
+        para(0, y, bw, bh, sk);
+        x.strokeStyle = "#000";
+        x.lineWidth = 4.5;
+        x.lineJoin = "round";
+        x.stroke();
+        x.strokeStyle = outer;
+        x.lineWidth = 2.2;
+        x.stroke();
+        const is = sk * ((bh - 4) / bh);
+        para(2, y + 2, bw - 4, bh - 4, is);
+        x.strokeStyle = hit ? "#ff8a6a" : f.col;
+        x.lineWidth = 1.35;
+        x.stroke();
+        x.restore();
+        /* retrato */
         const cx =
           (dir > 0 ? px + pr : px + 300 - pr) + (hit ? Math.sin(T * 3) * 2 : 0);
+        x.beginPath();
+        x.arc(cx, cy, pr + 5.5, 0, 7);
+        x.fillStyle = "rgba(4,3,12,.92)";
+        x.fill();
         x.save();
         x.beginPath();
         x.arc(cx, cy, pr, 0, 7);
@@ -6196,75 +6277,57 @@
         x.restore();
         x.beginPath();
         x.arc(cx, cy, pr, 0, 7);
-        x.lineWidth = 4;
+        x.lineWidth = 3.5;
         x.strokeStyle = f.col;
         x.stroke();
         x.beginPath();
-        x.arc(cx, cy, pr + 2.5, 0, 7);
-        x.lineWidth = 2;
-        x.strokeStyle = ln;
+        x.arc(cx, cy, pr + 3.2, 0, 7);
+        x.lineWidth = 2.2;
+        x.strokeStyle = outer;
         x.stroke();
-        x.font = '14px "Dela Gothic One",Impact,sans-serif';
+        x.beginPath();
+        x.arc(cx, cy, pr + 5, 0, 7);
+        x.lineWidth = 1.5;
+        x.strokeStyle = "#000";
+        x.stroke();
+        /* nome — stroke fino, abaixo da barra (sem placa) */
+        x.font = '13px "Dela Gothic One",Impact,sans-serif';
         x.textAlign = dir > 0 ? "left" : "right";
-        x.textBaseline = "alphabetic";
+        x.textBaseline = "top";
+        const ny = y + bh + pad + 6;
         x.lineJoin = "round";
-        x.lineWidth = 4;
+        x.miterLimit = 2;
+        x.lineWidth = 3;
         x.strokeStyle = "#0f0d1a";
-        x.strokeText(f.n, x0, 64);
-        x.fillStyle = "#f3e9d2";
-        x.fillText(f.n, x0, 64);
+        x.strokeText(f.n, x0, ny);
+        x.fillStyle = cream;
+        x.fillText(f.n, x0, ny);
+        /* wins em diamante */
         for (let i = 0; i < 2; i++) {
-          const dx = dir > 0 ? x0 + bw - 14 - i * 20 : x0 - bw + 14 + i * 20;
+          const dx = dir > 0 ? x0 + bw - 14 - i * 18 : x0 - bw + 14 + i * 18,
+            dy = ny + 7,
+            won = i < f.wins;
           x.beginPath();
-          x.arc(dx, 59, 6, 0, 7);
-          if (i < f.wins) {
-            x.fillStyle = "#f0c040";
-            x.fill();
-          } else {
-            x.fillStyle = "rgba(8,6,20,.6)";
+          x.moveTo(dx, dy - 7);
+          x.lineTo(dx + 5.5, dy);
+          x.lineTo(dx, dy + 7);
+          x.lineTo(dx - 5.5, dy);
+          x.closePath();
+          x.fillStyle = won ? "#f0c040" : "rgba(8,6,20,.75)";
+          x.fill();
+          x.lineWidth = 1.6;
+          x.strokeStyle = won ? "#ffe9a0" : cream;
+          x.stroke();
+          if (won) {
+            x.beginPath();
+            x.moveTo(dx, dy - 3.5);
+            x.lineTo(dx + 2.4, dy);
+            x.lineTo(dx, dy + 3.5);
+            x.lineTo(dx - 2.4, dy);
+            x.closePath();
+            x.fillStyle = "rgba(255,255,255,.35)";
             x.fill();
           }
-          x.lineWidth = 2;
-          x.strokeStyle = "#f3e9d2";
-          x.stroke();
-        }
-      }
-      function bar0(px, f, dir) {
-        const bw = 300,
-          bh = 20,
-          y = 24;
-        x.fillStyle = "rgba(0,0,0,.65)";
-        x.fillRect(px - 3, y - 3, bw + 6, bh + 6);
-        const gw = (bw * f.gh) / 100,
-          hw = (bw * f.hp) / 100;
-        x.fillStyle = "#f0c040";
-        x.fillRect(dir > 0 ? px : px + bw - gw, y, gw, bh);
-        x.fillStyle = f.col;
-        x.fillRect(dir > 0 ? px : px + bw - hw, y, hw, bh);
-        x.strokeStyle = f.hf > 0 ? "#ff6b4a" : "#f3e9d2";
-        x.lineWidth = 2;
-        x.strokeRect(px - 3, y - 3, bw + 6, bh + 6);
-        x.fillStyle = "#f3e9d2";
-        x.font = '14px "Dela Gothic One",Impact,sans-serif';
-        x.textAlign = dir > 0 ? "left" : "right";
-        x.textBaseline = "alphabetic";
-        const nx = dir > 0 ? px : px + bw;
-        x.lineWidth = 4;
-        x.lineJoin = "round";
-        x.strokeStyle = "#0f0d1a";
-        x.strokeText(f.n, nx, 64);
-        x.fillText(f.n, nx, 64);
-        for (let i = 0; i < 2; i++) {
-          x.fillStyle = i < f.wins ? "#f0c040" : "rgba(243,233,210,.25)";
-          x.beginPath();
-          x.arc(
-            dir > 0 ? px + bw - 10 - i * 20 : px + 10 + i * 20,
-            60,
-            6,
-            0,
-            7,
-          );
-          x.fill();
         }
       }
       function banner(t, s, age) {
@@ -6485,21 +6548,51 @@
           drawVg();
           bar(24, p1, 1);
           bar(W - 324, p2, -1);
-          x.fillStyle = "rgba(0,0,0,.65)";
-          x.fillRect(W / 2 - 32, 21, 64, 46);
-          x.strokeStyle = "#f3e9d2";
-          x.lineWidth = 2;
-          x.strokeRect(W / 2 - 32, 21, 64, 46);
-          x.save();
-          const pu = tm <= 10 ? 1 + Math.max(0, 1 - ti / 12) * 0.35 : 1;
-          x.translate(W / 2, 45);
-          x.scale(pu, pu);
-          x.fillStyle = tm <= 10 ? "#ff6b4a" : "#f3e9d2";
-          x.font = '28px "Dela Gothic One",Impact,sans-serif';
-          x.textAlign = "center";
-          x.textBaseline = "middle";
-          x.fillText(tm, 0, 0);
-          x.restore();
+          {
+            const tw = 68,
+              th = 48,
+              cut = 9,
+              urgent = tm <= 10,
+              cx = W / 2,
+              cy = 44,
+              l = cx - tw / 2,
+              t = cy - th / 2,
+              r = cx + tw / 2,
+              b = cy + th / 2;
+            x.beginPath();
+            x.moveTo(l + cut, t);
+            x.lineTo(r - cut, t);
+            x.lineTo(r, t + cut);
+            x.lineTo(r, b - cut);
+            x.lineTo(r - cut, b);
+            x.lineTo(l + cut, b);
+            x.lineTo(l, b - cut);
+            x.lineTo(l, t + cut);
+            x.closePath();
+            x.fillStyle = "rgba(4,3,12,.94)";
+            x.fill();
+            x.strokeStyle = "#000";
+            x.lineWidth = 4;
+            x.lineJoin = "round";
+            x.stroke();
+            x.strokeStyle = urgent ? "#ff6b4a" : "#f3e9d2";
+            x.lineWidth = 2.2;
+            x.stroke();
+            x.save();
+            const pu = urgent ? 1 + Math.max(0, 1 - ti / 12) * 0.35 : 1;
+            x.translate(cx, cy + 1);
+            x.scale(pu, pu);
+            x.font = '30px "Dela Gothic One",Impact,sans-serif';
+            x.textAlign = "center";
+            x.textBaseline = "middle";
+            x.lineJoin = "round";
+            x.lineWidth = 5;
+            x.strokeStyle = "#0f0d1a";
+            x.strokeText(tm, 0, 0);
+            x.fillStyle = urgent ? "#ff6b4a" : "#f3e9d2";
+            x.fillText(tm, 0, 0);
+            x.restore();
+          }
           if (st === "intro") introOverlay();
           if (st === "end") banner(msg, endTxt, 150 - mt);
         }

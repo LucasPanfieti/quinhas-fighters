@@ -87,13 +87,20 @@ def key(im):
         if fill.getpixel(pt) == 255:
             ImageDraw.floodfill(fill, pt, 128)
 
-    bg = fill.point(lambda v: 255 if v == 128 else 0)
+    # buracos fechados (ex.: entre braço e ombro): todo chroma duro some,
+    # nao so o ligado a borda
+    bg = fill.point(lambda v: 255 if v in (128, 255) else 0)
     bg_dil = bg.filter(ImageFilter.MaxFilter(5))
     bp = bytearray(bg.tobytes())
     bdp = bg_dil.tobytes()
     for i in range(N):
         if bp[i] == 0 and score[i] >= 224 and bdp[i] == 255:
             bp[i] = 255
+        # verde de tela "sujo" preso no buraco (mais escuro que o neon puro)
+        if bp[i] == 0 and score[i] >= 150:
+            rv, gv, bv = R[i], G[i], B[i]
+            if gv > 105 and gv > rv + 18 and gv > bv + 18 and rv < 110 and bv < 110:
+                bp[i] = 255
     bg = Image.frombytes('L', (W, H), bytes(bp))
     near_bg = bg.filter(ImageFilter.MaxFilter(9))
     nbp = near_bg.tobytes()
@@ -185,7 +192,49 @@ def key(im):
         out_b[o + 2] = bv
         out_b[o + 3] = a
 
-    return Image.frombytes('RGBA', (W, H), bytes(out_b))
+    out = Image.frombytes('RGBA', (W, H), bytes(out_b))
+    return _punch_green_holes(out)
+
+
+def _punch_green_holes(im, max_comp=900):
+    """Remove ilhas pequenas de verde residual (buraco braço/ombro etc.)."""
+    W, H = im.size
+    px = im.load()
+    N = W * H
+    mark = bytearray(N)
+    for y in range(H):
+        row = y * W
+        for x in range(W):
+            r, g, b, a = px[x, y]
+            if a < 24:
+                continue
+            if g > 95 and g > r + 16 and g > b + 16 and r < 135 and b < 135 and (r + b) < g + 55:
+                mark[row + x] = 1
+
+    seen = bytearray(N)
+    for i in range(N):
+        if not mark[i] or seen[i]:
+            continue
+        stack = [i]
+        seen[i] = 1
+        comp = []
+        while stack:
+            j = stack.pop()
+            comp.append(j)
+            x, y = j % W, j // W
+            for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+                if nx < 0 or ny < 0 or nx >= W or ny >= H:
+                    continue
+                k = ny * W + nx
+                if mark[k] and not seen[k]:
+                    seen[k] = 1
+                    stack.append(k)
+        if len(comp) > max_comp:
+            continue
+        for j in comp:
+            x, y = j % W, j // W
+            px[x, y] = (0, 0, 0, 0)
+    return im
 
 
 def key_magenta(im):

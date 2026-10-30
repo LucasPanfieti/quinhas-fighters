@@ -15,34 +15,20 @@ NAMES=['id','wk','cr','jp','pu','ki','bl','ht','hd','fa','ko','vi']
 def key_white(im):
     """Fundo branco -> transparente, so o que esta ligado a borda (o brilho branco do hadouken fica)."""
     rgb=im.convert('RGB');W,H=rgb.size
-    near=rgb.point(lambda v:255 if v>228 else 0).convert('L')
-    mn=Image.eval(near,lambda v:v)
     r,g,b=rgb.split()
-    from PIL import ImageChops
     white=ImageChops.darker(ImageChops.darker(r,g),b).point(lambda v:255 if v>228 else 0)
     m=white.copy()
     for pt in [(0,0),(W-1,0),(0,H-1),(W-1,H-1),(W//2,0),(W//2,H-1),(0,H//2),(W-1,H//2)]:
         if m.getpixel(pt)==255:ImageDraw.floodfill(m,pt,128)
     alpha=m.point(lambda v:0 if v==128 else 255)
-    alpha=alpha.filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(.6))
+    # matte suave sem MinFilter (evita picotar)
+    alpha=alpha.filter(ImageFilter.GaussianBlur(.85))
+    alpha=alpha.point(lambda v:0 if v<16 else (255 if v>232 else int((v-16)*255/216)))
     out=rgb.convert('RGBA');out.putalpha(alpha);return out
 
 def key_magenta(im):
-    """Fundo magenta/rosa de chroma (#FF00F2) -> transparente (inclui buracos entre bracos)."""
-    rgb=im.convert('RGB');W,H=rgb.size
-    r,g,b=rgb.split();R,G,B=r.tobytes(),g.tobytes(),b.tobytes()
-    # todos os pixels de chroma (nao so os ligados a borda — senao fica magenta no vao do braco)
-    a=bytearray(W*H)
-    for i in range(W*H):
-        rv,gv,bv=R[i],G[i],B[i]
-        # neon puro + spill um pouco mais frouxo
-        if (rv>160 and bv>160 and gv<90 and rv>gv+70 and bv>gv+70) or (rv>200 and bv>140 and gv<60 and rv>gv+100):
-            a[i]=0
-        else:
-            a[i]=255
-    alpha=Image.frombytes('L',(W,H),bytes(a))
-    alpha=alpha.filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(.45))
-    out=rgb.convert('RGBA');out.putalpha(alpha);return out
+    """Delegado ao chroma magenta profissional em slice.py."""
+    return S.key_magenta(im)
 
 def split_ball(p):
     """Separa o poder (bola) do corpo por componentes conectados. Devolve (corpo, bola recortada, cx, cy da bola)."""

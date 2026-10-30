@@ -31,7 +31,7 @@
       href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Rajdhani:wght@600;700&display=swap"
       rel="stylesheet"
     />
-    <style>
+<style>
       :root {
         --ink: #0f0d1a;
         --dusk: #2b1f4a;
@@ -106,7 +106,7 @@
         object-fit: cover;
       }
 
-      /* ---- overlays / menus ---- */
+/* ---- overlays / menus ---- */
       #menu,
       #sel,
       #hp,
@@ -1053,7 +1053,7 @@
         filter: drop-shadow(0 0 14px rgba(47, 123, 255, 0.9));
       }
 
-      /* ---- controls table ---- */
+/* ---- controls table ---- */
       #ct-wrap {
         width: min(720px, 100%);
         max-width: 100%;
@@ -1146,7 +1146,7 @@
         color: var(--bone);
       }
 
-      /* ---- title / pause btn ---- */
+/* ---- title / pause btn ---- */
       #title {
         container-type: size;
         position: absolute;
@@ -1709,7 +1709,7 @@
         }
       }
 
-      /* ---- breakpoints ---- */
+/* ---- breakpoints ---- */
       @media (orientation: portrait) {
         #tip {
           display: block !important;
@@ -1869,9 +1869,9 @@
           animation-iteration-count: 1 !important;
           transition-duration: 0.01ms !important;
         }
-      }
+}
 
-      /* ---- carregamento ---- */
+/* ---- carregamento ---- */
       #loading {
         position: absolute;
         inset: 0;
@@ -2857,7 +2857,7 @@
     </style>
   </head>
   <body>
-    <div id="app">
+<div id="app">
       <div id="stage">
         <canvas id="c"></canvas>
         <div id="loading">
@@ -2877,7 +2877,7 @@
             <img alt="Quinhas Ball Fighters" src="assets/title.webp?v=5" />
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
-          <p id="tver">v1.3.8</p>
+          <p id="tver">v1.3.9</p>
         </div>
         <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
         <div id="prompts">
@@ -2901,12 +2901,12 @@
           <button class="go" id="brv" style="display: none">Revanche</button>
           <button class="go" id="bai">Um jogador</button>
           <button class="go alt" id="b2p">Versus · 2 jogadores</button>
-          <button class="go alt" id="bhp">Controles</button>
-          <button class="go alt" id="bop">Áudio</button>
+   <button class="go alt" id="bhp">Controles</button>
+   <button class="go alt" id="bop">Áudio</button>
           <button class="go alt" id="btt">Voltar ao título</button>
-          <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">v1.3.8</p>
-        </div>
+   <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
+          <p id="ver">v1.3.9</p>
+  </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>
           <p id="selsub"></p>
@@ -2936,18 +2936,15 @@
           <h1>Escolha o cenário</h1>
           <div id="stgrid">
             <button type="button" class="stc" data-i="0">
-              <img src="assets/stg/1.webp" alt="" /><b>Templo da Montanha</b>
-            </button>
-            <button type="button" class="stc" data-i="1">
               <img src="assets/stg/2.webp" alt="" /><b>Colégio Leila Guedes</b>
             </button>
-            <button type="button" class="stc" data-i="2">
+            <button type="button" class="stc" data-i="1">
               <img src="assets/stg/3.webp" alt="" /><b>Casa do Quinhas</b>
             </button>
-            <button type="button" class="stc" data-i="3">
+            <button type="button" class="stc" data-i="2">
               <img src="assets/stg/4.webp" alt="" /><b>Casa do Junin</b>
             </button>
-            <button type="button" class="stc" data-i="4">
+            <button type="button" class="stc" data-i="3">
               <img src="assets/stg/5.webp" alt="" /><b>Casa da Bea</b>
             </button>
             <button type="button" class="stc rnd" data-i="r">
@@ -3045,15 +3042,15 @@
               id="prd"
             ></span>
           </p>
-          <button class="go" id="pcont">Continuar</button>
+  <button class="go" id="pcont">Continuar</button>
           <button class="go alt" id="php">Controles</button>
-          <button class="go alt" id="prest">Reiniciar luta</button>
-          <button class="go alt" id="psel">Escolher lutador</button>
-          <button class="go alt" id="pmenu">Menu principal</button>
+  <button class="go alt" id="prest">Reiniciar luta</button>
+  <button class="go alt" id="psel">Escolher lutador</button>
+  <button class="go alt" id="pmenu">Menu principal</button>
           <button class="go alt" id="ptit">Voltar ao título</button>
         </div>
-        <button id="pb" aria-label="Pausar">❚❚</button>
-        <div id="pad" aria-hidden="true">
+ <button id="pb" aria-label="Pausar">❚❚</button>
+ <div id="pad" aria-hidden="true">
           <div
             class="stick"
             id="stick"
@@ -3063,8 +3060,8 @@
             <div class="stick-base">
               <div class="stick-knob" id="stickKnob"></div>
             </div>
-          </div>
-          <div class="acts">
+  </div>
+  <div class="acts">
             <button type="button" class="b" data-k="vK" aria-label="Chute">
               <svg class="psi" viewBox="0 0 24 24" aria-hidden="true">
                 <path
@@ -3126,11 +3123,11 @@
             <button type="button" class="b" data-k="vB" aria-label="Defesa">
               R1
             </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script>
+  </div>
+ </div>
+ </div>
+</div>
+<script>
       const SPR = {
         t: {
           id: "assets/spr/t/id.webp?v=2",
@@ -3162,42 +3159,48 @@
             vi: { w: 240, h: 418, ax: 114.1 },
           },
         },
-        q: {
-          id: "assets/spr/q/id.webp?v=8",
-          wk: "assets/spr/q/wk.webp?v=8",
-          cr: "assets/spr/q/cr.webp?v=8",
-          jp: "assets/spr/q/jp.webp?v=8",
-          pu: "assets/spr/q/pu.webp?v=8",
-          ki: "assets/spr/q/ki.webp?v=8",
-          bl: "assets/spr/q/bl.webp?v=8",
-          ht: "assets/spr/q/ht.webp?v=8",
-          hb: "assets/spr/q/hb.webp?v=8",
-          hd: "assets/spr/q/hd.webp?v=8",
-          fa: "assets/spr/q/fa.webp?v=8",
-          ko: "assets/spr/q/ko.webp?v=8",
-          vi: "assets/spr/q/vi.webp?v=8",
-          ck: "assets/spr/q/ck.webp?v=6",
-          cp: "assets/spr/q/cp.webp?v=6",
-          ap: "assets/spr/q/ap.webp?v=6",
-          ak: "assets/spr/q/ak.webp?v=7",
+                                                                                                                                                                                                        q: {
+          id: "assets/spr/q/id.webp?v=23",
+          wk: "assets/spr/q/wk.webp?v=23",
+          cr: "assets/spr/q/cr.webp?v=23",
+          jp: "assets/spr/q/jp.webp?v=23",
+          pu: "assets/spr/q/pu.webp?v=23",
+          ki: "assets/spr/q/ki.webp?v=23",
+          bl: "assets/spr/q/bl.webp?v=23",
+          ht: "assets/spr/q/ht.webp?v=23",
+          hb: "assets/spr/q/hb.webp?v=23",
+          hd: "assets/spr/q/hd.webp?v=23",
+          fa: "assets/spr/q/fa.webp?v=23",
+          ko: "assets/spr/q/ko.webp?v=23",
+          vi: "assets/spr/q/vi.webp?v=23",
+          ck: "assets/spr/q/ck.webp?v=23",
+          cp: "assets/spr/q/cp.webp?v=23",
+          ap: "assets/spr/q/ap.webp?v=23",
+          ak: "assets/spr/q/ak.webp?v=23",
+          cb: "assets/spr/q/cb.webp?v=23",
+          ab: "assets/spr/q/ab.webp?v=23",
+          wb: "assets/spr/q/wb.webp?v=23",
           m: {
-            id: { w: 291, h: 418, ax: 151.7 },
-            wk: { w: 333, h: 420, ax: 173.2 },
-            cr: { w: 238, h: 286, ax: 128.5 },
-            jp: { w: 176, h: 382, ax: 80.1 },
-            pu: { w: 407, h: 412, ax: 168.2 },
-            ki: { w: 406, h: 412, ax: 141.9 },
-            bl: { w: 308, h: 395, ax: 150.9 },
-            ht: { w: 302, h: 411, ax: 159.3 },
-            hb: { w: 173, h: 144, ax: 86.5, dx: 230.9, dy: 251.7, hx: 160.0 },
-            hd: { w: 548, h: 358, ax: 231.2 },
-            fa: { w: 420, h: 240, ax: 211.6 },
-            ko: { w: 471, h: 112, ax: 235.5 },
-            vi: { w: 282, h: 446, ax: 135.5 },
-            ck: { w: 411, h: 281, ax: 103.7 },
-            cp: { w: 405, h: 318, ax: 196.0 },
-            ap: { w: 347, h: 397, ax: 158.8 },
-            ak: { w: 426, h: 344, ax: 100.6 },
+            id: { w: 305, h: 418, ax: 168.9 },
+            wk: { w: 285, h: 433, ax: 165.0 },
+            cr: { w: 294, h: 284, ax: 176.1 },
+            jp: { w: 277, h: 422, ax: 135.7 },
+            pu: { w: 374, h: 377, ax: 185.5 },
+            ki: { w: 382, h: 424, ax: 167.9 },
+            bl: { w: 304, h: 417, ax: 151.1 },
+            ht: { w: 301, h: 418, ax: 143.1 },
+            hb: { w: 158, h: 148, ax: 79.0, dx: 160.2, dy: 285, hx: 123.2 },
+            hd: { w: 308, h: 423, ax: 141.7 },
+            fa: { w: 439, h: 258, ax: 219.5 },
+            ko: { w: 468, h: 106, ax: 234.0 },
+            vi: { w: 315, h: 507, ax: 148.9 },
+            ck: { w: 403, h: 284, ax: 175.1 },
+            cp: { w: 364, h: 284, ax: 160.9 },
+            ap: { w: 341, h: 421, ax: 147.8 },
+            ak: { w: 407, h: 364, ax: 147.5 },
+            cb: { w: 294, h: 296, ax: 166.3 },
+            ab: { w: 262, h: 422, ax: 146.9 },
+            wb: { w: 224, h: 433, ax: 80.0 }
           },
         },
         r: {
@@ -3506,7 +3509,7 @@
       const W = 800,
         H = 450,
         SH = 240;
-      let G = 362;
+      let G = 438;
       cv.width = W * 2;
       cv.height = H * 2;
       const LOAD = {
@@ -4277,8 +4280,8 @@
           });
           if (typeof stickEnd === "function") stickEnd();
         }
-        aSync(s);
-      }
+ aSync(s);
+}
       function padMenu() {
         if (p1 && scr() === "sel" && pendMode === "2p") {
           for (let i = 0; i < 2; i++) {
@@ -4306,7 +4309,7 @@
             pm2[i] = d;
           }
           pm = Object.assign({}, pm2[0] || {});
-          uiTick();
+ uiTick();
           return;
         }
         const gs = [gpad(0), gpad(1)].filter(Boolean);
@@ -4412,8 +4415,8 @@
           if (!e.repeat) press("ok");
           return;
         }
-        press(k);
-      });
+ press(k);
+});
       addEventListener("pointerdown", () => {
         kb = false;
       });
@@ -4446,7 +4449,7 @@
           b: keys.Numpad0 || g.b,
         };
       };
-      /* ===== AUDIO (tudo gerado por codigo) ===== */
+/* ===== AUDIO (tudo gerado por codigo) ===== */
       const AU = {
         ctx: null,
         vol: { m: 0.6, s: 0.8, v: 1, mute: false },
@@ -4467,7 +4470,7 @@
           localStorage.setItem("qf_au", JSON.stringify(AU.vol));
         } catch (e) {}
       }
-      let ac;
+let ac;
       function aInit() {
         if (AU.ctx) return AU.ctx;
         try {
@@ -4726,7 +4729,7 @@
         nz(t, 0.3, 0.5, { f: 600, to: 3000, q: 0.7 });
         tone(80, t, 0.3, "sine", 0.8, { to: 35 });
       }
-      /* locutor */
+/* locutor */
       const ANNOUNCER = false;
       function speak(txt, o) {
         if (
@@ -4777,7 +4780,7 @@
         if (w) setTimeout(() => speak(w.n + " vence!"), 2000);
         if (ov) setTimeout(sfxWin, 1100);
       }
-      /* musica */
+/* musica */
       const NM = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
       const mid = (s) => {
         const m = /^([A-G])(#|b)?(\d)$/.exec(s);
@@ -5084,7 +5087,7 @@
         g("omu").textContent = AU.vol.mute ? "Som: desligado" : "Som: ligado";
         g("op").classList.toggle("muted", !!AU.vol.mute);
       }
-      updOpt();
+updOpt();
 
       /* s=startup, a=active, n=duração; r=alcance a partir do centro (visual do soco/chute é maior → a cobre a pose) */
       const ATK = {
@@ -5465,7 +5468,7 @@
           sfxSwing(k === "k" || k === "ck" || k === "ak" ? "k" : "p");
         }
         up(i, o) {
-          this.t++;
+  this.t++;
           if (this.hcd > 0) this.hcd--;
           if (this.gh > this.hp) this.gh -= 0.35;
           if (this.jt > 0) this.jt--;
@@ -5503,9 +5506,9 @@
               if (this.t >= a.n) this.atk = null;
             } else {
               this.face = o.x >= this.x ? 1 : -1;
-              this.blk = !!i.b && gr;
+              this.blk = !!i.b && (gr || !!this.P.ab);
               this.mv = 0;
-              this.cr = !!i.d && gr && !this.blk;
+              this.cr = !!i.d && gr;
               if (!this.blk) {
                 this.mv = this.cr ? 0 : (i.r ? 1 : 0) - (i.l ? 1 : 0);
                 this.x += this.mv * 3.4 * (this.mv * this.face > 0 ? 1 : 0.8);
@@ -5714,11 +5717,13 @@
             rot = -0.13 * q;
             sy = 1 - 0.03 * q;
           } else if (this.blk) {
-            pz = "bl";
-            tx = -3 + Math.sin(T * 2) * 1.2;
-            rot = 0.03;
-            sx = 1.04;
-            sy = 0.97;
+            pz =
+              !gr && P.ab
+                ? "ab"
+                : this.cr && P.cb
+                  ? "cb"
+                  : "bl";
+            tx = -2;
           } else if (this.atk === "h" && P.hd) {
             pz = "hd";
             tx = kf(t, [
@@ -5839,9 +5844,9 @@
                 sx = 1.08;
               }
             } else if (this.mv) {
-              pz = (this.wp >> 3) & 1 ? "wk" : "id";
-              ty = -Math.abs(Math.sin(this.wp * 0.39)) * 5;
-              rot = this.mv * this.face > 0 ? 0.05 : -0.03;
+              pz = P.wk ? "wk" : "id";
+              ty = -3 + Math.sin(this.wp * 0.22) * 1.4;
+              rot = this.mv * this.face > 0 ? 0.03 : -0.03;
             } else if (!this.land) {
               const b = Math.sin(T / 14 + (this.sx > W / 2 ? 1.7 : 0));
               sy = 1 + b * 0.014;
@@ -5869,7 +5874,7 @@
               o.m.w * o.sc,
               o.m.h * o.sc,
             );
-            x.restore();
+  x.restore();
           });
           x.save();
           x.translate(this.x, G + this.y);
@@ -5889,7 +5894,10 @@
             x.lineWidth = 7;
             if (punch) {
               const reach = (m.w - m.ax) * sc,
-                y0 = -a.hy,
+                /* só Quinhas soco em pé: braço mais baixo que o hy */
+                y0 =
+                  -a.hy +
+                  (this.n === "Quinhas-Kun" && this.atk === "p" ? 28 : 0),
                 x0 = Math.max(18, reach * 0.22),
                 x1 = reach + 6,
                 vr = a.vr || x1;
@@ -5969,8 +5977,8 @@
       bg4.src = "assets/bg4.webp";
       const bg5 = new Image();
       bg5.src = "assets/bg5.webp";
+      /* Templo da Montanha (bg / G:362) oculto por enquanto — chão alto invade o HUD */
       const MAPS = [
-        { n: "Templo da Montanha", img: bg, G: 362 },
         { n: "Colégio Leila Guedes", img: bg2, G: 438 },
         { n: "Casa do Quinhas", img: bg3, G: 425 },
         { n: "Casa do Junin", img: bg4, G: 428 },
@@ -6063,7 +6071,7 @@
       }
       const FACES = Array.from(
         { length: 15 },
-        (_, i) => "assets/faces/" + i + ".webp?v=3",
+        (_, i) => "assets/faces/" + i + ".webp?v=8",
       );
       const ROSTER = [
           "b",
@@ -6714,19 +6722,19 @@
         x.restore();
       }
       function drawVs(age) {
-        /* age: frames into VS splash (0 → ~78) */
+ /* age: frames into VS splash (0 → ~78) */
         const fadeIn = Math.min(1, age / 10),
           fadeOut = age > 62 ? Math.max(0, 1 - (age - 62) / 16) : 1,
           al = fadeIn * fadeOut;
         if (al <= 0.01) return;
         const ease = (t) => 1 - Math.pow(1 - Math.min(1, t), 3),
           s = ease(age / 16);
-        x.save();
+ x.save();
         x.globalAlpha = al * 0.72;
         x.fillStyle = "#040716";
         x.fillRect(0, 0, W, H);
         x.globalAlpha = al;
-        /* faixas de cor */
+ /* faixas de cor */
         x.fillStyle = p1.col;
         x.globalAlpha = al * 0.35;
         x.beginPath();
@@ -6760,7 +6768,7 @@
           x.clip();
           if (img && img.complete)
             x.drawImage(img, -r, -r + 4, r * 2, (r * 2 * 4) / 3);
-          x.restore();
+  x.restore();
           x.beginPath();
           x.arc(cx, H * 0.42, r, 0, 7);
           x.lineWidth = 5;
@@ -6789,7 +6797,7 @@
           rx = W + 100 - (100 + 155) * s;
         face(p1, lx, 0);
         face(p2, rx, 1);
-        /* VS */
+ /* VS */
         const vsT = Math.max(0, age - 6),
           vk = 1 + Math.pow(1 - Math.min(1, vsT / 10), 2) * 1.35,
           vp = Math.min(1, vsT / 8) * al;
@@ -6810,16 +6818,16 @@
         vg.addColorStop(1, "#1448ff");
         x.fillStyle = vg;
         x.fillText("VS", 0, 0);
-        x.restore();
-        /* rodapé */
+ x.restore();
+ /* rodapé */
         x.globalAlpha = al * 0.9;
         x.font = 'italic 13px "Dela Gothic One",Impact,sans-serif';
         x.textAlign = "center";
         x.textBaseline = "middle";
         x.fillStyle = "#dff0ff";
         x.fillText("MELHOR DE 3", W / 2, H - 28);
-        x.restore();
-      }
+ x.restore();
+}
       function introOverlay() {
         if (rd === 1 && mt > 90) {
           drawVs(168 - mt);
@@ -6868,7 +6876,7 @@
             x.beginPath();
             x.arc(0, 0, 6 + p * 42, 0, 7);
             x.stroke();
-            x.restore();
+ x.restore();
             x.strokeStyle = "#fff3b0";
             x.lineWidth = 4;
             x.lineCap = "round";
@@ -6978,6 +6986,9 @@
           "cp",
           "ap",
           "ak",
+          "cb",
+          "ab",
+          "wb",
         ])
           if (o[k]) r[k] = await load(o[k]);
         return r;

@@ -1,6 +1,6 @@
 # Quinhas Ball Fighters — documentação técnica
 
-Documento de referência do jogo (v1.3.8+). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
+Documento de referência do jogo (v1.3.15+). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
 
 ---
 
@@ -35,7 +35,9 @@ quinhas-fighters/
 │   ├── bg.webp         # mapa 0 — Templo da Montanha
 │   ├── bg2.webp        # mapa 1 — Colégio Leila Guedes
 │   ├── bg3.webp … bg5.webp  # casas Quinhas / Junin / Bea
-│   ├── faces/0..11.webp
+│   ├── faces/0..11.webp     # cards do roster (índices = ROSTER)
+│   ├── faces/rnd.webp       # face do card Aleatório
+│   ├── faces/rnd_body.webp  # silhueta corpo (preview do ?)
 │   ├── stg/1.webp … 5.webp  # thumbs da seleção de estágio
 │   └── spr/<id>/*.webp      # poses por personagem (ver §5)
 ├── tools/              # scripts Python de preparação de sprites (dev)
@@ -69,20 +71,30 @@ loading → title → menu ⇄ sel → stg → (luta: intro/fight/end)
 | `#loading` | Boot               | Barra de progresso; lista erros se asset falhar                            |
 | `#title`   | Título             | Clique / qualquer tecla / botão de pad → menu                              |
 | `#menu`    | Menu principal     | Um jogador, Versus, Controles, Áudio, Título; Revanche aparece pós-partida |
-| `#sel`     | Seleção de lutador | Grade `#grid`; previews `#fi`/`#fi2` (1P) ou `#vs` (2P)                    |
+| `#sel`     | Seleção de lutador | Grade `#grid` (12 + 3 em breve + Aleatório); previews `#fi`/`#fi2`/`#vs`   |
 | `#stg`     | Seleção de cenário | 5 mapas + Aleatório                                                        |
 | `#hp`      | Controles          | Tabela `#ct` preenchida por `buildHints`                                   |
 | `#op`      | Áudio              | Cicla música / SFX / mute                                                  |
 | `#pause`   | Pause (só em luta) | Continuar, Controles, Reiniciar, etc.                                      |
 | `#pad`     | Gamepad virtual    | Só em `scr()==='game'` + classe `.on`                                      |
 | `#pb`      | Botão Pausar       | Só durante a luta                                                          |
-| `#prompts` | Dicas de navegação | Teclado vs ícones de pad                                                   |
+| `#prompts` | Dicas de navegação | Teclado vs ícones de pad; **escondido** no select Injustice (desktop)      |
 
 ### 3.1 Modos de seleção (`pendMode`)
 
-- **`ai`:** um toque no card → IA escolhe oponente aleatório → `askStage('ai', id, opp)`.
-- **`2p`:** estado `s2` (`c` cursores, `lk` locks, `go` pronto). Cada jogador confirma; depois `askStage('2p', a, b)`.
+- **`ai`:** um toque no card → IA escolhe oponente aleatório → `askStage('ai', id, opp)`. Card `?` resolve com `randFighter` na hora.
+- **`2p`:** estado `s2` (`c` cursores, `lk` locks, `go` pronto). `AVall()` inclui `?`; confirmação resolve aleatório. Depois `askStage('2p', a, b)`.
 - Após o estágio: `begin(m, a, b, stgIndex)` cria `p1`/`p2` e chama `startRound()`.
+
+### 3.1.1 Layout do select (Injustice / responsivo)
+
+| Viewport | Comportamento |
+| -------- | ------------- |
+| Desktop largo (`min-width:1000px` + `min-height:560px`) | Nomes no topo (`#fi`/`#fi2` nameplates); corpos idle grandes face a face atrás da grade; grade 8×2 na base; `#vs` escondido no 2P |
+| Desktop estreito / baixo | 1P: só grade; 2P: faixa compacta `#vs` / `.pv` |
+| Toque (`hover:none` + `pointer:coarse`) | **Sem** preview de corpo (`#fi`/`#fi2`/`#vs` `display:none !important`); botão Versus (`#b2p`) oculto |
+
+Altura dos previews: `HM` (metros) → `scOf` → `P.sc` → `hsRatio` → CSS `--hs` (`height: calc(BASE * var(--hs))`, sem `max-width` que esmague o sprite). Aleatório (`?`) usa `RND_BODY` (`rnd_body.webp`, silhueta Eslepe) e `--hs` de `scOf("e")`.
 
 `helpFrom` (`'menu'|'pause'`) faz o botão Voltar de Controles retornar à origem correta.
 
@@ -148,7 +160,10 @@ Ordem da grade = `ROSTER` + `LAB` + `assets/faces/<i>.webp`:
 | 11          | `y` | Yas-Mine    | `#c45a8c`   | 0.537                |
 
 `CH[id] = { n, P, col }` é montado **depois** do load das imagens.  
-`hsRatio(sc)` normaliza altura nas UIs de seleção (maior `sc` do elenco = 1.0).
+`HM` (altura em metros por id) + `SC`/`REF_M` alimentam `scOf(id)` → `P.sc` na luta.  
+`hsRatio(sc)` normaliza altura nas UIs de seleção (maior `sc` do elenco = 1.0 → CSS `--hs`).
+
+Slots **em breve** (índices 12–14): cards sem `data-id`, `disabled`, arte em grayscale. Slot **Aleatório** (`data-id="?"`): último da grade.
 
 ### 5.2 Objeto `SPR` e pastas `assets/spr/<id>/`
 
@@ -342,6 +357,7 @@ HUD HTML (menus) é separado do canvas.
 - Fontes: **Dela Gothic One** + **Rajdhani** (Google Fonts).
 - Safe areas: `--safe-t/r/b/l`.
 - Touch: em coarse, `#app`/`body` evitam scroll (`position:fixed`, overflow hidden — ver media queries).
+- Select Injustice: `@media (min-width:1000px) and (min-height:560px)` — ver §3.1.1; reafirmação de `#fi`/`#fi2` perto do fim do CSS (sobrescreve `right:2%` legado).
 - Estágio landscape: `#stgrid` em row; portrait empilha cards.
 - Wedges laterais (`::before/::after` nos overlays) somem em coarse para não “sujar” o mapa.
 
@@ -374,7 +390,8 @@ Ao adicionar personagem novo:
 | Mudar layout/tamanho do pad mobile | CSS `#pad`, `--bs`, `.acts --r`                     |
 | Mudar pause landscape              | media query coarse+landscape `#pause…`              |
 | Novo mapa                          | fonte em `char-src/mapas/`, depois `assets/bg*.webp` + thumb `#stgrid` + `MAPS` |
-| Texto de versão                    | `#tver`, `#ver`                                     |
+| Texto de versão                    | `#tver`, `#ver` (manter alinhado ao ship)           |
+| Layout do select Injustice         | media `1000×560` + `#fi`/`#fi2`/`#grid` / `--hs`  |
 | Volumes default                    | `AU.vol` + `qf_au`                                  |
 | Comportamento da IA                | função `ai`                                         |
 | Animação de pose                   | `F.draw` + arquivos em `SPR`                        |
@@ -400,10 +417,10 @@ Ao adicionar personagem novo:
 
 **Local:** servir a pasta (ex. `python -m http.server`) e abrir no browser. Abrir o `file://` do HTML pode falhar em alguns browsers por CORS/load de assets — preferir HTTP.
 
-**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.3.8** (atualizar strings ao shipar).
+**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.3.15** (atualizar strings ao shipar).
 
 **Git:** commits só com o que for pedido; `.gitignore` impede pastas fonte e lixo de `tools/out` (exceto `*.json`).
 
 ---
 
-_Última revisão alinhada ao código em `index.html` (v1.3.8: roster em breve, aleatório, grade). Se o código divergir deste doc, o código manda — atualize esta página._
+_Última revisão alinhada ao código em `index.html` (v1.3.15: select Injustice desktop, preview por altura, silhueta do aleatório, sem corpo no toque). Se o código divergir deste doc, o código manda — atualize esta página._

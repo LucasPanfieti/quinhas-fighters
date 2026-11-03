@@ -732,6 +732,8 @@
         min-height: 0;
         align-content: stretch;
         justify-content: stretch;
+        position: relative;
+        z-index: 4; /* acima do preview lateral */
       }
       @media (orientation: landscape) {
         #grid {
@@ -983,15 +985,19 @@
         justify-content: center;
         gap: clamp(8px, 4vw, 48px);
         width: min(760px, 100%);
-        min-height: clamp(72px, 18vh, 190px);
+        /* reserva altura do maior (--hs=1) pra não pular ao trocar baixo↔alto */
+        min-height: calc(clamp(64px, 18vh, 180px) + 2.8em);
+        overflow: visible;
       }
       .pv {
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: flex-end;
         gap: 2px;
         min-width: 0;
         flex: 1;
+        overflow: visible;
       }
       .pv > img:first-of-type {
         /* altura = proporção em metros (--hs); sem max-width pra não encolher os largos */
@@ -999,9 +1005,10 @@
         width: auto;
         max-width: none;
         object-fit: contain;
-        object-position: bottom;
+        object-position: bottom center;
         transform-origin: bottom center;
         filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.65));
+        flex: 0 0 auto;
       }
       #pv2 > img:first-of-type {
         transform: scaleX(-1);
@@ -1289,19 +1296,40 @@
       #sel > #fi,
       #sel > #fi2 {
         position: absolute;
-        left: max(2%, var(--safe-l));
+        left: max(0px, var(--safe-l));
         bottom: 0;
-        width: min(22vw, 280px);
+        /* cabe na gutter ao lado da grade; altura do sprite não é comprimida */
+        width: min(
+          28vw,
+          300px,
+          max(110px, calc((100% - min(420px, 92vw)) / 2 - 10px - 2%))
+        );
         height: 100%;
         display: none;
         flex-direction: column;
         align-items: center;
         justify-content: flex-end;
         pointer-events: none;
-        overflow: hidden;
+        overflow: hidden; /* se o sprite for largo, corta a lateral — altura intacta */
+        z-index: 1;
         --c: #6fc2ff;
         opacity: 0;
         transition: opacity 0.25s;
+        box-sizing: border-box;
+      }
+      @media (orientation: landscape) and (min-width: 1000px) {
+        #sel > #fi,
+        #sel > #fi2 {
+          /* #grid pode chegar a 820px nesta faixa (ver breakpoint 900×640) —
+             usa o mesmo teto aqui + desconta a margem/inset de 2% pra não
+             sobrepor a grade (#fi2 tem "right: 2%", não só 10px). Piso baixo
+             (48px) pq perto de min-width:1000px a grade já ocupa quase tudo */
+          width: min(
+            24vw,
+            280px,
+            max(48px, calc((100% - min(820px, 90vw)) / 2 - 10px - 2%))
+          );
+        }
       }
       #sel > #fi.on,
       #sel > #fi2.on {
@@ -1309,15 +1337,27 @@
       }
       #fi > img:first-of-type,
       #fi2 > img:first-of-type {
-        /* altura = proporção em metros (--hs); sem max-width pra não encolher os largos */
-        height: calc(min(58vh, 430px) * var(--hs, 1));
+        /* altura = metros (--hs); NÃO usar max-width (encolhe os largos) */
+        height: calc(min(52vh, 400px) * var(--hs, 1));
         width: auto;
         max-width: none;
         object-fit: contain;
-        object-position: bottom;
+        object-position: bottom center;
         transform-origin: bottom center;
         filter: drop-shadow(0 0 3px var(--c)) drop-shadow(0 0 26px var(--c));
         animation: fin 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
+        flex: 0 0 auto;
+      }
+      /* silhueta de desbloqueio (aleatório / mistério) */
+      #fi.sil > img:first-of-type,
+      #fi2.sil > img:first-of-type,
+      .pv.sil > img:first-of-type {
+        filter: drop-shadow(0 0 4px rgba(255, 224, 138, 0.45))
+          drop-shadow(0 8px 18px rgba(0, 0, 0, 0.6));
+      }
+      #fi.sil,
+      #fi2.sil {
+        --c: #ffe08a;
       }
       #fi b,
       #fi2 b {
@@ -1794,11 +1834,12 @@
           font-size: clamp(16px, 4vw, 22px);
           margin-bottom: 6px;
         }
-        #vs {
-          min-height: 20vh;
-        }
-        .pv img {
+        .pv > img:first-of-type {
           height: calc(min(22vh, 120px) * var(--hs, 1));
+          max-width: none;
+        }
+        #vs {
+          min-height: calc(min(22vh, 120px) + 2.4em);
         }
         #ct th,
         #ct td {
@@ -1853,14 +1894,15 @@
         }
         #sel[data-m="2p"] #vs {
           order: 1;
-          min-height: auto;
+          min-height: calc(clamp(56px, 16vh, 110px) + 2.2em);
           margin-bottom: 4px;
         }
         #sel[data-m="2p"] #back {
           order: 3;
         }
-        #sel[data-m="2p"] .pv img {
+        #sel[data-m="2p"] .pv > img:first-of-type {
           height: calc(clamp(56px, 16vh, 110px) * var(--hs, 1));
+          max-width: none;
         }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -1976,6 +2018,12 @@
           --title-size: clamp(18px, 5vh, 34px);
           --go-w: min(300px, calc(100vw - 48px));
         }
+        /* toque: sem corpo inteiro — na gutter estreita o sprite corta feio */
+        #sel > #fi,
+        #sel > #fi2,
+        #sel #vs {
+          display: none !important;
+        }
         h1 {
           margin-bottom: clamp(4px, 1vh, 12px);
           max-width: min(14em, calc(100vw - 48px));
@@ -2088,12 +2136,13 @@
           text-overflow: ellipsis;
         }
         #vs {
-          min-height: 0;
+          min-height: calc(clamp(40px, 8vh, 72px) + 2em);
           gap: clamp(4px, 2vw, 16px);
           width: min(520px, calc(100vw - 48px));
         }
-        .pv img {
+        .pv > img:first-of-type {
           height: calc(clamp(40px, 8vh, 72px) * var(--hs, 1));
+          max-width: none;
         }
         #fi .nplate,
         #fi2 .nplate,
@@ -2278,10 +2327,11 @@
           );
         }
         #vs {
-          min-height: 0;
+          min-height: calc(clamp(44px, 9vh, 84px) + 2em);
         }
-        .pv img {
+        .pv > img:first-of-type {
           height: calc(clamp(44px, 9vh, 84px) * var(--hs, 1));
+          max-width: none;
         }
       }
       @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
@@ -3709,31 +3759,47 @@
           s2StageT = 0;
         }
       };
-      const AV = () =>
-        [...grid.querySelectorAll(".card[data-id]")]
-          .map((c) => c.dataset.id)
-          .filter((id) => id && id !== "?");
+      /* ids focáveis na grade (lutadores + aleatório "?"); locks sem data-id ficam de fora */
+      const AVall = () =>
+        [...grid.querySelectorAll(".card[data-id]")].map((c) => c.dataset.id);
+      const AV = () => AVall().filter((id) => id && id !== "?");
       const randFighter = (exclude) => {
         const o = Object.keys(CH).filter((k) => k !== exclude);
         return o[(Math.random() * o.length) | 0];
       };
+      const RND_FACE = "assets/faces/rnd.webp?v=1",
+        RND_BODY = "assets/faces/rnd_body.webp?v=1"; /* silhueta Eslepe */
       function s2render() {
-        const av = AV();
+        const av = AVall();
         grid.querySelectorAll(".card[data-id]").forEach((c) => {
           const i = av.indexOf(c.dataset.id);
           [0, 1].forEach((n) => {
             c.toggleAttribute("data-c" + (n + 1), s2.c[n] === i);
-            c.toggleAttribute("data-l" + (n + 1), s2.lk[n] === c.dataset.id);
+            c.toggleAttribute(
+              "data-l" + (n + 1),
+              s2.lk[n] != null && s2.lk[n] === c.dataset.id,
+            );
           });
         });
         [0, 1].forEach((n) => {
-          const id = av[s2.c[n]],
+          let i = s2.c[n];
+          if (i < 0 || i >= av.length) i = s2.c[n] = 0;
+          const id = av[i],
             pv = document.getElementById("pv" + (n + 1)),
-            im = pv.querySelector("img"),
-            src = CH[id].P.id.src;
-          if (im.getAttribute("src") !== src) im.src = src;
-          pv.style.setProperty("--hs", hsRatio(CH[id].P.sc));
-          setNamePlate(pv, id);
+            im = pv.querySelector("img");
+          if (id === "?") {
+            if (im.getAttribute("src") !== RND_BODY) im.src = RND_BODY;
+            /* silhueta = Eslepe 1,85 m */
+            pv.style.setProperty("--hs", hsRatio(scOf("e")));
+            pv.classList.add("sil");
+            setNamePlate(pv, "?");
+          } else if (id && CH[id]) {
+            const src = CH[id].P.id.src;
+            if (im.getAttribute("src") !== src) im.src = src;
+            pv.style.setProperty("--hs", hsRatio(CH[id].P.sc));
+            pv.classList.remove("sil");
+            setNamePlate(pv, id);
+          }
           pv.querySelector("small").textContent =
             (n ? "P2" : "P1") +
             (s2.lk[n] != null ? " · pronto!" : " · escolhendo…");
@@ -3754,12 +3820,14 @@
       }
       function s2in(n, k, leave) {
         if (s2.go || !CH) return;
-        const av = AV(),
+        const av = AVall(),
           N = av.length;
+        if (!N) return;
         if (k === "ok") {
           if (s2.lk[n] != null) return;
-          const id = av[s2.c[n]];
-          if (s2.lk[1 - n] === id) return;
+          let id = av[s2.c[n]];
+          if (id === "?") id = randFighter(s2.lk[1 - n]);
+          if (!id || !CH[id] || s2.lk[1 - n] === id) return;
           s2.lk[n] = id;
           snd(660, 0.08, "square", 0.06);
           s2render();
@@ -3785,31 +3853,30 @@
           return;
         }
         if (s2.lk[n] != null) return;
-        let i = s2.c[n];
-        if (k === "u" || k === "d") {
-          const cur = grid.querySelector('.card[data-id="' + av[i] + '"]'),
+        let i = ((s2.c[n] % N) + N) % N;
+        if (k === "u" || k === "d" || k === "l" || k === "r") {
+          const cur = [...grid.querySelectorAll(".card[data-id]")].find(
+              (c) => c.dataset.id === av[i],
+            ),
             t = cur && gridNav(cur, k, s2.lk[1 - n]);
           if (t) {
-            s2.c[n] = av.indexOf(t.dataset.id);
+            const ni = av.indexOf(t.dataset.id);
+            if (ni < 0) return;
+            s2.c[n] = ni;
             snd(440, 0.04, "square", 0.04);
             s2render();
           }
           return;
         }
-        const dir = k === "l" ? -1 : 1;
-        for (let t = 0; t < N; t++) {
-          i = (i + dir + N) % N;
-          if (av[i] !== s2.lk[1 - n]) break;
-        }
-        s2.c[n] = i;
-        snd(440, 0.04, "square", 0.04);
-        s2render();
       }
       function s2click(id) {
         if (s2.go) return;
         const n = s2.lk[0] == null ? 0 : s2.lk[1] == null ? 1 : -1;
-        if (n < 0 || s2.lk[1 - n] === id) return;
-        s2.c[n] = AV().indexOf(id);
+        if (n < 0 || (id !== "?" && s2.lk[1 - n] === id)) return;
+        const av = AVall(),
+          ix = av.indexOf(id);
+        if (ix < 0) return;
+        s2.c[n] = ix;
         s2in(n, "ok");
       }
 
@@ -3993,15 +4060,17 @@
       }
       buildHints(["-", "-"]);
 
-      /* navegacao vertical/horizontal na grade de lutadores (ignora bloqueados) */
+      /* navegacao na grade (4 dirs); ignora locks (sem data-id) e skipId */
       function gridNav(cur, dir, skipId) {
+        if (!cur) return null;
         const cards = [...grid.querySelectorAll(".card[data-id]")].filter(
           (c) => c !== cur && c.dataset.id !== skipId,
         );
         const r = cur.getBoundingClientRect(),
           cx = r.left + r.width / 2,
           cy = r.top + r.height / 2,
-          h = r.height;
+          h = Math.max(8, r.height),
+          w = Math.max(8, r.width);
         let best = null,
           bd = 1e9;
         for (const c of cards) {
@@ -4010,9 +4079,14 @@
             y1 = b.top + b.height / 2,
             dy = y1 - cy,
             dx = x1 - cx;
-          if (dir === "d" && dy < h * 0.5) continue;
-          if (dir === "u" && dy > -h * 0.5) continue;
-          const d = Math.abs(dy) * 4 + Math.abs(dx);
+          if (dir === "d" && dy < h * 0.35) continue;
+          if (dir === "u" && dy > -h * 0.35) continue;
+          if (dir === "r" && dx < w * 0.35) continue;
+          if (dir === "l" && dx > -w * 0.35) continue;
+          const d =
+            dir === "u" || dir === "d"
+              ? Math.abs(dy) * 4 + Math.abs(dx)
+              : Math.abs(dx) * 4 + Math.abs(dy);
           if (d < bd) {
             bd = d;
             best = c;
@@ -4234,31 +4308,25 @@
           return;
         }
         if (s === "sel") {
-          const cards = n - 1,
-            cur = L[i],
+          const cur = L[i],
             back = $("back");
-          if (k === "r") {
-            if (i < cards - 1) i++;
-          } else if (k === "l") {
-            if (i > 0 && i <= cards - 1) i--;
-          } else if (k === "d") {
-            if (i === n - 1) {
-            } else {
-              const t = gridNav(cur, "d");
-              i = t ? L.indexOf(t) : n - 1;
+          if (i === n - 1) {
+            /* no Voltar: sobe/lados voltam pra grade */
+            if (k === "u" || k === "l" || k === "r") {
+              const t = gridNav(back, k),
+                ni = t ? L.indexOf(t) : -1;
+              if (ni >= 0) i = ni;
             }
-          } else if (k === "u") {
-            if (i === n - 1) {
-              const t = gridNav(back, "u");
-              if (t) i = L.indexOf(t);
-            } else {
-              const t = gridNav(cur, "u");
-              if (t) i = L.indexOf(t);
-            }
+          } else if (k === "l" || k === "r" || k === "u" || k === "d") {
+            const t = gridNav(cur, k);
+            if (t) {
+              const ni = L.indexOf(t);
+              if (ni >= 0) i = ni;
+            } else if (k === "d") i = n - 1;
           }
         } else i = (i + (k === "l" || k === "u" ? -1 : 1) + n) % n;
         if (mi !== i) sfxUI("move");
-        mi = i;
+        mi = Math.max(0, i);
       }
       function uiTick() {
         hintTick();
@@ -4273,7 +4341,8 @@
           .forEach((e) => e.classList.remove("gf"));
         if (kb && LS[s] && !(s === "sel" && pendMode === "2p")) {
           const L = LS[s]();
-          mi = Math.min(mi, L.length - 1);
+          if (!L.length) return;
+          mi = Math.max(0, Math.min(mi, L.length - 1));
           L[mi].classList.add("gf");
           L[mi].scrollIntoView({ block: "nearest" });
         }
@@ -6150,6 +6219,14 @@ updOpt();
         if (!root) return;
         const plate = root.querySelector(".nplate"),
           b = root.querySelector("b");
+        if (id === "?") {
+          if (plate) plate.classList.add("hide");
+          if (b) {
+            b.classList.remove("hide");
+            b.textContent = "Aleatório";
+          }
+          return;
+        }
         if (id && NAMES[id] && NAMES[id].naturalWidth) {
           if (plate) {
             if (plate.getAttribute("src") !== NAMES[id].src)
@@ -6306,12 +6383,31 @@ updOpt();
         selEl.dataset.m = m;
         selEl.style.display = "flex";
         if (m === "2p") {
-          s2 = { c: [0, AV().length - 1], lk: [null, null], go: false };
+          const av = AVall();
+          let p2i = av.length - 1;
+          while (p2i > 0 && av[p2i] === "?") p2i--;
+          s2 = { c: [0, p2i], lk: [null, null], go: false };
           pm2 = [null, null];
           s2render();
         }
         selInfo();
       }
+      /* mouse/toque na grade sincroniza o foco das setas (1P) */
+      grid.addEventListener(
+        "pointerdown",
+        (e) => {
+          if (pendMode === "2p") return;
+          const c = e.target.closest(".card[data-id], #back");
+          if (!c || scr() !== "sel") return;
+          const L = LS.sel(),
+            ix = L.indexOf(c);
+          if (ix >= 0) {
+            mi = ix;
+            kb = true;
+          }
+        },
+        true,
+      );
       document.getElementById("back").onclick = () => {
         if (
           pendMode === "2p" &&
@@ -7182,12 +7278,30 @@ updOpt();
               const img = f.querySelector("img"),
                 nm = f.querySelector("b"),
                 sm = f.querySelector("small");
+              if (id === "?") {
+                if (f._id !== "?") {
+                  f._id = "?";
+                  img.style.animation = "none";
+                  void img.offsetWidth;
+                  img.style.animation = "";
+                  img.src = RND_BODY;
+                  setNamePlate(f, "?");
+                  f.style.setProperty("--c", "#ffe08a");
+                  f.style.setProperty("--hs", hsRatio(scOf("e")));
+                } else setNamePlate(f, "?");
+                sm.textContent = tag || "";
+                f.classList.add("sil");
+                f.classList.toggle("rdy", !!ready);
+                f.classList.add("on");
+                return;
+              }
               if (!id || !SPR[id] || !CH[id]) {
-                f.classList.remove("on");
+                f.classList.remove("on", "sil");
                 f._id = null;
                 setNamePlate(f, null);
                 return;
               }
+              f.classList.remove("sil");
               if (f._id !== id) {
                 f._id = id;
                 img.style.animation = "none";

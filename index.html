@@ -2877,7 +2877,7 @@
             <img alt="Quinhas Ball Fighters" src="assets/title.webp?v=5" />
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
-          <p id="tver">v1.3.10</p>
+          <p id="tver">v1.3.11</p>
         </div>
         <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
         <div id="prompts">
@@ -2905,7 +2905,7 @@
    <button class="go alt" id="bop">Áudio</button>
           <button class="go alt" id="btt">Voltar ao título</button>
    <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">v1.3.10</p>
+          <p id="ver">v1.3.11</p>
   </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>
@@ -3414,33 +3414,45 @@
           },
         },
         u: {
-          id: "assets/spr/u/id.webp?v=11",
-          wk: "assets/spr/u/wk.webp?v=11",
-          cr: "assets/spr/u/cr.webp?v=11",
-          jp: "assets/spr/u/jp.webp?v=11",
-          pu: "assets/spr/u/pu.webp?v=11",
-          ki: "assets/spr/u/ki.webp?v=11",
-          bl: "assets/spr/u/bl.webp?v=11",
-          ht: "assets/spr/u/ht.webp?v=11",
-          hb: "assets/spr/u/hb.webp?v=11",
-          hd: "assets/spr/u/hd.webp?v=11",
-          fa: "assets/spr/u/fa.webp?v=11",
-          ko: "assets/spr/u/ko.webp?v=11",
-          vi: "assets/spr/u/vi.webp?v=11",
+          id: "assets/spr/u/id.webp?v=20",
+          wk: "assets/spr/u/wk.webp?v=20",
+          cr: "assets/spr/u/cr.webp?v=20",
+          jp: "assets/spr/u/jp.webp?v=20",
+          pu: "assets/spr/u/pu.webp?v=20",
+          ki: "assets/spr/u/ki.webp?v=20",
+          bl: "assets/spr/u/bl.webp?v=20",
+          ht: "assets/spr/u/ht.webp?v=20",
+          hb: "assets/spr/u/hb.webp?v=20",
+          hd: "assets/spr/u/hd.webp?v=20",
+          fa: "assets/spr/u/fa.webp?v=20",
+          ko: "assets/spr/u/ko.webp?v=20",
+          vi: "assets/spr/u/vi.webp?v=20",
+          ck: "assets/spr/u/ck.webp?v=20",
+          cp: "assets/spr/u/cp.webp?v=20",
+          ap: "assets/spr/u/ap.webp?v=20",
+          ak: "assets/spr/u/ak.webp?v=20",
+          cb: "assets/spr/u/cb.webp?v=20",
+          ab: "assets/spr/u/ab.webp?v=20",
           m: {
-            id: { w: 264, h: 418, ax: 138.4 },
-            wk: { w: 295, h: 413, ax: 153.8 },
-            cr: { w: 229, h: 301, ax: 123.4 },
-            jp: { w: 153, h: 364, ax: 69.4 },
-            pu: { w: 351, h: 391, ax: 145.5 },
-            ki: { w: 357, h: 398, ax: 126.5 },
-            bl: { w: 278, h: 393, ax: 136.7 },
-            ht: { w: 264, h: 396, ax: 134.7 },
-            hb: { w: 107, h: 88, ax: 53.5, dx: 208.7, dy: 226, hx: 137.8 },
-            hd: { w: 448, h: 325, ax: 186.2 },
-            fa: { w: 362, h: 225, ax: 183.1 },
-            ko: { w: 422, h: 111, ax: 211 },
-            vi: { w: 241, h: 414, ax: 116.7 },
+            id: { w: 271, h: 418, ax: 147.7 },
+            wk: { w: 250, h: 427, ax: 144.1 },
+            cr: { w: 301, h: 274, ax: 151.6 },
+            jp: { w: 253, h: 428, ax: 147.0 },
+            pu: { w: 368, h: 380, ax: 193.0 },
+            ki: { w: 335, h: 416, ax: 138.5 },
+            bl: { w: 270, h: 417, ax: 137.6 },
+            ht: { w: 310, h: 435, ax: 139.6 },
+            hb: { w: 156, h: 146, ax: 78.0, dx: 153.5, dy: 287.7, hx: 117.2 },
+            hd: { w: 279, h: 417, ax: 129.7 },
+            fa: { w: 338, h: 291, ax: 212.5 },
+            ko: { w: 434, h: 99, ax: 217.0 },
+            vi: { w: 292, h: 457, ax: 115.4 },
+            ck: { w: 345, h: 273, ax: 151.1 },
+            cp: { w: 336, h: 272, ax: 150.2 },
+            ap: { w: 330, h: 422, ax: 126.8 },
+            ak: { w: 371, h: 428, ax: 161.8 },
+            cb: { w: 300, h: 271, ax: 156.4 },
+            ab: { w: 249, h: 425, ax: 134.3 }
           },
         },
         k: {
@@ -5894,10 +5906,12 @@ updOpt();
             x.lineWidth = 7;
             if (punch) {
               const reach = (m.w - m.ax) * sc,
-                /* só Quinhas soco em pé: braço mais baixo que o hy */
+                /* soco em pé: alguns sprites tem o braço abaixo do hy */
                 y0 =
                   -a.hy +
-                  (this.n === "Quinhas-Kun" && this.atk === "p" ? 28 : 0),
+                  (this.atk === "p"
+                    ? { "Quinhas-Kun": 28, "Luan-Zin": 28 }[this.n] || 0
+                    : 0),
                 x0 = Math.max(18, reach * 0.22),
                 x1 = reach + 6,
                 vr = a.vr || x1;

@@ -994,9 +994,10 @@
         flex: 1;
       }
       .pv > img:first-of-type {
+        /* altura = proporção em metros (--hs); sem max-width pra não encolher os largos */
         height: calc(clamp(64px, 18vh, 180px) * var(--hs, 1));
         width: auto;
-        max-width: 100%;
+        max-width: none;
         object-fit: contain;
         object-position: bottom;
         transform-origin: bottom center;
@@ -1308,9 +1309,10 @@
       }
       #fi > img:first-of-type,
       #fi2 > img:first-of-type {
+        /* altura = proporção em metros (--hs); sem max-width pra não encolher os largos */
         height: calc(min(58vh, 430px) * var(--hs, 1));
         width: auto;
-        max-width: 100%;
+        max-width: none;
         object-fit: contain;
         object-position: bottom;
         transform-origin: bottom center;
@@ -2877,7 +2879,7 @@
             <img alt="Quinhas Ball Fighters" src="assets/title.webp?v=5" />
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
-          <p id="tver">v1.3.11</p>
+          <p id="tver">v1.3.12</p>
         </div>
         <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
         <div id="prompts">
@@ -2905,7 +2907,7 @@
    <button class="go alt" id="bop">Áudio</button>
           <button class="go alt" id="btt">Voltar ao título</button>
    <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">v1.3.11</p>
+          <p id="ver">v1.3.12</p>
   </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>
@@ -3414,25 +3416,25 @@
           },
         },
         u: {
-          id: "assets/spr/u/id.webp?v=20",
-          wk: "assets/spr/u/wk.webp?v=20",
-          cr: "assets/spr/u/cr.webp?v=20",
-          jp: "assets/spr/u/jp.webp?v=20",
-          pu: "assets/spr/u/pu.webp?v=20",
-          ki: "assets/spr/u/ki.webp?v=20",
-          bl: "assets/spr/u/bl.webp?v=20",
-          ht: "assets/spr/u/ht.webp?v=20",
-          hb: "assets/spr/u/hb.webp?v=20",
-          hd: "assets/spr/u/hd.webp?v=20",
-          fa: "assets/spr/u/fa.webp?v=20",
-          ko: "assets/spr/u/ko.webp?v=20",
-          vi: "assets/spr/u/vi.webp?v=20",
-          ck: "assets/spr/u/ck.webp?v=20",
-          cp: "assets/spr/u/cp.webp?v=20",
-          ap: "assets/spr/u/ap.webp?v=20",
-          ak: "assets/spr/u/ak.webp?v=20",
-          cb: "assets/spr/u/cb.webp?v=20",
-          ab: "assets/spr/u/ab.webp?v=20",
+          id: "assets/spr/u/id.webp?v=21",
+          wk: "assets/spr/u/wk.webp?v=21",
+          cr: "assets/spr/u/cr.webp?v=21",
+          jp: "assets/spr/u/jp.webp?v=21",
+          pu: "assets/spr/u/pu.webp?v=21",
+          ki: "assets/spr/u/ki.webp?v=21",
+          bl: "assets/spr/u/bl.webp?v=21",
+          ht: "assets/spr/u/ht.webp?v=21",
+          hb: "assets/spr/u/hb.webp?v=21",
+          hd: "assets/spr/u/hd.webp?v=21",
+          fa: "assets/spr/u/fa.webp?v=21",
+          ko: "assets/spr/u/ko.webp?v=21",
+          vi: "assets/spr/u/vi.webp?v=21",
+          ck: "assets/spr/u/ck.webp?v=21",
+          cp: "assets/spr/u/cp.webp?v=21",
+          ap: "assets/spr/u/ap.webp?v=21",
+          ak: "assets/spr/u/ak.webp?v=21",
+          cb: "assets/spr/u/cb.webp?v=21",
+          ab: "assets/spr/u/ab.webp?v=21",
           m: {
             id: { w: 271, h: 418, ax: 147.7 },
             wk: { w: 250, h: 427, ax: 144.1 },
@@ -5422,7 +5424,24 @@ updOpt();
           x.restore();
         });
       }
-      const SC = 0.587;
+      /* escala de desenho: SC = Quinhas 1,75 m; P.sc = SC * (altura_m / 1.75) */
+      const SC = 0.587,
+        REF_M = 1.75,
+        HM = {
+          b: 1.6,
+          r: 1.75,
+          c: 1.65,
+          e: 1.85,
+          g: 1.65,
+          k: 1.85,
+          u: 1.7,
+          l: 1.75,
+          q: 1.75,
+          s: 1.75,
+          t: 1.7,
+          y: 1.6,
+        };
+      const scOf = (id) => +(SC * ((HM[id] || REF_M) / REF_M)).toFixed(3);
       function hsRatio(sc) {
         let m = SC;
         if (typeof CH === "object" && CH)
@@ -7090,36 +7109,37 @@ updOpt();
       ])
         .then(([it, iq, ie, ig, il, ic, iu, ik, ib, ir, is, iy]) => {
           if (loadDone()) return;
-          it.sc = 0.57;
+          /* sc pela altura em metros (HM): luta e preview usam a mesma proporção */
+          it.sc = scOf("t");
           it.pf = new Image();
           it.pf.src = FACE_OF("t");
-          ib.sc = 0.537;
+          ib.sc = scOf("b");
           ib.pf = new Image();
           ib.pf.src = FACE_OF("b");
-          ik.sc = 0.621;
+          ik.sc = scOf("k");
           ik.pf = new Image();
           ik.pf.src = FACE_OF("k");
-          iu.sc = 0.57;
+          iu.sc = scOf("u");
           iu.pf = new Image();
           iu.pf.src = FACE_OF("u");
-          ic.sc = 0.553;
+          ic.sc = scOf("c");
           ic.pf = new Image();
           ic.pf.src = FACE_OF("c");
-          il.sc = 0.587;
+          il.sc = scOf("l");
           il.pf = new Image();
           il.pf.src = FACE_OF("l");
-          iq.sc = 0.587;
-          ir.sc = 0.587;
+          iq.sc = scOf("q");
+          ir.sc = scOf("r");
           ir.pf = new Image();
           ir.pf.src = FACE_OF("r");
-          is.sc = 0.587;
+          is.sc = scOf("s");
           is.pf = new Image();
           is.pf.src = FACE_OF("s");
-          ie.sc = 0.621;
-          ig.sc = 0.553;
+          ie.sc = scOf("e");
+          ig.sc = scOf("g");
           ig.pf = new Image();
           ig.pf.src = FACE_OF("g");
-          iy.sc = 0.537;
+          iy.sc = scOf("y");
           iy.pf = new Image();
           iy.pf.src = FACE_OF("y");
           iq.pf = new Image();

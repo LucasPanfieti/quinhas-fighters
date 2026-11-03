@@ -221,6 +221,11 @@
       #pause[style*="flex"] > * {
         animation: pin 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
       }
+      /* preview usa opacity via .on — pin both deixava o corpo invisível */
+      #sel[style*="flex"] > #fi,
+      #sel[style*="flex"] > #fi2 {
+        animation: none;
+      }
       #stg[style*="flex"] .stc {
         animation: pin 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
       }
@@ -1317,20 +1322,6 @@
         transition: opacity 0.25s;
         box-sizing: border-box;
       }
-      @media (orientation: landscape) and (min-width: 1000px) {
-        #sel > #fi,
-        #sel > #fi2 {
-          /* #grid pode chegar a 820px nesta faixa (ver breakpoint 900×640) —
-             usa o mesmo teto aqui + desconta a margem/inset de 2% pra não
-             sobrepor a grade (#fi2 tem "right: 2%", não só 10px). Piso baixo
-             (48px) pq perto de min-width:1000px a grade já ocupa quase tudo */
-          width: min(
-            24vw,
-            280px,
-            max(48px, calc((100% - min(820px, 90vw)) / 2 - 10px - 2%))
-          );
-        }
-      }
       #sel > #fi.on,
       #sel > #fi2.on {
         opacity: 1;
@@ -1412,9 +1403,153 @@
           translate: 0 0;
         }
       }
+      /* ---- select Injustice (desktop): nomes topo, corpos, grade ---- */
       @media (min-width: 1000px) and (min-height: 560px) {
-        #sel:not([data-m="2p"]) #fi {
+        #sel {
+          justify-content: flex-start;
+          gap: clamp(6px, 1.2vh, 12px);
+          padding-top: max(12px, var(--safe-t));
+          padding-bottom: max(14px, calc(var(--safe-b) + 8px));
+        }
+        #sel > h1 {
+          position: relative;
+          z-index: 6;
+          font-size: clamp(18px, 3.2vh, 28px);
+          margin-bottom: 2px;
+        }
+        /* caixa de controles estilo mock (sobre o céu) */
+        #sel > #selsub {
+          position: relative;
+          z-index: 6;
+          margin-bottom: 0;
+          padding: 8px 14px;
+          border-radius: 8px;
+          background: rgba(4, 8, 20, 0.62);
+          box-shadow: 0 0 0 1px rgba(120, 180, 255, 0.22);
+          max-width: min(720px, 92vw);
+        }
+        #sel:not([data-m="2p"]) #fi,
+        #sel[data-m="2p"] #fi,
+        #sel[data-m="2p"] #fi2 {
           display: flex;
+        }
+        #sel[data-m="2p"] #vs {
+          display: none;
+        }
+        /* corpos no pátio, face a face — atrás da grade */
+        #sel > #fi,
+        #sel > #fi2 {
+          width: min(46%, 540px);
+          max-width: none;
+          left: max(0px, calc(50% - min(46%, 540px) - 2vw));
+          right: auto;
+          bottom: 0;
+          height: 100%;
+          overflow: visible;
+          z-index: 2;
+          align-items: flex-end;
+          justify-content: flex-end;
+          /* pés no chão do pátio, acima da grade (como no mock) */
+          padding: max(56px, calc(var(--safe-t) + 48px)) 0
+            clamp(200px, 36vh, 300px);
+          box-sizing: border-box;
+        }
+        #sel > #fi2 {
+          left: auto;
+          right: max(0px, calc(50% - min(46%, 540px) - 2vw));
+          align-items: flex-start;
+        }
+        #sel[data-m="2p"] #fi > img:first-of-type {
+          margin-right: -1.5vw;
+        }
+        #sel[data-m="2p"] #fi2 > img:first-of-type {
+          margin-left: -1.5vw;
+        }
+        #sel:not([data-m="2p"]) #fi {
+          left: 50%;
+          right: auto;
+          width: min(50%, 580px);
+          transform: translateX(-50%);
+          align-items: center;
+          padding-left: 2%;
+          padding-right: 2%;
+        }
+        #fi > img:first-of-type,
+        #fi2 > img:first-of-type {
+          height: calc(min(68vh, 540px) * var(--hs, 1));
+          max-width: none;
+        }
+        /* nomes nos cantos de cima */
+        #fi .nplate,
+        #fi2 .nplate,
+        #fi b:not(.hide),
+        #fi2 b:not(.hide) {
+          position: absolute;
+          top: max(14px, var(--safe-t));
+          margin: 0;
+          z-index: 3;
+        }
+        #fi .nplate,
+        #fi b:not(.hide) {
+          left: max(18px, calc(var(--safe-l) + 8px));
+          right: auto;
+        }
+        #fi2 .nplate,
+        #fi2 b:not(.hide) {
+          right: max(18px, calc(var(--safe-r) + 8px));
+          left: auto;
+        }
+        #fi .nplate,
+        #fi2 .nplate {
+          height: clamp(36px, 6vh, 54px);
+          max-width: min(42vw, 360px);
+        }
+        #fi small,
+        #fi2 small {
+          position: absolute;
+          top: calc(max(14px, var(--safe-t)) + clamp(40px, 6.5vh, 58px));
+          margin: 0;
+          z-index: 3;
+        }
+        #fi small {
+          left: max(18px, calc(var(--safe-l) + 8px));
+        }
+        #fi2 small {
+          right: max(18px, calc(var(--safe-r) + 8px));
+          left: auto;
+          text-align: right;
+        }
+        #fi small:empty,
+        #fi2 small:empty {
+          display: none;
+        }
+        /* grade na base + folga pro Voltar */
+        #sel > #grid {
+          --gc: 8;
+          --gr: 2;
+          --gmaxh: min(40dvh, 280px);
+          width: min(
+            900px,
+            88vw,
+            calc(var(--gmaxh) * var(--gc) * 3 / (var(--gr) * 4))
+          );
+          margin-top: auto;
+          margin-bottom: 12px;
+          z-index: 5;
+          position: relative;
+        }
+        #sel > #back {
+          position: relative;
+          z-index: 6;
+          margin-top: 4px;
+          margin-bottom: 4px;
+          flex-shrink: 0;
+          width: min(360px, 92vw);
+          flex-grow: 0;
+        }
+        /* dicas de teclado no rodapé colidem com Voltar nesta tela */
+        #stage:has(#sel[style*="flex"]) #prompts {
+          display: none;
         }
       }
       @keyframes kb {
@@ -2793,6 +2928,30 @@
         right: max(2%, var(--safe-r));
         --c: #38c8ff;
       }
+      /* Injustice: reafirma painéis (regras #fi2 right:2% / z-index:1 vinham depois) */
+      @media (min-width: 1000px) and (min-height: 560px) {
+        #sel > #fi,
+        #sel > #fi2 {
+          width: min(46%, 540px);
+          z-index: 2 !important;
+          padding-bottom: clamp(200px, 36vh, 300px);
+        }
+        #sel > #grid {
+          z-index: 5 !important;
+        }
+        #sel > #fi {
+          left: max(0px, calc(50% - min(46%, 540px) - 2vw));
+        }
+        #sel > #fi2 {
+          right: max(0px, calc(50% - min(46%, 540px) - 2vw));
+          left: auto;
+        }
+        #sel:not([data-m="2p"]) #fi {
+          left: 50%;
+          width: min(50%, 580px);
+          transform: translateX(-50%);
+        }
+      }
       #fi2 > img:first-of-type {
         transform: scaleX(-1);
         animation: fin2 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
@@ -2830,15 +2989,7 @@
           0 0 22px var(--c),
           0 0 8px var(--c);
       }
-      @media (min-width: 1000px) and (min-height: 560px) {
-        #sel[data-m="2p"] #fi,
-        #sel[data-m="2p"] #fi2 {
-          display: flex;
-        }
-        #sel[data-m="2p"] #vs {
-          display: none;
-        }
-      }
+      /* 2P desktop Injustice: display #fi/#fi2 e hide #vs — ver bloco min-width:1000px acima */
       .bi {
         display: inline-block;
         width: 1.75em;
@@ -2929,7 +3080,7 @@
             <img alt="Quinhas Ball Fighters" src="assets/title.webp?v=5" />
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
-          <p id="tver">v1.3.14</p>
+          <p id="tver">v1.3.15</p>
         </div>
         <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
         <div id="prompts">
@@ -2957,7 +3108,7 @@
    <button class="go alt" id="bop">Áudio</button>
           <button class="go alt" id="btt">Voltar ao título</button>
    <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">v1.3.14</p>
+          <p id="ver">v1.3.15</p>
   </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>

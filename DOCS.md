@@ -460,6 +460,8 @@ Máx. 2 teclados e 4 controles; ≥1 humano, ≥2 lutadores, todos os humanos pr
 
 **Celular (touch):** `IS_TOUCH` (pointer:coarse / hover:none, ou `?touch=1` para testar no desktop) troca o lobby por uma tela simples (`#almob`): quantidade 2/3/4, escolha do lutador e rivais de IA sorteados (`amBuild`). O jogador usa `k1` via analógico/botões virtuais; o botão ✕ "em breve" vira **Pular** (`vJ`) durante a Arena (`#pad.ar`), facilitando o pulo duplo.
 
+**Menu principal (v1.4.0):** só dois modos — **Versus · 1-2 jogadores** e **Arena · 2-4 jogadores**. Os dois usam o mesmo lobby "aperta pra entrar" (`openLobby(keep, kind)` com `kind` = `"vs"` ou `"arena"`). No Versus há 2 slots; se entra só um jogador, ao confirmar (OK) aparece o slot da IA com `pick` para ele escolher o oponente; com 2 humanos vira o modo `2p`. Depois vem a escolha de cenário e o 1v1 normal. Os dispositivos escolhidos ficam em `VDEV` (usado por `in1`/`in2`); `LASTV` guarda a última configuração para "Trocar lutadores". No celular, o Versus usa a tela simples (`#almob`) com os chips Você/CPU.
+
 ## 15. Glossário rápido
 
 | Termo   | Significado                                           |

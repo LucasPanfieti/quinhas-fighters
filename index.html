@@ -3321,6 +3321,49 @@
           gap: 6px;
         }
       }
+      #b2p {
+        display: none !important;
+      }
+      #amv,
+      #alobby.vs #amcrow {
+        display: none;
+      }
+      #alobby.vs #amv {
+        display: flex;
+      }
+      .amchip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 12px 4px 4px;
+        border-radius: 999px;
+        border: 2px solid rgba(90, 160, 255, 0.5);
+        background: rgba(8, 16, 48, 0.78);
+        color: #fff;
+        font: italic 900 clamp(12px, 3.6vh, 16px) / 1 "Dela Gothic One", Impact, sans-serif;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        text-shadow: 0 2px 0 #000;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+      .amchip i {
+        width: clamp(26px, 8vh, 38px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: #0a0a14 center top / cover no-repeat;
+        box-shadow: 0 0 0 2px #000;
+      }
+      .amchip.act {
+        border-color: #fff;
+        box-shadow: 0 0 16px rgba(255, 150, 50, 0.8);
+        background: rgba(60, 30, 8, 0.85);
+      }
+      #amg button.op {
+        box-shadow:
+          0 0 0 3px #ff6b6b,
+          0 0 14px rgba(255, 90, 90, 0.8);
+      }
       #alact {
         display: flex;
         flex-direction: column;
@@ -3509,9 +3552,9 @@
           <h1 id="h1"></h1>
           <p id="sub"></p>
           <button class="go" id="brv" style="display: none">Revanche</button>
-          <button class="go" id="bai">Um jogador</button>
+          <button class="go" id="bai">Versus · 1-2 jogadores</button>
           <button class="go alt" id="b2p">Versus · 2 jogadores</button>
-          <button class="go alt" id="bar">Arena · até 4</button>
+          <button class="go alt" id="bar">Arena · 2-4 jogadores</button>
    <button class="go alt" id="bhp">Controles</button>
    <button class="go alt" id="bop">Áudio</button>
           <button class="go alt" id="bsl" style="display: none">Trocar lutadores</button>
@@ -3567,12 +3610,17 @@
           <button class="go alt" id="stback">Voltar</button>
         </div>
         <div id="alobby">
-          <h1>Arena</h1>
+          <h1 id="alh1">Arena</h1>
           <p id="alsub">Ilhas do Céu · até 4 lutadores · 3 vidas</p>
           <div id="alslots"></div>
           <p id="alhint"></p>
           <div id="almob">
-            <div class="amrow">
+            <div class="amrow" id="amv">
+              <button type="button" class="amchip" data-w="0"><i></i><span>Você</span></button>
+              <span class="aml">vs</span>
+              <button type="button" class="amchip" data-w="1"><i></i><span>CPU</span></button>
+            </div>
+            <div class="amrow" id="amcrow">
               <span class="aml">Inimigos</span>
               <div id="amc">
                 <button type="button" data-n="1">1</button>
@@ -4825,8 +4873,7 @@
       $("psel").onclick = () => {
         const wasArena = st === "arena";
         leaveFight();
-        if (wasArena) openLobby(true);
-        else openSel(mode);
+        openLobby(true, wasArena ? "arena" : "vs");
       };
       $("pmenu").onclick = () => {
         leaveFight();
@@ -4850,8 +4897,7 @@
       $("bmm").onclick = () => showMenu("Quinhas Ball Fighters", "");
       $("bsl").onclick = () => {
         menu.style.display = "none";
-        if (mode === "arena" && LASTA) openLobby(true);
-        else openSel(mode === "2p" ? "2p" : "ai");
+        openLobby(true, mode === "arena" ? "arena" : "vs");
       };
       $("brv").onclick = () => {
         if (mode === "arena" && LASTA) beginArena(LASTA);
@@ -5144,7 +5190,9 @@
       document.addEventListener("visibilitychange", () => {
         if (document.hidden && scr() === "game") setPause(true);
       });
+      const VDEV = [null, null]; /* dispositivos do Versus escolhidos no lobby */
       const in1 = () => {
+        if (VDEV[0]) return devIn(VDEV[0], true);
         const g = gin(gpad(0));
         return {
           l: keys.KeyA || keys.vL || g.l,
@@ -5158,6 +5206,7 @@
         };
       };
       const in2 = () => {
+        if (VDEV[1]) return devIn(VDEV[1], true);
         const g = gin(gpad(1));
         return {
           l: keys.ArrowLeft || g.l,
@@ -7135,7 +7184,8 @@ updOpt();
         });
       $("stback").onclick = () => {
         $("stg").style.display = "none";
-        openSel(stgSel.m);
+        if (stgSel && stgSel.lob) openLobby(true, "vs");
+        else openSel(stgSel.m);
       };
       let p1,
         p2,
@@ -7541,8 +7591,8 @@ updOpt();
         menu.style.display = "none";
         startRound();
       }
-      document.getElementById("bai").onclick = () => openSel("ai");
-      document.getElementById("b2p").onclick = () => openSel("2p");
+      document.getElementById("bai").onclick = () => openLobby(false, "vs");
+      document.getElementById("b2p").onclick = () => openLobby(false, "vs");
       function ai(me, o) {
         const i = {},
           d = Math.abs(o.x - me.x),
@@ -8236,7 +8286,7 @@ updOpt();
         const g = l && l[n];
         return g && g.connected ? g : null;
       };
-      function devIn(dv) {
+      function devIn(dv, noJump) {
         if (dv === "k1")
           return {
             l: keys.KeyA || keys.vL,
@@ -8262,7 +8312,7 @@ updOpt();
         if (dv && dv[0] === "p") {
           const g = rawPad(+dv.slice(1)),
             o = gin(g);
-          if (g && g.buttons[0] && g.buttons[0].pressed) o.u = true; /* ✕/A pula */
+          if (!noJump && g && g.buttons[0] && g.buttons[0].pressed) o.u = true; /* ✕/A pula (Arena) */
           return o;
         }
         return {};
@@ -8897,7 +8947,8 @@ updOpt();
       }
 
       /* ---- lobby: aperta pra entrar (teclado A/B + até 4 controles) ---- */
-      const AL = { open: false, slots: [], gr: 0, prev: {}, rp: {}, sig: "" };
+      const AL = { open: false, slots: [], gr: 0, prev: {}, rp: {}, sig: "", kind: "arena", max: 4 };
+      let LASTV = null;
       const AL_IDS = () => ROSTER.filter(Boolean),
         alEmpty = () => ({ t: "empty", dev: null, cid: null, ready: false });
       const alReset = () => {
@@ -8912,11 +8963,17 @@ updOpt();
         const ids = AL_IDS().filter((id) => !alTaken(id, i));
         return ids[(Math.random() * ids.length) | 0];
       };
-      const alOcc = () => AL.slots.filter((s) => s.t !== "empty"),
+      const alOcc = () =>
+          AL.slots.slice(0, AL.max).filter((s) => s.t !== "empty"),
         canStart = () => {
           const o = alOcc(),
             hs = o.filter((s) => s.t === "human");
-          return o.length >= 2 && hs.length >= 1 && hs.every((s) => s.ready);
+          return (
+            o.length >= 2 &&
+            hs.length >= 1 &&
+            hs.every((s) => s.ready) &&
+            o.every((s) => s.t !== "ai" || s.ready)
+          );
         };
       const devLabel = (dv) =>
         dv === "k1"
@@ -8952,6 +9009,7 @@ updOpt();
         if (force || sig !== AL.sig) {
           AL.sig = sig;
           root.innerHTML = AL.slots
+            .slice(0, AL.max)
             .map((s, i) => {
               const id = s.cid,
                 idx = id && id !== "?" ? ROSTER.indexOf(id) : -1,
@@ -8974,6 +9032,16 @@ updOpt();
                   ? "Aperte OK de novo ou Enter para começar"
                   : devHint(s.dev);
                 if (s.ready) rdy = '<span class="alr">PRONTO</span>';
+              } else if (s.pick && !s.ready) {
+                hint = "Escolha o oponente · " + devHint(s.pick);
+                btns =
+                  '<button data-a="prev" data-i="' +
+                  i +
+                  '">◀</button><button data-a="next" data-i="' +
+                  i +
+                  '">▶</button><button data-a="okai" data-i="' +
+                  i +
+                  '">OK</button>';
               } else {
                 hint = "Controlado pela IA";
                 rdy = '<span class="alr">PRONTO</span>';
@@ -8991,7 +9059,7 @@ updOpt();
               return (
                 '<div class="als ' +
                 s.t +
-                (s.ready || s.t === "ai" ? " rdy" : "") +
+                (s.ready ? " rdy" : "") +
                 '" style="--c:' +
                 col +
                 '"><i class="alp">P' +
@@ -9020,14 +9088,22 @@ updOpt();
           hs = alOcc().filter((s) => s.t === "human").length;
         if (b) b.disabled = !ok;
         const h = $("alhint");
-        if (h)
+        if (h) {
+          const vs = AL.kind === "vs";
           h.textContent = ok
             ? "Tudo pronto — aperte Começar, Enter ou Start."
             : !hs
-              ? "Aperte um botão no teclado (WASD ou setas) ou no controle para entrar. Até 2 teclados e 4 controles."
+              ? vs
+                ? "Aperte um botão no teclado (WASD ou setas) ou no controle para entrar."
+                : "Aperte um botão no teclado (WASD ou setas) ou no controle para entrar. Até 2 teclados e 4 controles."
               : alOcc().length < 2
-                ? "Entre mais um jogador ou adicione uma IA (+ IA)."
-                : "Todos os jogadores precisam confirmar (OK).";
+                ? vs
+                  ? "Confirme (OK) para escolher o oponente da IA, ou deixe um segundo jogador entrar."
+                  : "Entre mais um jogador ou adicione uma IA (+ IA)."
+                : alOcc().some((s) => s.t === "ai" && !s.ready)
+                  ? "Escolha o personagem do oponente e confirme (OK)."
+                  : "Todos os jogadores precisam confirmar (OK).";
+        }
       }
       $("alslots").addEventListener("click", (e) => {
         const b = e.target.closest("button[data-a]");
@@ -9037,7 +9113,12 @@ updOpt();
           s = AL.slots[i];
         if (a === "ai" && s.t === "empty")
           AL.slots[i] = { t: "ai", dev: null, cid: alFree(i), ready: true };
-        else if (a === "rm") AL.slots[i] = alEmpty();
+        else if (a === "rm") {
+          AL.slots[i] = alEmpty();
+          AL.slots.forEach((x) => {
+            if (x.t === "human" && AL.kind === "vs") x.ready = false;
+          });
+        } else if (a === "okai") s.ready = true;
         else if (a === "prev" || a === "next") {
           alCycle(i, a === "prev" ? -1 : 1);
           return;
@@ -9050,38 +9131,68 @@ updOpt();
           matchMedia("(pointer:coarse)").matches ||
           matchMedia("(hover:none)").matches ||
           /[?&]touch=1/.test(location.search),
-        AM = { n: 3, me: null };
+        AM = { n: 3, me: null, opp: null, act: 0 };
       function amBuild() {
-        const me = AM.me || (AM.me = alFree(0));
+        const vs = AL.kind === "vs",
+          me = AM.me || (AM.me = alFree(0));
         AL.slots = [0, 1, 2, 3].map(alEmpty);
         AL.slots[0] = { t: "human", dev: "k1", cid: me, ready: true };
-        for (let i = 1; i < AM.n; i++)
-          AL.slots[i] = { t: "ai", dev: null, cid: alFree(i), ready: true };
+        if (vs) {
+          if (!AM.opp || AM.opp === me) {
+            const o = AL_IDS().filter((k) => k !== me);
+            AM.opp = o[(Math.random() * o.length) | 0];
+          }
+          AL.slots[1] = { t: "ai", dev: null, cid: AM.opp, ready: true };
+        } else
+          for (let i = 1; i < AM.n; i++)
+            AL.slots[i] = { t: "ai", dev: null, cid: alFree(i), ready: true };
         AL.slots.forEach((s) => {
           if (s.cid && s.cid !== "?" && CH[s.cid]) loadLazy(CH[s.cid].P);
         });
         amRender();
       }
       function amRender() {
-        const ids = AL_IDS(),
+        const vs = AL.kind === "vs",
+          ids = AL_IDS(),
           me = AL.slots[0].cid,
-          idx = me !== "?" ? ROSTER.indexOf(me) : -1;
-        $("amn").textContent = idx >= 0 ? LAB[idx] : "Aleatório";
-        $("amn").style.color = idx >= 0 && CH[me] ? CH[me].col : "#fff";
+          opp = vs ? AL.slots[1].cid : null,
+          cur = vs && AM.act === 1 ? opp : me,
+          idx = cur !== "?" ? ROSTER.indexOf(cur) : -1,
+          faceOf = (id) => {
+            const k = id && id !== "?" ? ROSTER.indexOf(id) : -1;
+            return k >= 0 ? FACES[k] : RND_FACE;
+          };
+        $("amn").textContent =
+          (vs ? (AM.act === 1 ? "Oponente · " : "Você · ") : "") +
+          (idx >= 0 ? LAB[idx] : "Aleatório");
+        $("amn").style.color = idx >= 0 && CH[cur] ? CH[cur].col : "#fff";
         document
           .querySelectorAll("#amc button")
           .forEach((b) => b.classList.toggle("on", +b.dataset.n + 1 === AM.n));
+        if (vs)
+          document.querySelectorAll(".amchip").forEach((c) => {
+            const w = +c.dataset.w,
+              id = w ? opp : me;
+            c.classList.toggle("act", AM.act === w);
+            c.querySelector("i").style.backgroundImage =
+              "url(" + faceOf(id) + ")";
+            c.querySelector("span").textContent = w
+              ? id === "?"
+                ? "CPU ?"
+                : "CPU"
+              : "Você";
+          });
         $("amg").innerHTML =
           ids
             .map((id) => {
               const k = ROSTER.indexOf(id);
               return (
-                `<button type="button" data-id="${id}" class="${id === me ? "on" : ""}" ` +
+                `<button type="button" data-id="${id}" class="${id === me ? "on" : vs && id === opp ? "op" : ""}" ` +
                 `style="background-image:url(${FACES[k]});--c:${CH[id] ? CH[id].col : "#6fc2ff"}" aria-label="${LAB[k]}"></button>`
               );
             })
             .join("") +
-          `<button type="button" data-id="?" class="${me === "?" ? "on" : ""}" style="background-image:url(${RND_FACE})" aria-label="Aleatório"></button>`;
+          `<button type="button" data-id="?" class="${vs ? (opp === "?" ? "op" : "") : me === "?" ? "on" : ""}" style="background-image:url(${RND_FACE})" aria-label="Aleatório"></button>`;
         alUpd();
       }
       $("amc").addEventListener("click", (e) => {
@@ -9094,29 +9205,64 @@ updOpt();
       $("amg").addEventListener("click", (e) => {
         const b = e.target.closest("button[data-id]");
         if (!b) return;
-        AM.me = b.dataset.id;
+        const id = b.dataset.id;
+        if (AL.kind === "vs") {
+          if (AM.act === 1) {
+            if (id === AL.slots[0].cid) return;
+            AM.opp = id;
+          } else {
+            AM.me = id === "?" ? alFree(0) : id;
+            AM.act = 1;
+            if (AM.opp === AM.me) AM.opp = null;
+          }
+        } else AM.me = id;
         sfxUI("move");
         amBuild();
       });
-      function openLobby(keep) {
+      document.querySelectorAll(".amchip").forEach((c) => {
+        c.onclick = () => {
+          AM.act = +c.dataset.w;
+          sfxUI("move");
+          amRender();
+        };
+      });
+      function openLobby(keep, kind) {
+        kind = kind === "vs" ? "vs" : "arena";
         alReset();
-        if (keep && LASTA)
-          LASTA.forEach((c) => {
+        AL.kind = kind;
+        AL.max = kind === "vs" ? 2 : 4;
+        const last = kind === "vs" ? LASTV : LASTA;
+        if (keep && last)
+          last.forEach((c) => {
             AL.slots[c.slot] = {
               t: c.t,
               dev: c.dev,
               cid: c.cid,
               ready: c.t === "ai",
             };
-            if (c.t === "human" && c.slot === 0 && IS_TOUCH) AM.me = c.cid;
           });
-        if (keep && LASTA && IS_TOUCH) AM.n = LASTA.length;
+        if (IS_TOUCH) {
+          AM.act = 0;
+          if (keep && last) {
+            const h = last.find((c) => c.t === "human"),
+              a = last.find((c) => c.t === "ai");
+            if (h) AM.me = h.cid;
+            if (kind === "vs") AM.opp = a ? a.cid : null;
+            else AM.n = last.length;
+          } else if (kind === "vs") AM.opp = null;
+        }
+        $("alh1").textContent = kind === "vs" ? "Versus" : "Arena";
+        $("alsub").textContent =
+          kind === "vs"
+            ? "1 ou 2 jogadores · melhor de 3 rounds"
+            : "Ilhas do Céu · até 4 lutadores · 3 vidas";
         AL.open = true;
         AL.gr = 20;
         AL.prev = {};
         AL.rp = {};
         menu.style.display = "none";
         $("alobby").classList.toggle("mob", IS_TOUCH);
+        $("alobby").classList.toggle("vs", kind === "vs");
         $("alobby").style.display = "flex";
         loadArena();
         if (IS_TOUCH) amBuild();
@@ -9127,8 +9273,36 @@ updOpt();
         $("alobby").style.display = "none";
         showMenu("Quinhas Ball Fighters", "");
       }
+      function versusStart() {
+        const occ = AL.slots
+          .map((s, i) => [s, i])
+          .slice(0, 2)
+          .filter(([s]) => s.t !== "empty");
+        if (occ.length === 2 && occ[0][0].t === "ai") occ.reverse();
+        const used = new Set(
+            occ.filter(([s]) => s.cid !== "?").map(([s]) => s.cid),
+          ),
+          cfg = occ.map(([s, i]) => {
+            let id = s.cid;
+            if (id === "?") {
+              const pool = AL_IDS().filter((k) => !used.has(k));
+              id = pool[(Math.random() * pool.length) | 0];
+              used.add(id);
+            }
+            return { t: s.t, dev: s.dev, cid: id, slot: i };
+          }),
+          hc = cfg.filter((c) => c.t === "human").length;
+        VDEV[0] = cfg[0].dev;
+        VDEV[1] = hc === 2 ? cfg[1].dev : null;
+        LASTV = cfg;
+        AL.open = false;
+        $("alobby").style.display = "none";
+        askStage(hc === 2 ? "2p" : "ai", cfg[0].cid, cfg[1].cid);
+        if (stgSel) stgSel.lob = true;
+      }
       function tryStart() {
         if (!AL.open || beginBusy || !canStart()) return;
+        if (AL.kind === "vs") return versusStart();
         const used = new Set(
             AL.slots
               .filter((s) => s.t !== "empty" && s.cid !== "?")
@@ -9224,7 +9398,7 @@ updOpt();
           if (si < 0) {
             if (AL.gr <= 0 && ed("any")) {
               const e = AL.slots.findIndex((s) => s.t === "empty");
-              if (e >= 0) {
+              if (e >= 0 && e < AL.max) {
                 AL.slots[e] = {
                   t: "human",
                   dev: dv,
@@ -9243,6 +9417,31 @@ updOpt();
             tryStart();
             continue;
           }
+          const pi = s.ready
+            ? AL.slots.findIndex((x) => x.pick === dv && !x.ready)
+            : -1;
+          if (pi >= 0) {
+            for (const k of ["l", "r"]) {
+              const key = dv + k;
+              if (c[k]) {
+                const n = (AL.rp[key] || 0) + 1;
+                AL.rp[key] = n;
+                if (n === 1 || (n > 18 && (n - 18) % 7 === 0))
+                  alCycle(pi, k === "l" ? -1 : 1);
+              } else AL.rp[key] = 0;
+            }
+            if (ed("ok")) {
+              AL.slots[pi].ready = true;
+              sfxUI("ok");
+              alRender();
+            } else if (ed("bk")) {
+              AL.slots[pi] = alEmpty();
+              s.ready = false;
+              sfxUI("back");
+              alRender();
+            }
+            continue;
+          }
           if (!s.ready) {
             for (const k of ["l", "r"]) {
               const key = dv + k;
@@ -9255,6 +9454,21 @@ updOpt();
             }
             if (ed("ok")) {
               s.ready = true;
+              if (AL.kind === "vs" && alOcc().length === 1) {
+                const e = AL.slots.findIndex(
+                  (x, j) => j < AL.max && x.t === "empty",
+                );
+                if (e >= 0) {
+                  AL.slots[e] = {
+                    t: "ai",
+                    dev: null,
+                    cid: alFree(e),
+                    ready: false,
+                    pick: dv,
+                  };
+                  loadLazy(CH[AL.slots[e].cid].P);
+                }
+              }
               sfxUI("ok");
               alRender();
             } else if (ed("bk")) {
@@ -9276,12 +9490,18 @@ updOpt();
         (e) => {
           if (!AL.open || !vis($("alobby"))) return;
           if (e.code === "Enter" || e.code === "NumpadEnter") {
-            if (!e.repeat) tryStart();
+            const pk = AL.slots.find((x) => x.pick && !x.ready);
+            if (!e.repeat) {
+              if (pk) {
+                pk.ready = true;
+                alRender();
+              } else tryStart();
+            }
           } else if (e.code === "Escape") exitLobby();
         },
         true,
       );
-      $("bar").onclick = openLobby;
+      $("bar").onclick = () => openLobby(false, "arena");
       $("alstart").onclick = tryStart;
       $("alback").onclick = exitLobby;
 

@@ -3350,7 +3350,65 @@
         filter: grayscale(0.6);
         cursor: not-allowed;
       }
-      @media (max-width: 600px) {
+      #sel[data-m="arena"] > #grid {
+        flex-shrink: 0;
+      }
+      @media (max-width: 440px) {
+        #hp #ct {
+          font-size: 10px;
+        }
+        #hp #ct th,
+        #hp #ct td {
+          padding: 5px 4px;
+        }
+        #hp #ct td:first-child {
+          max-width: 92px;
+        }
+        #hp #ct kbd {
+          font-size: 9px;
+          padding: 1px 4px;
+        }
+      }
+      @media (max-height: 420px) {
+        #sel[data-m="arena"] {
+          justify-content: safe center;
+          overflow-y: auto;
+        }
+        #a4hint {
+          display: none !important;
+        }
+        .ap {
+          padding: 18px 4px 5px;
+          min-height: 0;
+        }
+        .ap .aps {
+          height: calc(clamp(30px, 13vh, 52px) * var(--hs, 1));
+        }
+        .ap .apd {
+          display: none;
+        }
+        .ap .apn {
+          height: clamp(12px, 4.4vh, 18px);
+        }
+        .ap .apadd {
+          padding: 2px 8px;
+        }
+        #a4act .go {
+          min-height: 34px;
+          padding-block: 4px;
+        }
+        #hptabs .hpt {
+          min-height: 30px;
+        }
+        #hp #ct-wrap {
+          max-height: calc(100dvh - 110px);
+        }
+        #hp {
+          overflow-y: auto;
+          justify-content: safe center;
+        }
+      }
+      @media (max-width: 600px) and (min-height: 520px) {
         #av {
           flex-wrap: wrap;
         }
@@ -5540,6 +5598,14 @@
             const g = s2.vs ? rawPad(i) : gpad(i);
             if (!g) {
               pm2[i] = null;
+              if (s2.vs && !s2.go) {
+                const j = s2.dv.indexOf("p" + i);
+                if (j >= 0) {
+                  s2.dv[j] = null;
+                  s2.lk[j] = null;
+                  s2render();
+                }
+              }
               continue;
             }
             const B = (j) => !!(g.buttons[j] && g.buttons[j].pressed),

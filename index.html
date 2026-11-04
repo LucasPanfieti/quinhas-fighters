@@ -1046,6 +1046,25 @@
       .pv.ready img {
         animation: pop 0.4s;
       }
+      .pv.wait > img:first-of-type {
+        opacity: 0.28;
+        filter: grayscale(1) brightness(0.6);
+        animation: none;
+      }
+      .pv.wait b,
+      .pv.wait .nplate {
+        display: none;
+      }
+      .pv.wait small {
+        font-size: clamp(10px, 2.8vw, 13px);
+        opacity: 1;
+        animation: vsblink 1.1s ease-in-out infinite;
+      }
+      @keyframes vsblink {
+        50% {
+          opacity: 0.35;
+        }
+      }
       .pv.ready b {
         text-shadow: 0 0 14px currentColor;
       }
@@ -4394,7 +4413,7 @@
           b: B(5),
         };
       };
-      let s2 = { c: [0, 0], lk: [null, null], go: false },
+      let s2 = { c: [0, 0], lk: [null, null], go: false, dv: [null, null] },
         pm2 = [null, null],
         s2StageT = 0;
       const clearS2Stage = () => {
@@ -4413,12 +4432,25 @@
       };
       const RND_FACE = "assets/faces/rnd.webp?v=1",
         RND_BODY = "assets/faces/rnd_body.webp?v=1"; /* silhueta Eslepe */
+      /* rótulo do slot no Versus; null = ninguém entrou ("Pressione para entrar") */
+      const vsLbl = (n) => {
+        const st = s2.lk[n] != null ? " · pronto!" : " · escolhendo…";
+        if (!s2.vs) return "P" + (n + 1) + st;
+        if (s2.dv[n] != null || (!IS_TOUCH && n === 0 && s2.lk[0] != null))
+          return "P" + (n + 1) + st;
+        if (IS_TOUCH) return (n ? "CPU" : "Você") + st;
+        if (n === 1 && s2.lk[0] != null) return "CPU" + st;
+        return null;
+      };
       function s2render() {
         const av = AVall();
         grid.querySelectorAll(".card[data-id]").forEach((c) => {
           const i = av.indexOf(c.dataset.id);
           [0, 1].forEach((n) => {
-            c.toggleAttribute("data-c" + (n + 1), s2.c[n] === i);
+            c.toggleAttribute(
+              "data-c" + (n + 1),
+              s2.c[n] === i && vsLbl(n) != null,
+            );
             c.toggleAttribute(
               "data-l" + (n + 1),
               s2.lk[n] != null && s2.lk[n] === c.dataset.id,
@@ -4444,9 +4476,16 @@
             pv.classList.remove("sil");
             setNamePlate(pv, id);
           }
+          const lb = vsLbl(n);
           pv.querySelector("small").textContent =
-            (n ? "P2" : "P1") +
-            (s2.lk[n] != null ? " · pronto!" : " · escolhendo…");
+            lb == null ? "Pressione para entrar" : lb;
+          pv.classList.toggle("wait", lb == null);
+          if (lb == null) {
+            if (im.getAttribute("src") !== RND_BODY) im.src = RND_BODY;
+            pv.style.setProperty("--hs", hsRatio(scOf("e")));
+            pv.classList.add("sil");
+            setNamePlate(pv, "?");
+          }
           pv.classList.toggle("ready", s2.lk[n] != null);
         });
         if (typeof fiSet === "function")
@@ -4454,10 +4493,9 @@
             fiSet(
               $(n ? "fi2" : "fi"),
               av[s2.c[n]],
-              "P" +
-                (n + 1) +
-                " · " +
-                (s2.lk[n] != null ? "pronto" : "escolhendo"),
+              vsLbl(n) == null
+                ? "Pressione para entrar"
+                : vsLbl(n).replace("!", ""),
               s2.lk[n] != null,
             ),
           );
@@ -4484,7 +4522,11 @@
             s2StageT = setTimeout(() => {
               s2StageT = 0;
               if (!a || !b || !CH[a] || !CH[b]) return;
-              askStage("2p", a, b);
+              VDEV[0] = s2.vs ? s2.dv[0] : null;
+              VDEV[1] = s2.vs ? s2.dv[1] : null;
+              const cpu = s2.vs && s2.dv[1] == null;
+              askStage(cpu ? "ai" : "2p", a, b);
+              if (stgSel) stgSel.vs = !!s2.vs;
             }, 900);
           }
           return;
@@ -4512,6 +4554,36 @@
           }
           return;
         }
+      }
+      /* Versus: entrada por dispositivo ("k1","k2","p0".."p3"). 1º botão = entrar. */
+      function vsIn(dev, k) {
+        if (s2.go) return;
+        let n = s2.dv.indexOf(dev);
+        if (n < 0) {
+          if (k === "bk") return;
+          n = s2.dv[0] == null ? 0 : s2.dv[1] == null ? 1 : -1;
+          if (n < 0) return;
+          if (n === 1 && s2.lk[1] != null) return;
+          s2.dv[n] = dev;
+          snd(520, 0.08, "square", 0.06);
+          s2render();
+          return;
+        }
+        /* P1 já confirmou e ninguém mais entrou: ele escolhe o adversário (CPU) */
+        if (n === 0 && s2.lk[0] != null && s2.dv[1] == null) {
+          if (k === "bk") {
+            s2.lk[0] = null;
+            s2render();
+          } else s2in(1, k);
+          return;
+        }
+        if (k === "bk" && s2.lk[n] == null) {
+          s2.dv[n] = null;
+          snd(300, 0.06, "square", 0.05);
+          s2render();
+          return;
+        }
+        s2in(n, k);
       }
       function s2click(id) {
         if (s2.go) return;
@@ -4873,7 +4945,8 @@
       $("psel").onclick = () => {
         const wasArena = st === "arena";
         leaveFight();
-        openLobby(true, wasArena ? "arena" : "vs");
+        if (wasArena) openLobby(true, "arena");
+        else openSel("vs");
       };
       $("pmenu").onclick = () => {
         leaveFight();
@@ -4897,7 +4970,8 @@
       $("bmm").onclick = () => showMenu("Quinhas Ball Fighters", "");
       $("bsl").onclick = () => {
         menu.style.display = "none";
-        openLobby(true, mode === "arena" ? "arena" : "vs");
+        if (mode === "arena") openLobby(true, "arena");
+        else openSel("vs");
       };
       $("brv").onclick = () => {
         if (mode === "arena" && LASTA) beginArena(LASTA);
@@ -5051,7 +5125,7 @@
 }
       function padMenu() {
         if (p1 && scr() === "sel" && pendMode === "2p") {
-          for (let i = 0; i < 2; i++) {
+          for (let i = 0; i < (s2.vs ? 4 : 2); i++) {
             const g = gpad(i);
             if (!g) {
               pm2[i] = null;
@@ -5072,7 +5146,10 @@
               continue;
             }
             for (const k of ["l", "r", "u", "d", "ok", "bk"])
-              if (d[k] && !pm2[i][k]) s2in(i, k, true);
+              if (d[k] && !pm2[i][k]) {
+                if (s2.vs) vsIn("p" + i, k);
+                else s2in(i, k, true);
+              }
             pm2[i] = d;
           }
           pm = Object.assign({}, pm2[0] || {});
@@ -5152,7 +5229,16 @@
                 es)
             )
               return;
-            if (m1) s2in(0, m1);
+            if (s2.vs) {
+              if (m1) vsIn("k1", m1);
+              else if (m2) vsIn("k2", m2);
+              else if (en) {
+                const j = [0, 1].find(
+                  (q) => s2.dv[q] != null && s2.lk[q] == null,
+                );
+                vsIn(j != null ? s2.dv[j] : s2.dv[0] || "k1", "ok");
+              } else document.getElementById("back").click();
+            } else if (m1) s2in(0, m1);
             else if (m2) s2in(1, m2);
             else if (en) s2in(s2.lk[0] == null ? 0 : 1, "ok");
             else document.getElementById("back").click();
@@ -7184,7 +7270,8 @@ updOpt();
         });
       $("stback").onclick = () => {
         $("stg").style.display = "none";
-        if (stgSel && stgSel.lob) openLobby(true, "vs");
+        if (stgSel && stgSel.vs) openSel("vs");
+        else if (stgSel && stgSel.lob) openLobby(true, "vs");
         else openSel(stgSel.m);
       };
       let p1,
@@ -7381,6 +7468,11 @@ updOpt();
         if (pendMode === "ai") {
           el.className = "";
           el.textContent = "Toque num lutador — a IA escolhe o adversário";
+        } else if (pendMode === "2p" && s2.vs) {
+          el.className = "hint";
+          el.innerHTML = IS_TOUCH
+            ? "Toque no seu lutador e depois no do adversário (CPU)"
+            : '<div class="row"><span>Aperte qualquer botão para entrar</span></div><div class="row"><span>Sozinho? Depois de escolher, você escolhe o adversário (CPU)</span></div>';
         } else {
           el.className = "hint";
           const row = (n) => {
@@ -7456,6 +7548,11 @@ updOpt();
       }
       function openSel(m) {
         clearS2Stage();
+        const vs = m === "vs";
+        if (vs) {
+          m = "2p";
+          VDEV[0] = VDEV[1] = null;
+        }
         pendMode = m;
         pick1 = null;
         if (m !== "2p")
@@ -7473,7 +7570,13 @@ updOpt();
           const av = AVall();
           let p2i = av.length - 1;
           while (p2i > 0 && av[p2i] === "?") p2i--;
-          s2 = { c: [0, p2i], lk: [null, null], go: false };
+          s2 = {
+            c: [0, p2i],
+            lk: [null, null],
+            go: false,
+            vs,
+            dv: [null, null],
+          };
           pm2 = [null, null];
           s2render();
         }
@@ -7591,8 +7694,8 @@ updOpt();
         menu.style.display = "none";
         startRound();
       }
-      document.getElementById("bai").onclick = () => openLobby(false, "vs");
-      document.getElementById("b2p").onclick = () => openLobby(false, "vs");
+      document.getElementById("bai").onclick = () => openSel("vs");
+      document.getElementById("b2p").onclick = () => openSel("vs");
       function ai(me, o) {
         const i = {},
           d = Math.abs(o.x - me.x),

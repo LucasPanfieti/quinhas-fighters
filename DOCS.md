@@ -1,6 +1,6 @@
 # Quinhas Ball Fighters — documentação técnica
 
-Documento de referência do jogo (v1.3.15+). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
+Documento de referência do jogo (v1.3.16+). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
 
 ---
 
@@ -77,14 +77,14 @@ loading → title → menu ⇄ sel → stg → (luta: intro/fight/end)
 | `#op`      | Áudio              | Cicla música / SFX / mute                                                  |
 | `#pause`   | Pause (só em luta) | Continuar, Controles, Reiniciar, etc.                                      |
 | `#pad`     | Gamepad virtual    | Só em `scr()==='game'` + classe `.on`                                      |
-| `#pb`      | Botão Pausar       | Só durante a luta                                                          |
+| `#pb`      | Botão Pausar       | Só durante a luta; em landscape mobile fica abaixo do cronômetro (não no canto) |
 | `#prompts` | Dicas de navegação | Teclado vs ícones de pad; **escondido** no select Injustice (desktop)      |
 
 ### 3.1 Modos de seleção (`pendMode`)
 
 - **`ai`:** um toque no card → IA escolhe oponente aleatório → `askStage('ai', id, opp)`. Card `?` resolve com `randFighter` na hora.
 - **`2p`:** estado `s2` (`c` cursores, `lk` locks, `go` pronto). `AVall()` inclui `?`; confirmação resolve aleatório. Depois `askStage('2p', a, b)`.
-- Após o estágio: `begin(m, a, b, stgIndex)` cria `p1`/`p2` e chama `startRound()`.
+- Após o estágio: `begin(m, a, b, stgIndex)` garante `loadLazy` dos 2 lutadores + `loadStage(stg)`, depois `beginNow` cria `p1`/`p2` e chama `startRound()`. Se o lazy load demorar >200 ms, reexibe `#loading` com “Carregando lutadores…”.
 
 ### 3.1.1 Layout do select (Injustice / responsivo)
 
@@ -100,7 +100,10 @@ Altura dos previews: `HM` (metros) → `scOf` → `P.sc` → `hsRatio` → CSS `
 
 ### 3.2 Pause landscape (mobile)
 
-Em `@media (hover:none) and (pointer:coarse) and (orientation:landscape)`, `#pause[style*="flex"]` vira **CSS grid 2 colunas** (`display:grid !important` porque o JS seta `display:flex`). Continuar (`#pcont`) e Voltar ao título (`#ptit`) ocupam a linha inteira.
+Em `@media (hover:none) and (pointer:coarse) and (orientation:landscape)`:
+
+- `#pause[style*="flex"]` vira **CSS grid 2 colunas** (`display:grid !important` porque o JS seta `display:flex`). Continuar (`#pcont`) e Voltar ao título (`#ptit`) ocupam a linha inteira.
+- `#pb` sai do canto superior direito e fica **centralizado abaixo do cronômetro**, para não cobrir o retrato do P2.
 
 ---
 
@@ -190,11 +193,22 @@ Cache-bust: query `?v=N` nas URLs (incrementar ao trocar arte).
 
 ### 5.3 Boot / load
 
-1. `LOAD.total` ≈ personagens×8 + 2 fundos (estimativa da barra).
-2. `Promise.all` carrega poses via `ld(SPR.*)` + `bg`…`bg5`.
-3. Atribui `sc`, `pf` (face Image) e preenche `CH`.
-4. Instancia `p1`/`p2` dummy, mostra título, inicia `loop`.
-5. Se algum arquivo falhar → tela de erro listando paths (lembrar: pasta `assets/` precisa acompanhar o HTML).
+1. `LOAD.total` ≈ `Object.keys(SPR).length * 2 + 1` (barra só cobre o boot: idle + nomes + `bg.webp`).
+2. `ld(SPR.*)` carrega **só a pose `id` (parado)** via `load()`; as demais poses entram em `P._lz` (Image sem `src`) e sobem depois com `loadLazy(P)`.
+3. `Promise.all` no boot: `ld` de todos os personagens + `nameLoads` + `bg.webp`. Fundos `bg2`…`bg5` usam `img.dataset.src` e só resolvem `src` em `loadStage(i)`.
+4. Atribui `sc`, `pf` (face Image) e preenche `CH`.
+5. Instancia `p1`/`p2` dummy, mostra título, inicia `loop`.
+6. Se algum arquivo falhar → tela de erro listando paths (lembrar: pasta `assets/` precisa acompanhar o HTML).
+
+**Lazy load (após o boot):**
+
+| Quando | O quê |
+| ------ | ----- |
+| `askStage` | `loadLazy` dos dois lutadores escolhidos |
+| `pointerenter` no card de mapa (`#stgrid .stc`, exceto Aleatório) | `loadStage(+dataset.i)` |
+| `begin` | `Promise.all([loadLazy(P1), loadLazy(P2), loadStage(stg)])` → `beginNow` |
+
+`loadLazy` / `loadStage` cacheiam a Promise em `P._lp` / `im._lp` (não recarregam). `beginBusy` evita double-tap abrindo duas lutas.
 
 **Armadilha conhecida:** `buildHints` / `hintTick` podem chamar `selInfo()` antes de `CH` existir. Por isso `hintTick` usa `try{selInfo()}catch`. Não chamar `selInfo` “puro” no boot sem esse cuidado.
 
@@ -388,7 +402,8 @@ Ao adicionar personagem novo:
 | Mudar controles teclado/luta       | `in1`/`in2` + `KB`                                  |
 | Mudar botões do pad físico         | `gin`                                               |
 | Mudar layout/tamanho do pad mobile | CSS `#pad`, `--bs`, `.acts --r`                     |
-| Mudar pause landscape              | media query coarse+landscape `#pause…`              |
+| Mudar pause landscape              | media query coarse+landscape `#pause…` / `#pb`      |
+| Lazy load de sprite/mapa           | `loadLazy`, `loadStage`, `ld` (`id` eager / resto `_lz`) |
 | Novo mapa                          | fonte em `char-src/mapas/`, depois `assets/bg*.webp` + thumb `#stgrid` + `MAPS` |
 | Texto de versão                    | `#tver`, `#ver` (manter alinhado ao ship)           |
 | Layout do select Injustice         | media `1000×560` + `#fi`/`#fi2`/`#grid` / `--hs`  |
@@ -417,10 +432,10 @@ Ao adicionar personagem novo:
 
 **Local:** servir a pasta (ex. `python -m http.server`) e abrir no browser. Abrir o `file://` do HTML pode falhar em alguns browsers por CORS/load de assets — preferir HTTP.
 
-**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.3.15** (atualizar strings ao shipar).
+**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.3.16** (atualizar strings ao shipar).
 
 **Git:** commits só com o que for pedido; `.gitignore` impede pastas fonte e lixo de `tools/out` (exceto `*.json`).
 
 ---
 
-_Última revisão alinhada ao código em `index.html` (v1.3.15: select Injustice desktop, preview por altura, silhueta do aleatório, sem corpo no toque). Se o código divergir deste doc, o código manda — atualize esta página._
+_Última revisão alinhada ao código em `index.html` (v1.3.16: lazy load de poses/mapas, pausa centralizada no landscape mobile). Se o código divergir deste doc, o código manda — atualize esta página._

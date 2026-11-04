@@ -1583,6 +1583,17 @@
           0 0 0 2px rgba(90, 160, 255, 0.55),
           0 3px 0 #000;
       }
+      /* celular deitado: pausa abaixo do cronometro (no canto ela cobre o retrato do P2) */
+      @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+        #pb {
+          right: auto;
+          left: 50%;
+          transform: translateX(-50%);
+          top: calc(max(8px, var(--safe-t)) + clamp(44px, 14.5vh, 58px));
+          width: clamp(34px, 9vh, 44px);
+          height: clamp(34px, 9vh, 44px);
+        }
+      }
 
       /* ---- escolha de cenario ---- */
       #stgrid {
@@ -3080,7 +3091,7 @@
             <img alt="Quinhas Ball Fighters" src="assets/title.webp?v=5" />
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
-          <p id="tver">v1.3.15</p>
+          <p id="tver">v1.3.16</p>
         </div>
         <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
         <div id="prompts">
@@ -3108,7 +3119,7 @@
    <button class="go alt" id="bop">Áudio</button>
           <button class="go alt" id="btt">Voltar ao título</button>
    <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">v1.3.15</p>
+          <p id="ver">v1.3.16</p>
   </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>
@@ -3730,7 +3741,7 @@
       const LOAD = {
         d: 0,
         bad: [],
-        total: Object.keys(SPR).length * 8 + 5 + 12,
+        total: Object.keys(SPR).length * 2 + 1,
       };
       const load = (s) =>
         new Promise((r) => {
@@ -6223,13 +6234,13 @@ updOpt();
       const bg = new Image();
       bg.src = "assets/bg.webp";
       const bg2 = new Image();
-      bg2.src = "assets/bg2.webp";
+      bg2.dataset.src = "assets/bg2.webp";
       const bg3 = new Image();
-      bg3.src = "assets/bg3.webp";
+      bg3.dataset.src = "assets/bg3.webp";
       const bg4 = new Image();
-      bg4.src = "assets/bg4.webp";
+      bg4.dataset.src = "assets/bg4.webp";
       const bg5 = new Image();
-      bg5.src = "assets/bg5.webp";
+      bg5.dataset.src = "assets/bg5.webp";
       /* Templo da Montanha (bg / G:362) oculto por enquanto — chão alto invade o HUD */
       const MAPS = [
         { n: "Colégio Leila Guedes", img: bg2, G: 438 },
@@ -6241,6 +6252,8 @@ updOpt();
         stgSel = null;
       function askStage(m, a, b) {
         stgSel = { m, a, b };
+        if (CH[a]) loadLazy(CH[a].P);
+        if (CH[b]) loadLazy(CH[b].P);
         selEl.style.display = "none";
         menu.style.display = "none";
         $("stg").style.display = "flex";
@@ -6257,6 +6270,13 @@ updOpt();
               begin(stgSel.m, stgSel.a, stgSel.b, i);
             }),
         );
+      $("stgrid")
+        .querySelectorAll(".stc")
+        .forEach((c) => {
+          c.onpointerenter = () => {
+            if (c.dataset.i !== "r") loadStage(+c.dataset.i);
+          };
+        });
       $("stback").onclick = () => {
         $("stg").style.display = "none";
         openSel(stgSel.m);
@@ -6579,7 +6599,67 @@ updOpt();
         selEl.style.display = "none";
         menu.style.display = "flex";
       };
+      /* carrega o resto dos sprites do lutador / o fundo da fase só quando precisa */
+      function loadLazy(P) {
+        if (!P || !P._lz) return Promise.resolve();
+        if (!P._lp)
+          P._lp = Promise.all(
+            P._lz.map(
+              ([im, u]) =>
+                new Promise((res) => {
+                  im.onload = () => res();
+                  im.onerror = () => {
+                    LOAD.bad.push(u);
+                    res();
+                  };
+                  im.src = u;
+                }),
+            ),
+          );
+        return P._lp;
+      }
+      function loadStage(i) {
+        const im = MAPS[i] && MAPS[i].img;
+        if (!im || !im.dataset.src) return Promise.resolve();
+        if (!im._lp)
+          im._lp = new Promise((res) => {
+            im.onload = () => res();
+            im.onerror = () => {
+              LOAD.bad.push(im.dataset.src);
+              res();
+            };
+            im.src = im.dataset.src;
+          });
+        return im._lp;
+      }
+      let beginBusy = false;
       function begin(m, a, b, stg = 0) {
+        if (beginBusy) return;
+        beginBusy = true;
+        const box = document.getElementById("loading"),
+          txt = document.getElementById("ltxt");
+        let shown = false;
+        const t = setTimeout(() => {
+          shown = true;
+          txt.textContent = "Carregando lutadores…";
+          document.getElementById("lbar").style.display = "none";
+          box.classList.remove("done");
+        }, 200);
+        Promise.all([loadLazy(CH[a].P), loadLazy(CH[b].P), loadStage(stg)]).then(
+          () => {
+            clearTimeout(t);
+            beginBusy = false;
+            if (LOAD.bad.length) {
+              box.classList.remove("done");
+              loadDone();
+              return;
+            }
+            if (shown) box.classList.add("done");
+            beginNow(m, a, b, stg);
+          },
+        );
+      }
+      function beginNow(m, a, b, stg = 0) {
         LASTM = [m, a, b, stg];
         G = MAPS[stg].G;
         curBg = MAPS[stg].img;
@@ -7270,7 +7350,14 @@ updOpt();
           "ab",
           "wb",
         ])
-          if (o[k]) r[k] = await load(o[k]);
+          if (o[k]) {
+            if (k === "id") r[k] = await load(o[k]);
+            else {
+              const im = new Image();
+              r[k] = im;
+              (r._lz = r._lz || []).push([im, o[k]]);
+            }
+          }
         return r;
       };
       const nameLoads = ROSTER.filter(Boolean).map((id) =>
@@ -7301,54 +7388,6 @@ updOpt();
             bg.onload = r;
             bg.onerror = () => {
               LOAD.bad.push("assets/bg.webp");
-              r();
-            };
-          }
-        }),
-        new Promise((r) => {
-          if (bg2.complete) {
-            if (!bg2.naturalWidth) LOAD.bad.push("assets/bg2.webp");
-            r();
-          } else {
-            bg2.onload = r;
-            bg2.onerror = () => {
-              LOAD.bad.push("assets/bg2.webp");
-              r();
-            };
-          }
-        }),
-        new Promise((r) => {
-          if (bg3.complete) {
-            if (!bg3.naturalWidth) LOAD.bad.push("assets/bg3.webp");
-            r();
-          } else {
-            bg3.onload = r;
-            bg3.onerror = () => {
-              LOAD.bad.push("assets/bg3.webp");
-              r();
-            };
-          }
-        }),
-        new Promise((r) => {
-          if (bg4.complete) {
-            if (!bg4.naturalWidth) LOAD.bad.push("assets/bg4.webp");
-            r();
-          } else {
-            bg4.onload = r;
-            bg4.onerror = () => {
-              LOAD.bad.push("assets/bg4.webp");
-              r();
-            };
-          }
-        }),
-        new Promise((r) => {
-          if (bg5.complete) {
-            if (!bg5.naturalWidth) LOAD.bad.push("assets/bg5.webp");
-            r();
-          } else {
-            bg5.onload = r;
-            bg5.onerror = () => {
-              LOAD.bad.push("assets/bg5.webp");
               r();
             };
           }

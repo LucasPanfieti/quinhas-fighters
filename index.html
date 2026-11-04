@@ -3107,6 +3107,280 @@
         }
       }
 
+      /* ---- Arena: seleção clássica com 4 vagas ---- */
+      #av,
+      #a4act,
+      #a4hint {
+        display: none;
+      }
+      #sel[data-m="arena"] > #av {
+        display: flex;
+      }
+      #sel[data-m="arena"] > #a4act {
+        display: flex;
+      }
+      #sel[data-m="arena"] > #a4hint {
+        display: block;
+      }
+      #sel[data-m="arena"] > #back,
+      #sel[data-m="arena"] > #vs,
+      #sel[data-m="arena"] > #fi,
+      #sel[data-m="arena"] > #fi2 {
+        display: none !important;
+      }
+      #sel[data-m="arena"] {
+        justify-content: center;
+      }
+      #sel[data-m="arena"] > #grid {
+        position: relative;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      #stage:has(#sel[data-m="arena"][style*="flex"]) #prompts {
+        display: none;
+      }
+      #grid .card.tk {
+        filter: grayscale(0.9) brightness(0.5);
+      }
+      .acur {
+        position: absolute;
+        z-index: 4;
+        pointer-events: none;
+        box-sizing: border-box;
+        border-radius: 9px;
+        border: 3px solid var(--pc);
+        box-shadow:
+          0 0 0 1px #000,
+          0 0 16px var(--pc);
+        transition:
+          left 0.11s,
+          top 0.11s,
+          width 0.11s,
+          height 0.11s;
+        animation: apul 1s ease-in-out infinite;
+      }
+      .acur.lk {
+        background: color-mix(in srgb, var(--pc) 24%, transparent);
+        animation: none;
+      }
+      .acur i {
+        position: absolute;
+        font:
+          normal 9px "Dela Gothic One",
+          system-ui,
+          sans-serif;
+        padding: 2px 5px;
+        border-radius: 4px;
+        background: var(--pc);
+        color: #101010;
+        white-space: nowrap;
+        line-height: 1;
+      }
+      .acur.s0 i {
+        top: -3px;
+        left: -3px;
+      }
+      .acur.s1 i {
+        top: -3px;
+        right: -3px;
+      }
+      .acur.s2 i {
+        bottom: -3px;
+        left: -3px;
+      }
+      .acur.s3 i {
+        bottom: -3px;
+        right: -3px;
+      }
+      @keyframes apul {
+        50% {
+          box-shadow:
+            0 0 0 1px #000,
+            0 0 26px var(--pc);
+        }
+      }
+      #av {
+        width: min(900px, 94vw);
+        gap: clamp(6px, 1.2vw, 12px);
+        margin-top: clamp(6px, 1.6vh, 14px);
+        align-items: stretch;
+      }
+      .ap {
+        position: relative;
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 3px;
+        padding: 26px 6px 8px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: linear-gradient(
+          180deg,
+          rgba(8, 12, 30, 0.55),
+          rgba(8, 12, 30, 0.88)
+        );
+        border: 2px solid color-mix(in srgb, var(--pc) 38%, transparent);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+        min-height: calc(clamp(52px, 13vh, 118px) + 6.2em);
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+      .ap.rdy {
+        border-color: var(--pc);
+        box-shadow:
+          0 0 0 1px var(--pc),
+          0 0 20px color-mix(in srgb, var(--pc) 55%, transparent);
+      }
+      .ap .apt {
+        position: absolute;
+        top: 0;
+        left: 0;
+        font:
+          normal 11px "Dela Gothic One",
+          system-ui,
+          sans-serif;
+        padding: 3px 10px 3px 8px;
+        border-radius: 0 0 9px 0;
+        background: var(--pc);
+        color: #101010;
+      }
+      .ap .apd {
+        position: absolute;
+        top: 4px;
+        right: 6px;
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.75;
+      }
+      .ap .aps {
+        height: calc(clamp(52px, 13vh, 118px) * var(--hs, 1));
+        width: auto;
+        max-width: none;
+        object-fit: contain;
+        object-position: bottom center;
+        flex: 0 0 auto;
+        filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.65));
+        transition: opacity 0.2s;
+      }
+      .ap.rdy .aps {
+        animation: pop 0.4s;
+      }
+      .ap.empty .aps {
+        opacity: 0.22;
+        filter: grayscale(1) brightness(0.6);
+      }
+      .ap .apn {
+        height: clamp(16px, 3.2vh, 26px);
+        max-width: 96%;
+        width: auto;
+        object-fit: contain;
+      }
+      .ap b.apn {
+        height: auto;
+        font:
+          italic clamp(11px, 1.4vw, 14px) "Dela Gothic One",
+          Impact,
+          sans-serif;
+        text-shadow: 0 2px 0 #000;
+      }
+      .ap .aph {
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-size: clamp(8px, 0.95vw, 10.5px);
+        color: var(--pc);
+        text-align: center;
+      }
+      .ap.empty .aph {
+        animation: vsblink 1.1s ease-in-out infinite;
+      }
+      .ap .apx {
+        position: absolute;
+        top: 3px;
+        right: 4px;
+        display: flex;
+        gap: 3px;
+      }
+      .ap .apx button,
+      .ap .apadd {
+        font: inherit;
+        color: #dff0ff;
+        background: rgba(10, 16, 40, 0.8);
+        border: 1.5px solid rgba(120, 170, 255, 0.5);
+        border-radius: 6px;
+        cursor: pointer;
+        pointer-events: auto;
+      }
+      .ap .apx button {
+        width: 22px;
+        height: 22px;
+        padding: 0;
+        font-size: 13px;
+        line-height: 1;
+      }
+      .ap .apadd {
+        font-size: 11px;
+        padding: 3px 12px;
+        letter-spacing: 0.06em;
+      }
+      .ap .apx button:hover,
+      .ap .apadd:hover {
+        background: rgba(40, 70, 150, 0.9);
+      }
+      #a4hint {
+        margin: clamp(4px, 1vh, 8px) 0 0;
+        min-height: 1.3em;
+        text-align: center;
+        font-size: clamp(11px, 1.5vw, 14px);
+        letter-spacing: 0.04em;
+        color: #cfe3ff;
+        text-shadow: 0 1px 0 #000;
+      }
+      #a4hint.ok {
+        color: #9dff8a;
+      }
+      #a4act {
+        gap: 10px;
+        width: min(520px, 92vw);
+        margin-top: clamp(4px, 1vh, 8px);
+      }
+      #a4act .go {
+        flex: 1;
+        margin: 0;
+      }
+      #a4act .go[disabled] {
+        opacity: 0.45;
+        filter: grayscale(0.6);
+        cursor: not-allowed;
+      }
+      @media (max-width: 600px) {
+        #av {
+          flex-wrap: wrap;
+        }
+        .ap {
+          flex: 1 1 44%;
+          min-height: calc(clamp(48px, 10vh, 90px) + 5.4em);
+        }
+      }
+      @media (max-height: 560px) {
+        .ap {
+          padding-top: 22px;
+          min-height: calc(clamp(40px, 11vh, 70px) + 4.6em);
+        }
+        .ap .aps {
+          height: calc(clamp(40px, 11vh, 70px) * var(--hs, 1));
+        }
+      }
+      @media (max-height: 480px) {
+        #sel[data-m="arena"] > #selsub {
+          display: none;
+        }
+      }
+
       /* ---- Arena: lobby (aperta pra entrar) ---- */
       #alobby {
         position: absolute;
@@ -3604,6 +3878,12 @@
               <img alt="" /><img class="nplate hide" alt="" /><b></b
               ><small></small>
             </div>
+          </div>
+          <div id="av"></div>
+          <p id="a4hint"></p>
+          <div id="a4act">
+            <button class="go" id="a4go" type="button">Começar</button>
+            <button class="go alt" id="a4bk" type="button">Voltar</button>
           </div>
           <button class="go alt" id="back">Voltar</button>
         </div>
@@ -5097,7 +5377,11 @@
         document
           .querySelectorAll(".gf")
           .forEach((e) => e.classList.remove("gf"));
-        if (kb && LS[s] && !(s === "sel" && pendMode === "2p")) {
+        if (
+          kb &&
+          LS[s] &&
+          !(s === "sel" && (pendMode === "2p" || pendMode === "arena"))
+        ) {
           const L = LS[s]();
           if (!L.length) return;
           mi = Math.max(0, Math.min(mi, L.length - 1));
@@ -5124,9 +5408,52 @@
  aSync(s);
 }
       function padMenu() {
+        if (p1 && scr() === "sel" && pendMode === "arena") {
+          for (let i = 0; i < 4; i++) {
+            const g = rawPad(i);
+            if (!g) {
+              pm2[i] = null;
+              const si = A4.s.findIndex(
+                (s) => s.t === "human" && s.dev === "p" + i,
+              );
+              if (si >= 0 && !A4.go) {
+                A4.s[si] = a4Empty();
+                a4Render();
+              }
+              continue;
+            }
+            const B = (j) => !!(g.buttons[j] && g.buttons[j].pressed),
+              A = g.axes,
+              d = {
+                l: B(14) || A[0] < -0.5,
+                r: B(15) || A[0] > 0.5,
+                u: B(12) || A[1] < -0.5,
+                d: B(13) || A[1] > 0.5,
+                ok: B(0),
+                bk: B(1),
+                ca: B(3),
+                cr: B(2),
+                st: B(9),
+              };
+            if (!pm2[i]) {
+              pm2[i] = d;
+              continue;
+            }
+            for (const k of ["l", "r", "u", "d", "ok", "bk", "ca", "cr", "st"])
+              if (d[k] && !pm2[i][k]) {
+                if (k === "st") {
+                  if (a4Can()) a4Start();
+                } else a4In("p" + i, k);
+              }
+            pm2[i] = d;
+          }
+          pm = {};
+          uiTick();
+          return;
+        }
         if (p1 && scr() === "sel" && pendMode === "2p") {
           for (let i = 0; i < (s2.vs ? 4 : 2); i++) {
-            const g = gpad(i);
+            const g = s2.vs ? rawPad(i) : gpad(i);
             if (!g) {
               pm2[i] = null;
               continue;
@@ -5195,6 +5522,48 @@
           aSave();
           aVol();
           updOpt();
+        }
+        if (p1 && scr() === "sel" && pendMode === "arena") {
+          const M1 = {
+              KeyA: "l",
+              KeyD: "r",
+              KeyW: "u",
+              KeyS: "d",
+              KeyJ: "ok",
+              KeyK: "bk",
+              KeyI: "ca",
+              KeyL: "cr",
+            }[e.code],
+            M2 = {
+              ArrowLeft: "l",
+              ArrowRight: "r",
+              ArrowUp: "u",
+              ArrowDown: "d",
+              Numpad4: "ok",
+              Numpad5: "bk",
+              Numpad8: "ca",
+              Numpad6: "cr",
+            }[e.code],
+            en =
+              e.code === "Enter" ||
+              e.code === "Space" ||
+              e.code === "NumpadEnter",
+            es = e.code === "Escape" || e.code === "Backspace",
+            mm = M1 || M2;
+          if (mm || en || es) {
+            if (e.repeat && (en || es || !"lrud".includes(mm))) return;
+            if (M1) a4In("k1", M1);
+            else if (M2) a4In("k2", M2);
+            else if (en) {
+              if (a4Can()) a4Start();
+              else {
+                const j = A4.s.find((s) => s.t === "human" && s.lk == null);
+                if (j) a4In(j.dev, "ok");
+                else if (!a4Hum().length) a4In("k1", "ok");
+              }
+            } else $("back").click();
+            return;
+          }
         }
         if (p1 && scr() === "sel" && pendMode === "2p") {
           const m1 = {
@@ -7465,7 +7834,12 @@ updOpt();
       let pick1 = null;
       function selInfo() {
         const el = document.getElementById("selsub");
-        if (pendMode === "ai") {
+        if (pendMode === "arena") {
+          el.className = "hint";
+          el.innerHTML =
+            '<div class="row"><span>Aperte um botão para entrar · até 4 jogadores</span></div>' +
+            '<div class="row"><span>CPU: botão + CPU · teclado <kbd>I</kbd> / <kbd>8</kbd> · controle <kbd>Y</kbd></span></div>';
+        } else if (pendMode === "ai") {
           el.className = "";
           el.textContent = "Toque num lutador — a IA escolhe o adversário";
         } else if (pendMode === "2p" && s2.vs) {
@@ -7520,6 +7894,7 @@ updOpt();
           );
       }
       function pick(id) {
+        if (pendMode === "arena") return a4Click(id);
         if (id === "?") {
           if (pendMode === "2p") {
             const excl =
@@ -7586,7 +7961,7 @@ updOpt();
       grid.addEventListener(
         "pointerdown",
         (e) => {
-          if (pendMode === "2p") return;
+          if (pendMode === "2p" || pendMode === "arena") return;
           const c = e.target.closest(".card[data-id], #back");
           if (!c || scr() !== "sel") return;
           const L = LS.sel(),
@@ -7598,7 +7973,311 @@ updOpt();
         },
         true,
       );
+      /* ---- Arena: seleção clássica com 4 vagas (aperta pra entrar) ---- */
+      const A4C = ["#ff8a3d", "#38c8ff", "#7be06a", "#ff5fa8"];
+      let A4 = { s: [], go: false };
+      const a4Empty = () => ({ t: "empty", dev: null, c: 0, lk: null, cid: null }),
+        a4Taken = (id, ex) =>
+          !!id &&
+          id !== "?" &&
+          A4.s.some(
+            (s, i) =>
+              i !== ex && (s.lk === id || (s.t === "cpu" && s.cid === id)),
+          ),
+        a4Free = (ex) => {
+          const o = AV().filter((id) => !a4Taken(id, ex));
+          return o[(Math.random() * o.length) | 0];
+        },
+        a4Hum = () => A4.s.filter((s) => s.t === "human"),
+        a4Fighters = () => A4.s.filter((s) => s.t !== "empty"),
+        a4Can = () => {
+          const h = a4Hum();
+          return (
+            !A4.go &&
+            h.length >= 1 &&
+            a4Fighters().length >= 2 &&
+            h.every((s) => s.lk != null)
+          );
+        },
+        a4FirstFree = () => {
+          const i = AVall().findIndex((id) => id !== "?" && !a4Taken(id, -1));
+          return i < 0 ? 0 : i;
+        },
+        a4DevName = (d) =>
+          d === "k1"
+            ? "WASD"
+            : d === "k2"
+              ? "Setas"
+              : "Controle " + (+d.slice(1) + 1);
+      function a4Open(keep) {
+        clearS2Stage();
+        pendMode = "arena";
+        pick1 = null;
+        A4 = { s: [0, 1, 2, 3].map(a4Empty), go: false };
+        const av = AVall();
+        if (keep && LASTA)
+          LASTA.forEach((c) => {
+            if (c.slot < 0 || c.slot > 3) return;
+            A4.s[c.slot] =
+              c.t === "human"
+                ? { t: "human", dev: c.dev, c: Math.max(0, av.indexOf(c.cid)), lk: null, cid: null }
+                : { t: "cpu", dev: null, c: 0, lk: null, cid: c.cid };
+          });
+        grid
+          .querySelectorAll(".card")
+          .forEach((c) =>
+            ["data-c1", "data-c2", "data-l1", "data-l2"].forEach((a) =>
+              c.removeAttribute(a),
+            ),
+          );
+        menu.style.display = "none";
+        selEl.dataset.m = "arena";
+        selEl.style.display = "flex";
+        loadArena();
+        selInfo();
+        a4Render();
+        requestAnimationFrame(() => a4Render());
+      }
+      function a4Join(dev) {
+        const i = A4.s.findIndex((s) => s.t !== "human");
+        if (i < 0) return -1;
+        A4.s[i] = { t: "human", dev, c: a4FirstFree(), lk: null, cid: null };
+        /* sozinho: já entra uma CPU de adversária (um humano novo toma o lugar dela) */
+        if (a4Fighters().length < 2) {
+          const e = A4.s.findIndex((s) => s.t === "empty");
+          if (e >= 0) A4.s[e] = { t: "cpu", dev: null, c: 0, lk: null, cid: a4Free(e) };
+        }
+        return i;
+      }
+      function a4AddCpu() {
+        const e = A4.s.findIndex((s) => s.t === "empty");
+        if (e < 0) return;
+        const id = a4Free(e);
+        A4.s[e] = { t: "cpu", dev: null, c: 0, lk: null, cid: id };
+        if (id && CH[id]) loadLazy(CH[id].P);
+        snd(520, 0.06, "square", 0.05);
+        a4Render();
+      }
+      function a4DelCpu(i) {
+        if (i == null)
+          for (let j = 3; j >= 0; j--)
+            if (A4.s[j].t === "cpu") {
+              i = j;
+              break;
+            }
+        if (i == null || A4.s[i].t !== "cpu") return;
+        A4.s[i] = a4Empty();
+        snd(300, 0.06, "square", 0.05);
+        a4Render();
+      }
+      function a4In(dev, k) {
+        if (A4.go || !CH) return;
+        const i = A4.s.findIndex((s) => s.t === "human" && s.dev === dev);
+        if (i < 0) {
+          if (k === "bk" || k === "ca" || k === "cr") return;
+          if (a4Join(dev) < 0) return;
+          snd(520, 0.08, "square", 0.06);
+          a4Render();
+          return;
+        }
+        const s = A4.s[i],
+          av = AVall(),
+          N = av.length;
+        if (k === "ca") return a4AddCpu();
+        if (k === "cr") return a4DelCpu();
+        if (k === "ok") {
+          if (s.lk != null) {
+            if (a4Can()) a4Start();
+            return;
+          }
+          let id = av[s.c];
+          if (id === "?") id = a4Free(i);
+          if (!id || !CH[id] || a4Taken(id, i)) {
+            snd(180, 0.08, "square", 0.05);
+            return;
+          }
+          s.lk = id;
+          loadLazy(CH[id].P);
+          snd(660, 0.08, "square", 0.06);
+          a4Render();
+          return;
+        }
+        if (k === "bk") {
+          if (s.lk != null) s.lk = null;
+          else {
+            A4.s[i] = a4Empty();
+            if (!a4Hum().length) A4.s = [0, 1, 2, 3].map(a4Empty);
+          }
+          snd(300, 0.06, "square", 0.05);
+          a4Render();
+          return;
+        }
+        if (s.lk != null || !N) return;
+        const ix = ((s.c % N) + N) % N,
+          cur = [...grid.querySelectorAll(".card[data-id]")].find(
+            (c) => c.dataset.id === av[ix],
+          ),
+          t = cur && gridNav(cur, k, null);
+        if (t) {
+          const ni = av.indexOf(t.dataset.id);
+          if (ni >= 0) {
+            s.c = ni;
+            snd(440, 0.04, "square", 0.04);
+            a4Render();
+          }
+        }
+      }
+      function a4Click(id) {
+        if (A4.go) return;
+        let i = A4.s.findIndex((s) => s.t === "human" && s.lk == null);
+        if (i < 0) {
+          const dev = ["k1", "k2"].find((d) => !A4.s.some((s) => s.dev === d));
+          if (!dev) return;
+          i = a4Join(dev);
+          if (i < 0) return;
+        }
+        const ix = AVall().indexOf(id);
+        if (ix < 0) return;
+        A4.s[i].c = ix;
+        a4In(A4.s[i].dev, "ok");
+      }
+      function a4Start() {
+        if (!a4Can() || beginBusy) return;
+        const cfg = [];
+        A4.s.forEach((s, i) => {
+          if (s.t === "empty") return;
+          cfg.push({
+            t: s.t === "human" ? "human" : "ai",
+            dev: s.dev,
+            cid: s.t === "human" ? s.lk : s.cid,
+            slot: i,
+          });
+        });
+        A4.go = true;
+        snd(880, 0.2, "square", 0.07);
+        selEl.style.display = "none";
+        pendMode = "ai";
+        beginArena(cfg);
+      }
+      function a4Render() {
+        if (pendMode !== "arena") return;
+        const av = AVall();
+        $("av").innerHTML = A4.s
+          .map((s, i) => {
+            const id =
+              s.t === "human" ? (s.lk != null ? s.lk : av[s.c]) : s.cid;
+            let img = RND_BODY,
+              hs = hsRatio(scOf("e")),
+              nm = "";
+            if (id && id !== "?" && CH[id]) {
+              img = CH[id].P.id.src;
+              hs = hsRatio(CH[id].P.sc);
+              nm =
+                NAMES[id] && NAMES[id].naturalWidth
+                  ? '<img class="apn" alt="' + CH[id].n + '" src="' + NAMES[id].src + '" />'
+                  : '<b class="apn">' + CH[id].n + "</b>";
+            } else if (id === "?") nm = '<b class="apn">Aleatório</b>';
+            const lab =
+              s.t === "empty"
+                ? "Pressione para entrar"
+                : s.t === "cpu"
+                  ? "CPU"
+                  : s.lk != null
+                    ? "Pronto!"
+                    : "Escolhendo…";
+            const ctl =
+              s.t === "empty"
+                ? '<button type="button" class="apadd" data-a="add">+ CPU</button>'
+                : s.t === "cpu"
+                  ? '<div class="apx"><button type="button" data-a="rr" title="Trocar lutador">↻</button><button type="button" data-a="rm" title="Remover">✕</button></div>'
+                  : "";
+            return (
+              '<div class="ap ' + s.t + (s.lk != null ? " rdy" : "") +
+              '" data-i="' + i + '" style="--pc:' + A4C[i] + ";--hs:" + hs + '">' +
+              '<i class="apt">P' + (i + 1) + "</i>" +
+              (s.t === "human"
+                ? '<span class="apd">' + a4DevName(s.dev) + "</span>"
+                : "") +
+              '<img class="aps" alt="" src="' + img + '" />' +
+              nm + '<small class="aph">' + lab + "</small>" + ctl + "</div>"
+            );
+          })
+          .join("");
+        /* fichas na grade */
+        const cards = [...grid.querySelectorAll(".card[data-id]")];
+        cards.forEach((c) =>
+          c.classList.toggle(
+            "tk",
+            !!c.dataset.id && c.dataset.id !== "?" && a4Taken(c.dataset.id, -1),
+          ),
+        );
+        A4.s.forEach((s, i) => {
+          let el = $("acur" + i);
+          if (!el) {
+            el = document.createElement("div");
+            el.id = "acur" + i;
+            el.innerHTML = "<i></i>";
+            grid.appendChild(el);
+          }
+          const card =
+            s.t === "human" &&
+            cards.find((c) => c.dataset.id === (s.lk != null ? s.lk : av[s.c]));
+          if (!card) {
+            el.style.display = "none";
+            return;
+          }
+          const o = i * 3;
+          el.className = "acur s" + i + (s.lk != null ? " lk" : "");
+          el.style.cssText =
+            "--pc:" + A4C[i] + ";left:" + (card.offsetLeft + o) + "px;top:" + (card.offsetTop + o) +
+            "px;width:" + (card.offsetWidth - o * 2) + "px;height:" + (card.offsetHeight - o * 2) + "px";
+          el.firstChild.textContent = "P" + (i + 1) + (s.lk != null ? " ✓" : "");
+        });
+        const can = a4Can(),
+          hs = a4Hum(),
+          h = $("a4hint");
+        $("a4go").disabled = !can;
+        h.className = can ? "ok" : "";
+        h.textContent = can
+          ? "Tudo pronto — Começar (Enter ou Start)"
+          : !hs.length
+            ? "Aperte um botão no teclado ou controle para entrar"
+            : hs.some((s) => s.lk == null)
+              ? "Escolha seu lutador e confirme"
+              : "Adicione ao menos 1 CPU ou outro jogador";
+      }
+      $("av").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-a]");
+        if (!b || A4.go) return;
+        const i = +b.closest(".ap").dataset.i,
+          a = b.dataset.a;
+        if (a === "add") a4AddCpu();
+        else if (a === "rm") a4DelCpu(i);
+        else if (a === "rr") {
+          const s = A4.s[i];
+          s.cid = null;
+          s.cid = a4Free(i);
+          if (s.cid && CH[s.cid]) loadLazy(CH[s.cid].P);
+          snd(440, 0.05, "square", 0.04);
+          a4Render();
+        }
+      });
+      $("a4go").onclick = a4Start;
+      $("a4bk").onclick = () => $("back").click();
+      addEventListener("resize", () => {
+        if (pendMode === "arena" && vis(selEl)) a4Render();
+      });
       document.getElementById("back").onclick = () => {
+        if (pendMode === "arena" && !A4.go) {
+          if (A4.s.some((s) => s.t === "human" && s.lk != null)) {
+            A4.s.forEach((s) => (s.lk = null));
+            a4Render();
+            return;
+          }
+          selEl.style.display = "none";
+          menu.style.display = "flex";
+          return;
+        }
         if (
           pendMode === "2p" &&
           !s2.go &&
@@ -9331,6 +10010,7 @@ updOpt();
       });
       function openLobby(keep, kind) {
         kind = kind === "vs" ? "vs" : "arena";
+        if (kind === "arena" && !IS_TOUCH) return a4Open(keep);
         alReset();
         AL.kind = kind;
         AL.max = kind === "vs" ? 2 : 4;
@@ -9807,12 +10487,12 @@ updOpt();
             const f1 = $("fi"),
               f2 = $("fi2"),
               show = (id) => {
-                if (pendMode === "2p") return;
+                if (pendMode === "2p" || pendMode === "arena") return;
                 fiSet(f1, id, "");
                 fiSet(f2, null);
               };
             const upd = () => {
-              if (pendMode === "2p") return;
+              if (pendMode === "2p" || pendMode === "arena") return;
               const c =
                 grid.querySelector(".card.gf[data-id]") ||
                 grid.querySelector(".card:hover[data-id]");

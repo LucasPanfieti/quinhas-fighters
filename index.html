@@ -1046,6 +1046,25 @@
       .pv.ready img {
         animation: pop 0.4s;
       }
+      .pv.wait > img:first-of-type {
+        opacity: 0.28;
+        filter: grayscale(1) brightness(0.6);
+        animation: none;
+      }
+      .pv.wait b,
+      .pv.wait .nplate {
+        display: none;
+      }
+      .pv.wait small {
+        font-size: clamp(10px, 2.8vw, 13px);
+        opacity: 1;
+        animation: vsblink 1.1s ease-in-out infinite;
+      }
+      @keyframes vsblink {
+        50% {
+          opacity: 0.35;
+        }
+      }
       .pv.ready b {
         text-shadow: 0 0 14px currentColor;
       }
@@ -1583,6 +1602,14 @@
           0 0 0 2px rgba(90, 160, 255, 0.55),
           0 3px 0 #000;
       }
+      #pb.ar {
+        width: 38px;
+        height: 38px;
+        font-size: 12px;
+        border-width: 2.5px;
+        top: max(6px, var(--safe-t));
+        right: max(8px, var(--safe-r));
+      }
       /* celular deitado: pausa abaixo do cronometro (no canto ela cobre o retrato do P2) */
       @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
         #pb {
@@ -1592,6 +1619,17 @@
           top: calc(max(8px, var(--safe-t)) + clamp(44px, 14.5vh, 58px));
           width: clamp(34px, 9vh, 44px);
           height: clamp(34px, 9vh, 44px);
+        }
+      }
+
+      @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+        #pb.ar {
+          left: auto;
+          right: max(8px, var(--safe-r));
+          transform: none;
+          top: max(6px, var(--safe-t));
+          width: 36px;
+          height: 36px;
         }
       }
 
@@ -2227,13 +2265,6 @@
         #help,
         #tip {
           display: none;
-        }
-        #selsub.hint .row {
-          display: none;
-        }
-        #selsub.hint::before {
-          content: "Toque no 1º lutador (P1) e depois no 2º (P2)";
-          font-style: italic;
         }
         #selsub,
         #psub,
@@ -3068,6 +3099,788 @@
           row-gap: 6px;
         }
       }
+
+      /* ---- Arena: seleção clássica com 4 vagas ---- */
+      #av,
+      #a4act,
+      #a4hint {
+        display: none;
+      }
+      #sel[data-m="arena"] > #av {
+        display: flex;
+      }
+      #sel[data-m="arena"] > #a4act {
+        display: flex;
+      }
+      #sel[data-m="arena"] > #a4hint {
+        display: block;
+      }
+      #sel[data-m="arena"] > #back,
+      #sel[data-m="arena"] > #vs,
+      #sel[data-m="arena"] > #fi,
+      #sel[data-m="arena"] > #fi2 {
+        display: none !important;
+      }
+      #sel[data-m="arena"] {
+        justify-content: center;
+      }
+      #sel[data-m="arena"] > #grid {
+        position: relative;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      #stage:has(#sel[data-m="arena"][style*="flex"]) #prompts {
+        display: none;
+      }
+      #grid .card.tk {
+        filter: grayscale(0.9) brightness(0.5);
+      }
+      .acur {
+        position: absolute;
+        z-index: 4;
+        pointer-events: none;
+        box-sizing: border-box;
+        border-radius: 9px;
+        border: 3px solid var(--pc);
+        box-shadow:
+          0 0 0 1px #000,
+          0 0 16px var(--pc);
+        transition:
+          left 0.11s,
+          top 0.11s,
+          width 0.11s,
+          height 0.11s;
+        animation: apul 1s ease-in-out infinite;
+      }
+      .acur.lk {
+        background: color-mix(in srgb, var(--pc) 24%, transparent);
+        animation: none;
+      }
+      .acur i {
+        position: absolute;
+        font:
+          normal 9px "Dela Gothic One",
+          system-ui,
+          sans-serif;
+        padding: 2px 5px;
+        border-radius: 4px;
+        background: var(--pc);
+        color: #101010;
+        white-space: nowrap;
+        line-height: 1;
+      }
+      .acur.s0 i {
+        top: -3px;
+        left: -3px;
+      }
+      .acur.s1 i {
+        top: -3px;
+        right: -3px;
+      }
+      .acur.s2 i {
+        bottom: -3px;
+        left: -3px;
+      }
+      .acur.s3 i {
+        bottom: -3px;
+        right: -3px;
+      }
+      @keyframes apul {
+        50% {
+          box-shadow:
+            0 0 0 1px #000,
+            0 0 26px var(--pc);
+        }
+      }
+      #av {
+        width: min(900px, 94vw);
+        gap: clamp(6px, 1.2vw, 12px);
+        margin-top: clamp(6px, 1.6vh, 14px);
+        align-items: stretch;
+      }
+      .ap {
+        position: relative;
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 3px;
+        padding: 26px 6px 8px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: linear-gradient(
+          180deg,
+          rgba(8, 12, 30, 0.55),
+          rgba(8, 12, 30, 0.88)
+        );
+        border: 2px solid color-mix(in srgb, var(--pc) 38%, transparent);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+        min-height: calc(clamp(52px, 13vh, 118px) + 6.2em);
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+      .ap.rdy {
+        border-color: var(--pc);
+        box-shadow:
+          0 0 0 1px var(--pc),
+          0 0 20px color-mix(in srgb, var(--pc) 55%, transparent);
+      }
+      .ap .apt {
+        position: absolute;
+        top: 0;
+        left: 0;
+        font:
+          normal 11px "Dela Gothic One",
+          system-ui,
+          sans-serif;
+        padding: 3px 10px 3px 8px;
+        border-radius: 0 0 9px 0;
+        background: var(--pc);
+        color: #101010;
+      }
+      .ap .apd {
+        position: absolute;
+        top: 4px;
+        right: 6px;
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.75;
+      }
+      .ap .aps {
+        height: calc(clamp(52px, 13vh, 118px) * var(--hs, 1));
+        width: auto;
+        max-width: none;
+        object-fit: contain;
+        object-position: bottom center;
+        flex: 0 0 auto;
+        filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.65));
+        transition: opacity 0.2s;
+      }
+      .ap.rdy .aps {
+        animation: pop 0.4s;
+      }
+      .ap.empty .aps {
+        opacity: 0.22;
+        filter: grayscale(1) brightness(0.6);
+      }
+      .ap .apn {
+        height: clamp(16px, 3.2vh, 26px);
+        max-width: 96%;
+        width: auto;
+        object-fit: contain;
+      }
+      .ap b.apn {
+        height: auto;
+        font:
+          italic clamp(11px, 1.4vw, 14px) "Dela Gothic One",
+          Impact,
+          sans-serif;
+        text-shadow: 0 2px 0 #000;
+      }
+      .ap .aph {
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-size: clamp(8px, 0.95vw, 10.5px);
+        color: var(--pc);
+        text-align: center;
+      }
+      .ap.empty .aph {
+        animation: vsblink 1.1s ease-in-out infinite;
+      }
+      .ap .apx {
+        position: absolute;
+        top: 3px;
+        right: 4px;
+        display: flex;
+        gap: 3px;
+      }
+      .ap .apx button,
+      .ap .apadd {
+        font: inherit;
+        color: #dff0ff;
+        background: rgba(10, 16, 40, 0.8);
+        border: 1.5px solid rgba(120, 170, 255, 0.5);
+        border-radius: 6px;
+        cursor: pointer;
+        pointer-events: auto;
+      }
+      .ap .apx button {
+        width: 22px;
+        height: 22px;
+        padding: 0;
+        font-size: 13px;
+        line-height: 1;
+      }
+      .ap .apadd {
+        font-size: 11px;
+        padding: 3px 12px;
+        letter-spacing: 0.06em;
+      }
+      .ap .apx button:hover,
+      .ap .apadd:hover {
+        background: rgba(40, 70, 150, 0.9);
+      }
+      #a4hint {
+        margin: clamp(4px, 1vh, 8px) 0 0;
+        min-height: 1.3em;
+        text-align: center;
+        font-size: clamp(11px, 1.5vw, 14px);
+        letter-spacing: 0.04em;
+        color: #cfe3ff;
+        text-shadow: 0 1px 0 #000;
+      }
+      #a4hint.ok {
+        color: #9dff8a;
+      }
+      #a4act {
+        gap: 10px;
+        width: min(520px, 92vw);
+        margin-top: clamp(4px, 1vh, 8px);
+      }
+      #a4act .go {
+        flex: 1;
+        margin: 0;
+      }
+      #a4act .go[disabled] {
+        opacity: 0.45;
+        filter: grayscale(0.6);
+        cursor: not-allowed;
+      }
+      #sel[data-m="arena"] > #grid {
+        flex-shrink: 0;
+      }
+      @media (max-width: 440px) {
+        #hp #ct {
+          font-size: 10px;
+        }
+        #hp #ct th,
+        #hp #ct td {
+          padding: 5px 4px;
+        }
+        #hp #ct td:first-child {
+          max-width: 92px;
+        }
+        #hp #ct kbd {
+          font-size: 9px;
+          padding: 1px 4px;
+        }
+      }
+      @media (max-height: 420px) {
+        #sel[data-m="arena"] {
+          justify-content: safe center;
+          overflow-y: auto;
+        }
+        #a4hint {
+          display: none !important;
+        }
+        .ap {
+          padding: 18px 4px 5px;
+          min-height: 0;
+        }
+        .ap .aps {
+          height: calc(clamp(30px, 13vh, 52px) * var(--hs, 1));
+        }
+        .ap .apd {
+          display: none;
+        }
+        .ap .apn {
+          height: clamp(12px, 4.4vh, 18px);
+        }
+        .ap .apadd {
+          padding: 2px 8px;
+        }
+        #a4act .go {
+          min-height: 34px;
+          padding-block: 4px;
+        }
+        #hptabs .hpt {
+          min-height: 30px;
+        }
+        #hp #ct-wrap {
+          max-height: calc(100dvh - 110px);
+        }
+        #hp {
+          overflow-y: auto;
+          justify-content: safe center;
+        }
+      }
+      @media (max-width: 600px) and (min-height: 520px) {
+        #av {
+          flex-wrap: wrap;
+        }
+        .ap {
+          flex: 1 1 44%;
+          min-height: calc(clamp(48px, 10vh, 90px) + 5.4em);
+        }
+      }
+      @media (max-height: 560px) {
+        .ap {
+          padding-top: 22px;
+          min-height: calc(clamp(40px, 11vh, 70px) + 4.6em);
+        }
+        .ap .aps {
+          height: calc(clamp(40px, 11vh, 70px) * var(--hs, 1));
+        }
+      }
+      @media (max-height: 480px) {
+        #sel[data-m="arena"] > #selsub {
+          display: none;
+        }
+      }
+
+      /* ---- Arena: lobby (aperta pra entrar) ---- */
+      #alobby {
+        position: absolute;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: safe center;
+        gap: var(--ui-gap);
+        text-align: center;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: max(16px, var(--safe-t)) max(16px, var(--safe-r))
+          max(16px, var(--safe-b)) max(16px, var(--safe-l));
+        background:
+          radial-gradient(
+            ellipse at 50% 40%,
+            rgba(10, 30, 100, 0.55),
+            rgba(2, 4, 16, 0.92) 75%
+          ),
+          repeating-linear-gradient(
+            112deg,
+            transparent 0 38px,
+            rgba(120, 180, 255, 0.035) 38px 44px,
+            transparent 44px 90px
+          );
+      }
+      #alobby > * {
+        flex-shrink: 0;
+      }
+      #stage:has(#alobby[style*="flex"]) canvas {
+        object-fit: cover;
+      }
+      #alobby h1 {
+        margin-bottom: 2px;
+      }
+      #alsub {
+        font: 700 clamp(12px, 2.6vw, 16px) / 1.2 var(--ui);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #9fc4ff;
+      }
+      #alslots {
+        display: flex;
+        gap: clamp(8px, 1.6vw, 16px);
+        justify-content: center;
+        flex-wrap: wrap;
+        width: min(1000px, 96vw);
+      }
+      .als {
+        position: relative;
+        width: min(224px, 44vw);
+        min-height: clamp(210px, 38vh, 290px);
+        padding: 10px 10px 12px;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        background: rgba(4, 7, 22, 0.82);
+        box-shadow:
+          0 0 0 2px rgba(90, 160, 255, 0.45),
+          0 8px 18px rgba(0, 0, 0, 0.6);
+        --c: #6fc2ff;
+      }
+      .als.human,
+      .als.ai {
+        box-shadow:
+          0 0 0 3px var(--c),
+          0 8px 18px rgba(0, 0, 0, 0.6);
+      }
+      .als.rdy {
+        box-shadow:
+          0 0 0 3px #fff,
+          0 0 26px var(--c),
+          0 8px 18px rgba(0, 0, 0, 0.6);
+      }
+      .als .alp {
+        font: italic 900 14px/1 "Dela Gothic One", Impact, sans-serif;
+        letter-spacing: 0.06em;
+        color: var(--c);
+        text-shadow: 0 2px 0 #000;
+      }
+      .als .alf {
+        width: min(108px, 22vw);
+        aspect-ratio: 3/4;
+        border-radius: 6px;
+        background: #0a0a14 center/cover no-repeat;
+        box-shadow: 0 0 0 2px #000;
+      }
+      .als.empty .alf {
+        opacity: 0.18;
+        filter: grayscale(1);
+      }
+      .als .aln {
+        font: italic 700 clamp(13px, 2.4vw, 17px) / 1.1 var(--ui);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-shadow: 0 2px 0 #000;
+      }
+      .als .ald {
+        font: 700 12px/1.1 var(--ui);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #dff0ff;
+      }
+      .als .alh {
+        font: 600 11px/1.25 var(--ui);
+        color: #9fc4ff;
+        min-height: 2.5em;
+      }
+      .als .alr {
+        font: italic 900 13px/1 "Dela Gothic One", Impact, sans-serif;
+        color: #7dff9a;
+        letter-spacing: 0.1em;
+      }
+      .als .alb {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        margin-top: auto;
+      }
+      .als .alb button {
+        font: 700 12px/1 var(--ui);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #fff;
+        background: rgba(47, 123, 255, 0.35);
+        border: 0;
+        border-radius: 3px;
+        padding: 7px 10px;
+        cursor: pointer;
+      }
+      .als .alb button:hover {
+        background: rgba(47, 123, 255, 0.7);
+      }
+      #alhint {
+        font: 600 clamp(12px, 2.4vw, 15px) / 1.3 var(--ui);
+        color: #cfe3ff;
+        max-width: min(720px, 94vw);
+      }
+      #alstart[disabled] {
+        opacity: 0.45;
+        pointer-events: none;
+      }
+      #menu.res #bai,
+      #menu.res #b2p,
+      #menu.res #bar,
+      #menu.res #bop,
+      #menu.res #bhp,
+      #menu.res #btt {
+        display: none !important;
+      }
+      #menu.res #sub {
+        white-space: pre-line;
+        max-width: min(92vw, 720px);
+      }
+      /* menus: só o necessário (sem Controles de teclado no celular; sem "título" na pausa) */
+      @media (hover: none) and (pointer: coarse) {
+        #bhp,
+        #php {
+          display: none !important;
+        }
+      }
+      #ptit {
+        display: none !important;
+      }
+      #hp #help,
+      #hp .hnote,
+      #stage:has(#hp[style*="flex"]) #prompts {
+        display: none !important;
+      }
+      #sel[data-cpu] .card[data-l2]::after {
+        content: "CPU ✓";
+      }
+      #hptabs {
+        display: flex;
+        gap: 8px;
+        width: min(360px, 92vw);
+      }
+      #hptabs .hpt {
+        flex: 1;
+        margin: 0;
+        min-height: 38px;
+        padding: 6px 10px;
+        font-size: clamp(13px, 2.4vw, 16px);
+        opacity: 0.7;
+      }
+      #hptabs .hpt.on {
+        opacity: 1;
+        background: linear-gradient(180deg, #2f6bff, #1a3fb3);
+        box-shadow: 0 0 0 2px #7aa7ff;
+      }
+      #hp[data-t="vs"] #ct tr[data-m="ar"],
+      #hp[data-t="ar"] #ct tr[data-m="vs"] {
+        display: none;
+      }
+      #hp .hnote {
+        font: 600 clamp(12px, 2.4vw, 15px) / 1.35 var(--ui);
+        color: #cfe3ff;
+        text-align: center;
+        max-width: min(640px, 94vw);
+        margin: 0;
+      }
+      /* telas baixas (celular deitado / janela pequena): botões e logo mais compactos */
+      @media (max-height: 480px) {
+        #menu .go,
+        #pause .go {
+          min-height: clamp(34px, 10.4vh, 44px);
+          font-size: clamp(13px, 4.2vh, 17px);
+        }
+        #menu {
+          gap: clamp(4px, 1.3vh, 8px);
+        }
+        #menu .mlogo {
+          max-height: min(20vh, 120px);
+        }
+        #menu #sub {
+          margin: 0;
+          font-size: clamp(11px, 3.2vh, 14px);
+        }
+        #menu .winrow .nplate {
+          height: clamp(30px, 9vh, 48px);
+        }
+        #alslots {
+          flex-wrap: nowrap;
+        }
+        .als {
+          width: calc(25% - 8px);
+          min-height: 0;
+          padding: 6px 6px 8px;
+          gap: 4px;
+        }
+        .als .alf {
+          width: min(72px, 21vh);
+        }
+        .als .alh {
+          min-height: 0;
+          font-size: 10px;
+        }
+        .als .alb button {
+          padding: 5px 8px;
+        }
+        #alobby #alact {
+          flex-direction: row;
+          gap: 12px;
+        }
+        #alobby #alact .go {
+          width: auto;
+          padding: 0 clamp(22px, 5vw, 36px);
+        }
+        #ct td,
+        #ct th {
+          padding-top: 3px;
+          padding-bottom: 3px;
+        }
+        #hp {
+          gap: 6px;
+        }
+      }
+      #b2p {
+        display: none !important;
+      }
+      #amv,
+      #alobby.vs #amcrow {
+        display: none;
+      }
+      #alobby.vs #amv {
+        display: flex;
+      }
+      .amchip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 12px 4px 4px;
+        border-radius: 999px;
+        border: 2px solid rgba(90, 160, 255, 0.5);
+        background: rgba(8, 16, 48, 0.78);
+        color: #fff;
+        font: italic 900 clamp(12px, 3.6vh, 16px) / 1 "Dela Gothic One", Impact, sans-serif;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        text-shadow: 0 2px 0 #000;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+      .amchip i {
+        width: clamp(26px, 8vh, 38px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: #0a0a14 center top / cover no-repeat;
+        box-shadow: 0 0 0 2px #000;
+      }
+      .amchip.act {
+        border-color: #fff;
+        box-shadow: 0 0 16px rgba(255, 150, 50, 0.8);
+        background: rgba(60, 30, 8, 0.85);
+      }
+      #amg button.op {
+        box-shadow:
+          0 0 0 3px #ff6b6b,
+          0 0 14px rgba(255, 90, 90, 0.8);
+      }
+      #alact {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--ui-gap);
+      }
+      #almob {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: clamp(6px, 1.6vh, 12px);
+        width: min(640px, 96vw);
+      }
+      #alobby.mob #almob {
+        display: flex;
+      }
+      #alobby.mob #alslots,
+      #alobby.mob #alhint,
+      #alobby.mob #alsub {
+        display: none;
+      }
+      #alobby.mob {
+        gap: clamp(6px, 1.8vh, 14px);
+      }
+      #alobby.mob h1 {
+        font-size: clamp(22px, 7vh, 40px);
+        margin: 0;
+      }
+      #alobby.mob #alact {
+        flex-direction: row;
+        gap: 12px;
+      }
+      #alobby.mob #alact .go {
+        min-width: 0;
+        width: auto;
+        padding: 10px clamp(18px, 5vw, 34px);
+        font-size: clamp(14px, 4vh, 19px);
+      }
+      .amrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .aml {
+        font: 700 clamp(11px, 3.2vh, 14px) / 1 var(--ui);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #9fc4ff;
+      }
+      #amc {
+        display: flex;
+        gap: 8px;
+      }
+      #amc button,
+      #amre {
+        font: italic 900 clamp(15px, 4.6vh, 22px) / 1 "Dela Gothic One", Impact,
+          sans-serif;
+        color: #fff;
+        min-width: clamp(44px, 11vh, 58px);
+        height: clamp(34px, 9vh, 46px);
+        padding: 0 10px;
+        border-radius: 8px;
+        border: 2px solid rgba(90, 160, 255, 0.55);
+        background: rgba(8, 16, 48, 0.75);
+        text-shadow: 0 2px 0 #000;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+      #amc button.on {
+        background: linear-gradient(#ffb04a, #ff7a1a);
+        border-color: #fff;
+        box-shadow: 0 0 16px rgba(255, 150, 50, 0.7);
+      }
+      #amre {
+        font-size: clamp(11px, 3vh, 14px);
+        letter-spacing: 0.06em;
+      }
+      #amg {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: clamp(5px, 1.4vh, 9px);
+        width: min(720px, 96vw);
+      }
+      #amg button {
+        --w: min(clamp(40px, 12.5vh, 66px), 12.4vw);
+        width: var(--w);
+        aspect-ratio: 3 / 4;
+        border-radius: 8px;
+        border: 2px solid #000;
+        background: #0a0a14 center top / cover no-repeat;
+        box-shadow: 0 0 0 2px rgba(90, 160, 255, 0.4);
+        cursor: pointer;
+        padding: 0;
+        touch-action: manipulation;
+        transition: transform 0.12s;
+      }
+      #amg button.on {
+        box-shadow:
+          0 0 0 3px #fff,
+          0 0 18px var(--c, #6fc2ff);
+        transform: translateY(-2px) scale(1.06);
+      }
+      #amn {
+        font: italic 900 clamp(15px, 4.6vh, 22px) / 1 "Dela Gothic One", Impact,
+          sans-serif;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        text-shadow: 0 2px 0 #000;
+        min-width: 9em;
+      }
+      #amo {
+        display: flex;
+        gap: 6px;
+      }
+      #amo i {
+        width: clamp(26px, 7vh, 38px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        background: #0a0a14 center 12% / cover no-repeat;
+        box-shadow: 0 0 0 2px #000;
+      }
+      /* Arena no celular: botão de pulo (substitui o ✕ "em breve") */
+      #pad .b .ia {
+        display: none;
+      }
+      #pad.ar .b.soon {
+        opacity: 1;
+        pointer-events: auto;
+        box-shadow:
+          0 0 0 1.5px rgba(255, 224, 138, 0.8),
+          0 3px 0 rgba(0, 0, 0, 0.35),
+          0 5px 12px rgba(0, 0, 0, 0.3);
+      }
+      #pad.ar .b.soon .ix {
+        display: none;
+      }
+      #pad.ar .b.soon .ia {
+        display: block;
+      }
     </style>
   </head>
   <body>
@@ -3091,7 +3904,7 @@
             <img alt="Quinhas Ball Fighters" src="assets/title.webp?v=5" />
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
-          <p id="tver">v1.3.16</p>
+          <p id="tver">v1.4.0</p>
         </div>
         <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
         <div id="prompts">
@@ -3113,13 +3926,16 @@
           <h1 id="h1"></h1>
           <p id="sub"></p>
           <button class="go" id="brv" style="display: none">Revanche</button>
-          <button class="go" id="bai">Um jogador</button>
+          <button class="go" id="bai">Versus · 1-2 jogadores</button>
           <button class="go alt" id="b2p">Versus · 2 jogadores</button>
+          <button class="go alt" id="bar">Arena · 2-4 jogadores</button>
    <button class="go alt" id="bhp">Controles</button>
    <button class="go alt" id="bop">Áudio</button>
+          <button class="go alt" id="bsl" style="display: none">Trocar lutadores</button>
+          <button class="go alt" id="bmm" style="display: none">Menu principal</button>
           <button class="go alt" id="btt">Voltar ao título</button>
    <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">v1.3.16</p>
+          <p id="ver">v1.4.0</p>
   </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>
@@ -3144,6 +3960,12 @@
               ><small></small>
             </div>
           </div>
+          <div id="av"></div>
+          <p id="a4hint"></p>
+          <div id="a4act">
+            <button class="go" id="a4go" type="button">Começar</button>
+            <button class="go alt" id="a4bk" type="button">Voltar</button>
+          </div>
           <button class="go alt" id="back">Voltar</button>
         </div>
         <div id="stg">
@@ -3167,8 +3989,39 @@
           </div>
           <button class="go alt" id="stback">Voltar</button>
         </div>
+        <div id="alobby">
+          <h1 id="alh1">Arena</h1>
+          <p id="alsub">Ilhas do Céu · até 4 lutadores · 3 vidas</p>
+          <div id="alslots"></div>
+          <p id="alhint"></p>
+          <div id="almob">
+            <div class="amrow" id="amv">
+              <button type="button" class="amchip" data-w="0"><i></i><span>Você</span></button>
+              <span class="aml">vs</span>
+              <button type="button" class="amchip" data-w="1"><i></i><span>CPU</span></button>
+            </div>
+            <div class="amrow" id="amcrow">
+              <span class="aml">Inimigos</span>
+              <div id="amc">
+                <button type="button" data-n="1">1</button>
+                <button type="button" data-n="2">2</button>
+                <button type="button" data-n="3">3</button>
+              </div>
+            </div>
+            <div class="amrow"><b id="amn"></b></div>
+            <div id="amg"></div>
+          </div>
+          <div id="alact">
+            <button class="go" id="alstart" type="button">Começar</button>
+            <button class="go alt" id="alback" type="button">Voltar</button>
+          </div>
+        </div>
         <div id="hp">
           <h1>Controles</h1>
+          <div id="hptabs">
+            <button type="button" class="go alt hpt on" data-t="vs">Versus</button>
+            <button type="button" class="go alt hpt" data-t="ar">Arena</button>
+          </div>
           <div id="ct-wrap">
             <table id="ct">
               <tr>
@@ -3176,10 +4029,25 @@
                 <th>P1</th>
                 <th>P2</th>
               </tr>
-              <tr>
+              <tr data-m="vs">
                 <td>Movimento</td>
                 <td data-ct="move" data-p="0"></td>
                 <td data-ct="move" data-p="1"></td>
+              </tr>
+              <tr data-m="ar">
+                <td>Movimento</td>
+                <td data-ct="amove" data-p="0"></td>
+                <td data-ct="amove" data-p="1"></td>
+              </tr>
+              <tr data-m="ar">
+                <td>Pular <span class="soon">2× = pulo duplo</span></td>
+                <td data-ct="ajump" data-p="0"></td>
+                <td data-ct="ajump" data-p="1"></td>
+              </tr>
+              <tr data-m="ar">
+                <td>Descer da plataforma</td>
+                <td data-ct="adrop" data-p="0"></td>
+                <td data-ct="adrop" data-p="1"></td>
               </tr>
               <tr>
                 <td>Soco</td>
@@ -3201,7 +4069,7 @@
                 <td data-ct="block" data-p="0"></td>
                 <td data-ct="block" data-p="1"></td>
               </tr>
-              <tr>
+              <tr data-m="vs">
                 <td>Especial <span class="soon">Em breve</span></td>
                 <td data-ct="special" data-p="0"></td>
                 <td data-ct="special" data-p="1"></td>
@@ -3217,6 +4085,7 @@
             Celular: analógico à esquerda, ações à direita. Menus: Enter
             confirma, Esc volta.
           </p>
+          <p class="hnote" id="hnote"></p>
           <button class="go alt" id="hback">Voltar</button>
         </div>
         <div id="op">
@@ -3321,10 +4190,20 @@
             <button
               type="button"
               class="b soon"
-              disabled
-              aria-label="Especial (em breve)"
+              data-k="vJ"
+              aria-label="Pular (Arena)"
             >
-              <svg class="psi" viewBox="0 0 24 24" aria-hidden="true">
+              <svg class="psi ia" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 18V6M6.5 11.5L12 6l5.5 5.5"
+                  fill="none"
+                  stroke="#ffe08a"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <svg class="psi ix" viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   d="M7.5 7.5l9 9M16.5 7.5l-9 9"
                   fill="none"
@@ -3912,7 +4791,7 @@
           b: B(5),
         };
       };
-      let s2 = { c: [0, 0], lk: [null, null], go: false },
+      let s2 = { c: [0, 0], lk: [null, null], go: false, dv: [null, null] },
         pm2 = [null, null],
         s2StageT = 0;
       const clearS2Stage = () => {
@@ -3931,12 +4810,39 @@
       };
       const RND_FACE = "assets/faces/rnd.webp?v=1",
         RND_BODY = "assets/faces/rnd_body.webp?v=1"; /* silhueta Eslepe */
+      /* rótulo do slot no Versus; null = ninguém entrou ("Pressione para entrar") */
+      const vsLbl = (n) => {
+        const st = s2.lk[n] != null ? " · pronto!" : " · escolhendo…";
+        if (!s2.vs) return "P" + (n + 1) + st;
+        if (s2.dv[n] != null || (!IS_TOUCH && n === 0 && s2.lk[0] != null))
+          return "P" + (n + 1) + st;
+        if (IS_TOUCH) return (n ? "CPU" : "Você") + st;
+        if (n === 1 && s2.lk[0] != null) return "CPU" + st;
+        return null;
+      };
+      /* borda de seleção só para quem já entrou (nada pré-selecionado) */
+      const s2cur = (n) =>
+        !s2.vs ||
+        s2.dv[n] != null ||
+        (n === 1 && s2.lk[0] != null && !IS_TOUCH);
       function s2render() {
         const av = AVall();
+        selEl.toggleAttribute("data-cpu", !!s2.vs && s2.dv[1] == null);
+        if (s2.vs && IS_TOUCH) {
+          const el = $("selsub");
+          el.className = "";
+          el.textContent =
+            s2.lk[0] == null
+              ? "Toque no seu lutador"
+              : "Agora toque no adversário (CPU)";
+        }
         grid.querySelectorAll(".card[data-id]").forEach((c) => {
           const i = av.indexOf(c.dataset.id);
           [0, 1].forEach((n) => {
-            c.toggleAttribute("data-c" + (n + 1), s2.c[n] === i);
+            c.toggleAttribute(
+              "data-c" + (n + 1),
+              s2.c[n] === i && s2cur(n),
+            );
             c.toggleAttribute(
               "data-l" + (n + 1),
               s2.lk[n] != null && s2.lk[n] === c.dataset.id,
@@ -3962,9 +4868,16 @@
             pv.classList.remove("sil");
             setNamePlate(pv, id);
           }
+          const lb = vsLbl(n);
           pv.querySelector("small").textContent =
-            (n ? "P2" : "P1") +
-            (s2.lk[n] != null ? " · pronto!" : " · escolhendo…");
+            lb == null ? "Pressione para entrar" : lb;
+          pv.classList.toggle("wait", lb == null);
+          if (lb == null) {
+            if (im.getAttribute("src") !== RND_BODY) im.src = RND_BODY;
+            pv.style.setProperty("--hs", hsRatio(scOf("e")));
+            pv.classList.add("sil");
+            setNamePlate(pv, "?");
+          }
           pv.classList.toggle("ready", s2.lk[n] != null);
         });
         if (typeof fiSet === "function")
@@ -3972,10 +4885,9 @@
             fiSet(
               $(n ? "fi2" : "fi"),
               av[s2.c[n]],
-              "P" +
-                (n + 1) +
-                " · " +
-                (s2.lk[n] != null ? "pronto" : "escolhendo"),
+              vsLbl(n) == null
+                ? "Pressione para entrar"
+                : vsLbl(n).replace("!", ""),
               s2.lk[n] != null,
             ),
           );
@@ -4002,7 +4914,11 @@
             s2StageT = setTimeout(() => {
               s2StageT = 0;
               if (!a || !b || !CH[a] || !CH[b]) return;
-              askStage("2p", a, b);
+              VDEV[0] = s2.vs ? s2.dv[0] : null;
+              VDEV[1] = s2.vs ? s2.dv[1] : null;
+              const cpu = s2.vs && s2.dv[1] == null;
+              askStage(cpu ? "ai" : "2p", a, b);
+              if (stgSel) stgSel.vs = !!s2.vs;
             }, 900);
           }
           return;
@@ -4030,6 +4946,36 @@
           }
           return;
         }
+      }
+      /* Versus: entrada por dispositivo ("k1","k2","p0".."p3"). 1º botão = entrar. */
+      function vsIn(dev, k) {
+        if (s2.go) return;
+        let n = s2.dv.indexOf(dev);
+        if (n < 0) {
+          if (k === "bk") return;
+          n = s2.dv[0] == null ? 0 : s2.dv[1] == null ? 1 : -1;
+          if (n < 0) return;
+          if (n === 1 && s2.lk[1] != null) return;
+          s2.dv[n] = dev;
+          snd(520, 0.08, "square", 0.06);
+          s2render();
+          return;
+        }
+        /* P1 já confirmou e ninguém mais entrou: ele escolhe o adversário (CPU) */
+        if (n === 0 && s2.lk[0] != null && s2.dv[1] == null) {
+          if (k === "bk") {
+            s2.lk[0] = null;
+            s2render();
+          } else s2in(1, k);
+          return;
+        }
+        if (k === "bk" && s2.lk[n] == null) {
+          s2.dv[n] = null;
+          snd(300, 0.06, "square", 0.05);
+          s2render();
+          return;
+        }
+        s2in(n, k);
       }
       function s2click(id) {
         if (s2.go) return;
@@ -4120,6 +5066,9 @@
           "<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>",
           "<kbd>▲</kbd><kbd>◀</kbd><kbd>▼</kbd><kbd>▶</kbd>",
         ],
+        amove: ["<kbd>A</kbd><kbd>D</kbd>", "<kbd>◀</kbd><kbd>▶</kbd>"],
+        ajump: ["<kbd>K</kbd>", "<kbd>Num 5</kbd>"],
+        adrop: ["<kbd>S</kbd>", "<kbd>▼</kbd>"],
         punch: ["<kbd>J</kbd>", "<kbd>Num 4</kbd>"],
         kick: ["<kbd>I</kbd>", "<kbd>Num 8</kbd>"],
         hadouken: ["<kbd>L</kbd>", "<kbd>Num 6</kbd>"],
@@ -4190,7 +5139,17 @@
         document.querySelectorAll("#ct td[data-ct]").forEach((td) => {
           const a = td.dataset.ct,
             i = +td.dataset.p;
-          td.innerHTML = padOn ? gI(a, kind(i)) : KB[a] ? KB[a][i] : "";
+          td.innerHTML = padOn
+            ? a === "amove"
+              ? gI("move", kind(i))
+              : a === "ajump"
+                ? gI("special", kind(i))
+                : a === "adrop"
+                  ? '<span class="gi">' + DPAD + "</span><kbd>↓</kbd>"
+                  : gI(a, kind(i))
+            : KB[a]
+              ? KB[a][i]
+              : "";
         });
       }
       function hintTick() {
@@ -4265,11 +5224,21 @@
       const vis = (e) => getComputedStyle(e).display !== "none";
       const LS = {
         menu: () =>
-          [$("brv"), $("bai"), $("b2p"), $("bhp"), $("bop"), $("btt")].filter(
+          [
+            $("brv"),
+            $("bai"),
+            $("b2p"),
+            $("bar"),
+            $("bhp"),
+            $("bop"),
+            $("bsl"),
+            $("bmm"),
+            $("btt"),
+          ].filter(
             (e) => vis(e),
           ),
         sel: () => [...grid.querySelectorAll(".card:not(.lock)"), $("back")],
-        help: () => [$("hback")],
+        help: () => [...document.querySelectorAll("#hptabs .hpt"), $("hback")],
         opt: () => [$("omrow"), $("osrow"), $("omu"), $("oback")],
         pause: () => [...$("pause").querySelectorAll(".go")],
         stage: () => [...$("stg").querySelectorAll(".stc"), $("stback")],
@@ -4282,11 +5251,21 @@
         if (vis($("op"))) return "opt";
         if (vis($("stg"))) return "stage";
         if (vis(selEl)) return "sel";
+        if (vis($("alobby"))) return "alobby";
         if (vis(menu)) return "menu";
-        return st === "intro" || st === "fight" || st === "end" ? "game" : "";
+        return st === "intro" ||
+          st === "fight" ||
+          st === "end" ||
+          st === "arena"
+          ? "game"
+          : "";
       }
       function setPause(on) {
-        if (on && !(st === "intro" || st === "fight" || st === "end")) return;
+        if (
+          on &&
+          !(st === "intro" || st === "fight" || st === "end" || st === "arena")
+        )
+          return;
         if (paused !== on) {
           sfxUI("pause");
           try {
@@ -4300,8 +5279,14 @@
             b = p2.cid && NAMES[p2.cid],
             pp1 = $("pp1"),
             pp2 = $("pp2"),
-            prd = $("prd");
-          if (a && a.naturalWidth && b && b.naturalWidth) {
+            prd = $("prd"),
+            pxs = $("psub").querySelector(".px");
+          if (pxs) pxs.style.display = st === "arena" ? "none" : "";
+          if (st === "arena") {
+            pp1.classList.add("hide");
+            pp2.classList.add("hide");
+            prd.textContent = "Arena · Ilhas do Céu";
+          } else if (a && a.naturalWidth && b && b.naturalWidth) {
             pp1.src = a.src;
             pp1.alt = p1.n;
             pp1.classList.remove("hide");
@@ -4333,6 +5318,8 @@
         $("hp").style.display = "none";
         p1.reset();
         p2.reset();
+        fighters = [];
+        PJ.length = 0;
         fx = [];
         ps = [];
         slow = 0;
@@ -4340,14 +5327,35 @@
         st = "menu";
       }
       let helpFrom = "menu";
+      const HNOTE = {
+        vs: "Versus: ↑ pula. No celular, analógico à esquerda e ações à direita.",
+        ar: "Arena: ↑ não faz nada — pule com o botão de pulo (✕ / A no controle) e aperte de novo no ar para o pulo duplo. No celular, use o botão de pulo.",
+      };
+      function hpTab(t) {
+        $("hp").dataset.t = t;
+        document
+          .querySelectorAll("#hptabs .hpt")
+          .forEach((b) => b.classList.toggle("on", b.dataset.t === t));
+        $("hnote").textContent = HNOTE[t];
+      }
+      document
+        .querySelectorAll("#hptabs .hpt")
+        .forEach((b) => (b.onclick = () => hpTab(b.dataset.t)));
+      hpTab("vs");
       $("pb").onclick = () => setPause(true);
       $("pcont").onclick = () => setPause(false);
       $("php").onclick = () => {
         helpFrom = "pause";
+        hpTab(st === "arena" ? "ar" : "vs");
         $("pause").style.display = "none";
         $("hp").style.display = "flex";
       };
       $("prest").onclick = () => {
+        if (st === "arena" && LASTA) {
+          setPause(false);
+          beginArena(LASTA);
+          return;
+        }
         setPause(false);
         p1.wins = 0;
         p2.wins = 0;
@@ -4356,8 +5364,10 @@
         startRound();
       };
       $("psel").onclick = () => {
+        const wasArena = st === "arena";
         leaveFight();
-        openSel(mode);
+        if (wasArena) openLobby(true, "arena");
+        else openSel("vs");
       };
       $("pmenu").onclick = () => {
         leaveFight();
@@ -4369,6 +5379,7 @@
       };
       $("bhp").onclick = () => {
         helpFrom = "menu";
+        hpTab("vs");
         menu.style.display = "none";
         $("hp").style.display = "flex";
       };
@@ -4378,8 +5389,15 @@
         else menu.style.display = "flex";
       };
       $("btt").onclick = toTitle;
+      $("bmm").onclick = () => showMenu("Quinhas Ball Fighters", "");
+      $("bsl").onclick = () => {
+        menu.style.display = "none";
+        if (mode === "arena") openLobby(true, "arena");
+        else openSel("vs");
+      };
       $("brv").onclick = () => {
-        if (LASTM) begin(...LASTM);
+        if (mode === "arena" && LASTA) beginArena(LASTA);
+        else if (LASTM) begin(...LASTM);
       };
       $("bop").onclick = () => {
         menu.style.display = "none";
@@ -4501,7 +5519,11 @@
         document
           .querySelectorAll(".gf")
           .forEach((e) => e.classList.remove("gf"));
-        if (kb && LS[s] && !(s === "sel" && pendMode === "2p")) {
+        if (
+          kb &&
+          LS[s] &&
+          !(s === "sel" && (pendMode === "2p" || pendMode === "arena"))
+        ) {
           const L = LS[s]();
           if (!L.length) return;
           mi = Math.max(0, Math.min(mi, L.length - 1));
@@ -4528,11 +5550,62 @@
  aSync(s);
 }
       function padMenu() {
-        if (p1 && scr() === "sel" && pendMode === "2p") {
-          for (let i = 0; i < 2; i++) {
-            const g = gpad(i);
+        if (p1 && scr() === "sel" && pendMode === "arena") {
+          for (let i = 0; i < 4; i++) {
+            const g = rawPad(i);
             if (!g) {
               pm2[i] = null;
+              const si = A4.s.findIndex(
+                (s) => s.t === "human" && s.dev === "p" + i,
+              );
+              if (si >= 0 && !A4.go) {
+                A4.s[si] = a4Empty();
+                a4Render();
+              }
+              continue;
+            }
+            const B = (j) => !!(g.buttons[j] && g.buttons[j].pressed),
+              A = g.axes,
+              d = {
+                l: B(14) || A[0] < -0.5,
+                r: B(15) || A[0] > 0.5,
+                u: B(12) || A[1] < -0.5,
+                d: B(13) || A[1] > 0.5,
+                ok: B(0),
+                bk: B(1),
+                ca: B(3),
+                cr: B(2),
+                st: B(9),
+              };
+            if (!pm2[i]) {
+              pm2[i] = d;
+              continue;
+            }
+            for (const k of ["l", "r", "u", "d", "ok", "bk", "ca", "cr", "st"])
+              if (d[k] && !pm2[i][k]) {
+                if (k === "st") {
+                  if (a4Can()) a4Start();
+                } else a4In("p" + i, k);
+              }
+            pm2[i] = d;
+          }
+          pm = {};
+          uiTick();
+          return;
+        }
+        if (p1 && scr() === "sel" && pendMode === "2p") {
+          for (let i = 0; i < (s2.vs ? 4 : 2); i++) {
+            const g = s2.vs ? rawPad(i) : gpad(i);
+            if (!g) {
+              pm2[i] = null;
+              if (s2.vs && !s2.go) {
+                const j = s2.dv.indexOf("p" + i);
+                if (j >= 0) {
+                  s2.dv[j] = null;
+                  s2.lk[j] = null;
+                  s2render();
+                }
+              }
               continue;
             }
             const B = (j) => !!(g.buttons[j] && g.buttons[j].pressed),
@@ -4550,14 +5623,17 @@
               continue;
             }
             for (const k of ["l", "r", "u", "d", "ok", "bk"])
-              if (d[k] && !pm2[i][k]) s2in(i, k, true);
+              if (d[k] && !pm2[i][k]) {
+                if (s2.vs) vsIn("p" + i, k);
+                else s2in(i, k, true);
+              }
             pm2[i] = d;
           }
           pm = Object.assign({}, pm2[0] || {});
  uiTick();
           return;
         }
-        const gs = [gpad(0), gpad(1)].filter(Boolean);
+        const gs = [gpad(0), gpad(1), gpad(2), gpad(3)].filter(Boolean);
         if (gs.length) {
           const B = (n) =>
               gs.some((g) => !!(g.buttons[n] && g.buttons[n].pressed)),
@@ -4597,6 +5673,48 @@
           aVol();
           updOpt();
         }
+        if (p1 && scr() === "sel" && pendMode === "arena") {
+          const M1 = {
+              KeyA: "l",
+              KeyD: "r",
+              KeyW: "u",
+              KeyS: "d",
+              KeyJ: "ok",
+              KeyK: "bk",
+              KeyI: "ca",
+              KeyL: "cr",
+            }[e.code],
+            M2 = {
+              ArrowLeft: "l",
+              ArrowRight: "r",
+              ArrowUp: "u",
+              ArrowDown: "d",
+              Numpad4: "ok",
+              Numpad5: "bk",
+              Numpad8: "ca",
+              Numpad6: "cr",
+            }[e.code],
+            en =
+              e.code === "Enter" ||
+              e.code === "Space" ||
+              e.code === "NumpadEnter",
+            es = e.code === "Escape" || e.code === "Backspace",
+            mm = M1 || M2;
+          if (mm || en || es) {
+            if (e.repeat && (en || es || !"lrud".includes(mm))) return;
+            if (M1) a4In("k1", M1);
+            else if (M2) a4In("k2", M2);
+            else if (en) {
+              if (a4Can()) a4Start();
+              else {
+                const j = A4.s.find((s) => s.t === "human" && s.lk == null);
+                if (j) a4In(j.dev, "ok");
+                else if (!a4Hum().length) a4In("k1", "ok");
+              }
+            } else $("back").click();
+            return;
+          }
+        }
         if (p1 && scr() === "sel" && pendMode === "2p") {
           const m1 = {
               KeyA: "l",
@@ -4630,7 +5748,16 @@
                 es)
             )
               return;
-            if (m1) s2in(0, m1);
+            if (s2.vs) {
+              if (m1) vsIn("k1", m1);
+              else if (m2) vsIn("k2", m2);
+              else if (en) {
+                const j = [0, 1].find(
+                  (q) => s2.dv[q] != null && s2.lk[q] == null,
+                );
+                vsIn(j != null ? s2.dv[j] : s2.dv[0] || "k1", "ok");
+              } else document.getElementById("back").click();
+            } else if (m1) s2in(0, m1);
             else if (m2) s2in(1, m2);
             else if (en) s2in(s2.lk[0] == null ? 0 : 1, "ok");
             else document.getElementById("back").click();
@@ -4668,7 +5795,9 @@
       document.addEventListener("visibilitychange", () => {
         if (document.hidden && scr() === "game") setPause(true);
       });
+      const VDEV = [null, null]; /* dispositivos do Versus escolhidos no lobby */
       const in1 = () => {
+        if (VDEV[0]) return devIn(VDEV[0], true);
         const g = gin(gpad(0));
         return {
           l: keys.KeyA || keys.vL || g.l,
@@ -4682,6 +5811,7 @@
         };
       };
       const in2 = () => {
+        if (VDEV[1]) return devIn(VDEV[1], true);
         const g = gin(gpad(1));
         return {
           l: keys.ArrowLeft || g.l,
@@ -5627,7 +6757,7 @@ updOpt();
           } else {
             p.vy += 0.35;
             p.vx *= 0.97;
-            if (p.y > G + 2) {
+            if (p.y > G + 2 && st !== "arena") {
               p.y = G + 2;
               p.vy *= -0.4;
             }
@@ -5952,7 +7082,8 @@ updOpt();
           const P = this.P,
             t = this.t,
             a = this.atk && ATK[this.atk],
-            gr = this.y >= 0;
+            gr = this.ar ? this.on : this.y >= 0,
+            ak = this.ak || 1;
           let pz = "id",
             tx = 0,
             ty = 0,
@@ -6098,7 +7229,11 @@ updOpt();
               sy = 1 - l * 0.16;
               sx = 1 + l * 0.12;
             }
-            if (st === "end" && P.vi && (this === p1 ? p2 : p1).ko) pz = "vi";
+            if (
+              (st === "end" && P.vi && (this === p1 ? p2 : p1).ko) ||
+              (this.vic && P.vi)
+            )
+              pz = "vi";
             else if (this.cr) {
               if (P.cr) pz = "cr";
               else {
@@ -6158,9 +7293,9 @@ updOpt();
               const reach = (m.w - m.ax) * sc,
                 /* soco em pé: alguns sprites tem o braço abaixo do hy */
                 y0 =
-                  -a.hy +
+                  -a.hy * ak +
                   (this.atk === "p"
-                    ? { "Quinhas-Kun": 28, "Luan-Zin": 28 }[this.n] || 0
+                    ? ({ "Quinhas-Kun": 28, "Luan-Zin": 28 }[this.n] || 0) * ak
                     : 0),
                 x0 = Math.max(18, reach * 0.22),
                 x1 = reach + 6,
@@ -6174,8 +7309,10 @@ updOpt();
               }
             } else if (kick) {
               const cy =
-                  this.atk === "ck" ? -70 : this.atk === "ak" ? -120 : -150,
-                rad = this.atk === "ck" ? 88 : this.atk === "ak" ? 100 : 112;
+                  (this.atk === "ck" ? -70 : this.atk === "ak" ? -120 : -150) *
+                  ak,
+                rad =
+                  (this.atk === "ck" ? 88 : this.atk === "ak" ? 100 : 112) * ak;
               x.beginPath();
               x.arc(0, cy, rad, 0.05, 1.05);
               x.stroke();
@@ -6231,6 +7368,379 @@ updOpt();
           };
         }
       }
+      /* ===== ARENA: lutador com física de plataforma (chão + plats soft + blastzone) ===== */
+      class AF extends F {
+        constructor(n, P, sx, col) {
+          super(n, P, sx, col);
+          Object.assign(this, {
+            ar: true,
+            ak: ARK,
+            lives: ARENA_LIVES,
+            kos: 0,
+            out: false,
+            rsp: 0,
+            inv: 0,
+            hov: 0,
+            on: false,
+            sup: -1,
+            jc: 1,
+            drop: 0,
+            pu: false,
+            wy: 0,
+            kx: 0,
+            lastBy: null,
+            lastT: 0,
+            vic: false,
+            slot: 0,
+            dev: null,
+            ai: false,
+          });
+        }
+        /* alvo válido para golpes/projéteis */
+        alive() {
+          return !this.out && !this.rsp && !this.ko && this.lives > 0;
+        }
+        hurtable() {
+          return this.alive() && this.inv <= 0;
+        }
+        bodyH() {
+          const m = this.P.m && this.P.m.id;
+          return (m ? m.h : 300) * this.P.sc;
+        }
+        place(px, wy) {
+          this.x = px;
+          this.wy = wy;
+          this.y = wy - G;
+          this.vy = 0;
+          this.kx = 0;
+          this.on = false;
+          this.sup = -1;
+          this.jc = 1;
+        }
+        respawn() {
+          const A = ARENA;
+          let bx = A.respawn[1],
+            bd = -1;
+          A.respawn.forEach((cx) => {
+            let m = 1e9;
+            fighters.forEach((f) => {
+              if (f !== this && f.alive()) m = Math.min(m, Math.abs(f.x - cx));
+            });
+            if (m > bd) {
+              bd = m;
+              bx = cx;
+            }
+          });
+          Object.assign(this, {
+            hp: 100,
+            gh: 100,
+            ko: false,
+            stun: 0,
+            atk: null,
+            blk: false,
+            cr: false,
+            t: 0,
+            kx: 0,
+            inv: 190,
+            hov: 45,
+            lastBy: null,
+            lastT: 0,
+            drop: 0,
+            pu: true,
+            rsp: 0,
+          });
+          this.place(bx, A.respawnY);
+          this.face = bx < W / 2 ? 1 : -1;
+          dust(this.x, this.wy, 10, 0);
+          spark(this.x, this.wy - 60 * this.ak, 0, 8);
+        }
+        /* perde uma vida (HP zerou ou saiu da blastzone) */
+        loseLife(by, how) {
+          const k = by && by !== this ? by : this.lastT > 0 ? this.lastBy : null;
+          if (k && k !== this) k.kos++;
+          this.lives = Math.max(0, this.lives - 1);
+          this.lastBy = null;
+          this.lastT = 0;
+          this.atk = null;
+          this.stun = 0;
+          this.blk = false;
+          if (how === "blast") {
+            const bx = Math.max(10, Math.min(W - 10, this.x)),
+              by2 = Math.max(60, Math.min(H - 10, this.wy - 40));
+            const dir = this.x < W / 2 ? 1 : -1;
+            fx.push({ k: "h", x: bx, y: by2, t: 0, s: Math.random() * 6 });
+            spark(bx, by2, dir, 18);
+            shake = Math.max(shake, 12);
+            sfxKO();
+            if (this.lives > 0) this.rsp = 50;
+            else this.out = true;
+            this.hp = 0;
+          }
+        }
+        up(i, o) {
+          this.t++;
+          if (this.hcd > 0) this.hcd--;
+          if (this.gh > this.hp) this.gh -= 0.35;
+          if (this.jt > 0) this.jt--;
+          if (this.land > 0) this.land--;
+          if (this.hf > 0) this.hf--;
+          if (this.inv > 0) this.inv--;
+          if (this.lastT > 0) this.lastT--;
+          if (this.drop > 0) this.drop--;
+          this.tr.forEach((q) => (q.a -= 0.06));
+          this.tr = this.tr.filter((q) => q.a > 0);
+          if (this.out) return;
+          if (this.rsp > 0) {
+            if (--this.rsp === 0) this.respawn();
+            return;
+          }
+          const A = ARENA,
+            SPD = 3.2,
+            edge = !!i.u && !this.pu;
+          this.pu = !!i.u;
+          if (this.on) {
+            const s = A.surf[this.sup];
+            if (!s || this.x < s.x0 - 8 || this.x > s.x1 + 8) {
+              this.on = false;
+              this.sup = -1;
+              this.jc = Math.max(this.jc, 1);
+            }
+          }
+          if (this.ko) {
+            if (this.t === 9) {
+              dust(this.x, this.wy, 12, 0);
+              shake = Math.max(shake, 8);
+            }
+            if (this.t >= 58) {
+              if (this.lives > 0) this.respawn();
+              else this.out = true;
+              return;
+            }
+          } else if (this.stun > 0) {
+            this.stun--;
+            if (!this.stun) this.blk = false;
+          } else if (this.atk) {
+            const a = ATK[this.atk];
+            if (this.atk === "h" && this.t === a.s) arenaFireball(this);
+            if (this.t >= a.s && this.t < a.s + a.a && !this.landed)
+              this.swing(a);
+            if (
+              this.atk !== "h" &&
+              this.t % 2 === 0 &&
+              this.t >= a.s - 2 &&
+              this.t < a.s + a.a + 8 &&
+              this.cur
+            )
+              this.tr.push({ ...this.cur, a: 0.45 });
+            if (this.t >= a.n) this.atk = null;
+          } else {
+            if (this.ai && o) this.face = o.x >= this.x ? 1 : -1;
+            else if (!this.ai && !i.b && (i.l || i.r) && !(i.l && i.r))
+              this.face = i.r ? 1 : -1;
+            this.blk = !!i.b && (this.on || !!this.P.ab);
+            this.mv = 0;
+            if (this.on && this.sup > 0 && i.d && !this.blk) {
+              this.drop = 14;
+              this.on = false;
+              this.sup = -1;
+              this.jc = Math.max(this.jc, 1);
+            }
+            this.cr = !!i.d && this.on && this.sup === 0;
+            if (!this.blk) {
+              this.mv = this.cr ? 0 : (i.r ? 1 : 0) - (i.l ? 1 : 0);
+              this.x += this.mv * SPD * (this.mv * this.face > 0 ? 1 : 0.8);
+              if (this.mv && this.on) {
+                this.wp++;
+                if (this.wp % 9 === 0) {
+                  dust(this.x - this.face * 10, this.wy, 2, -this.face);
+                  sfxStep();
+                }
+              }
+              if (edge && !this.cr) {
+                if (this.on) {
+                  this.vy = -10;
+                  this.on = false;
+                  this.sup = -1;
+                  this.jc = 1;
+                  this.jt = 6;
+                  dust(this.x, this.wy, 4, 0);
+                  sfxJump();
+                } else if (this.jc < 2) {
+                  this.vy = -9.6;
+                  this.jc = 2;
+                  this.jt = 6;
+                  dust(this.x, this.wy - 20 * this.ak, 7, 0);
+                  sfxJump();
+                }
+              }
+              if (i.h && this.P.hd && !this.hcd && this.on) this.go("h");
+              else if (i.p)
+                this.go(
+                  !this.on
+                    ? this.P.ap
+                      ? "ap"
+                      : "p"
+                    : this.cr && this.P.cp
+                      ? "cp"
+                      : "p",
+                );
+              else if (i.k)
+                this.go(
+                  !this.on
+                    ? this.P.ak
+                      ? "ak"
+                      : "k"
+                    : this.cr && this.P.ck
+                      ? "ck"
+                      : "k",
+                );
+            }
+          }
+          /* deslize / knockback */
+          this.x += this.kx;
+          this.kx *= this.on ? 0.86 : this.stun > 0 || this.ko ? 0.955 : 0.9;
+          if (Math.abs(this.kx) < 0.05) this.kx = 0;
+          /* gravidade + pouso nas superfícies */
+          const prev = this.wy;
+          if (this.on) this.vy = 0;
+          else {
+            if (this.hov > 0) {
+              this.hov--;
+              this.vy = 0;
+            } else this.vy = Math.min(12, this.vy + 0.5);
+            this.wy += this.vy;
+            if (this.vy >= 0) {
+              const dn = !!i.d && !this.ko && !this.stun;
+              for (let k = 0; k < A.surf.length; k++) {
+                const s = A.surf[k];
+                if (s.soft && (this.drop > 0 || dn)) continue;
+                if (
+                  this.x >= s.x0 - 8 &&
+                  this.x <= s.x1 + 8 &&
+                  prev <= s.y + 0.5 &&
+                  this.wy >= s.y
+                ) {
+                  const fall = this.vy;
+                  this.wy = s.y;
+                  this.vy = 0;
+                  this.on = true;
+                  this.sup = k;
+                  this.jc = 0;
+                  if (fall > 3) {
+                    this.land = Math.min(12, 6 + ((fall * 0.4) | 0));
+                    dust(this.x, s.y, 6, 0);
+                    sfxLand();
+                  }
+                  break;
+                }
+              }
+            }
+          }
+          this.y = this.wy - G;
+        }
+        /* golpe: acerta todo mundo no alcance (FFA) */
+        swing(a) {
+          let any = false;
+          for (const o of fighters) {
+            if (o === this || !o.hurtable()) continue;
+            if (this.reaches(o, a)) {
+              HQ.push([o, this, a]);
+              any = true;
+            }
+          }
+          if (any) this.landed = true;
+        }
+        reaches(o, a) {
+          const ak = this.ak,
+            d = (o.x - this.x) * this.face,
+            sc = this.P.sc,
+            dy = Math.abs(o.wy - this.wy),
+            air = this.atk === "ap" || this.atk === "ak",
+            cro = this.atk === "cp" || this.atk === "ck",
+            pose =
+              this.atk === "cp"
+                ? "cp"
+                : this.atk === "ck"
+                  ? "ck"
+                  : this.atk === "ap"
+                    ? "ap"
+                    : this.atk === "ak"
+                      ? "ak"
+                      : null;
+          let reach = a.r * (sc / SC) + 32 * ak;
+          if (pose && this.P.m && this.P.m[pose]) {
+            const m = this.P.m[pose];
+            reach = (m.w - m.ax) * sc + 40 * ak;
+          }
+          const yOk = air
+            ? dy < 175 * ak
+            : cro
+              ? o.wy - this.wy > -48 * ak && dy < 95 * ak
+              : dy < 110 * ak;
+          return d > -24 * ak && d < reach && yOk;
+        }
+        hurt(by, a) {
+          if (!this.hurtable()) return;
+          const s = Math.random() * 6,
+            ak = this.ak,
+            cy = this.wy - a.hy * ak;
+          if (this.blk) {
+            this.hp -= a.d * 0.15;
+            this.stun = 8;
+            this.kx = by.face * 2.5;
+            dust(this.x, this.wy, 3, by.face);
+            fx.push({ k: "b", x: this.x + this.face * 16, y: cy, t: 0, s });
+            sfxBlock();
+          } else {
+            this.hp -= a.d;
+            const lost = 1 - Math.max(0, this.hp) / 100,
+              proj = a === ATK.h,
+              base = proj ? 8.5 : a.kb;
+            this.atk = null;
+            this.blk = false;
+            this.t = 0;
+            this.stun = a.st + ((lost * 10) | 0);
+            this.kx = by.face * base * (1 + lost * 1.5) * 1.05;
+            const up = (proj ? 3 : a.kb * 0.35) + lost * a.kb * 1.1;
+            if (up > 2.8) {
+              this.vy = -Math.min(19, up);
+              this.on = false;
+              this.sup = -1;
+              this.jc = Math.max(this.jc, 1);
+            }
+            this.lastBy = by;
+            this.lastT = 180;
+            fx.push({ k: "h", x: this.x, y: cy, t: 0, s });
+            shake = a.d > 8 ? 8 : 5;
+            freeze = 3;
+            this.hf = 6;
+            spark(this.x, cy, by.face, 8);
+            sfxHit(a.d > 8);
+          }
+          if (this.hp <= 0) {
+            this.hp = 0;
+            this.loseLife(by, "hp");
+            this.ko = true;
+            this.t = 0;
+            this.kx = by.face * 5;
+            this.atk = null;
+            shake = 14;
+            freeze = 7;
+            spark(this.x, cy, by.face, 16);
+            sfxKO();
+          }
+        }
+        shadow() {
+          if (!this.on || !this.alive()) return;
+          x.save();
+          x.globalAlpha = 0.28;
+          x.fillStyle = "#000";
+          x.beginPath();
+          x.ellipse(this.x, this.wy + 2, 30 * this.ak * 1.5, 5, 0, 0, 7);
+          x.fill();
+          x.restore();
+        }
+      }
       const bg = new Image();
       bg.src = "assets/bg.webp";
       const bg2 = new Image();
@@ -6279,7 +7789,9 @@ updOpt();
         });
       $("stback").onclick = () => {
         $("stg").style.display = "none";
-        openSel(stgSel.m);
+        if (stgSel && stgSel.vs) openSel("vs");
+        else if (stgSel && stgSel.lob) openLobby(true, "vs");
+        else openSel(stgSel.m);
       };
       let p1,
         p2,
@@ -6305,6 +7817,9 @@ updOpt();
         const brand = t === "Quinhas Ball Fighters",
           win = !!(winCid && NAMES[winCid] && NAMES[winCid].naturalWidth);
         menu.classList.toggle("brand", brand);
+        menu.classList.remove("res");
+        $("bmm").style.display = "none";
+        $("bsl").style.display = "none";
         menu.classList.toggle("win", win);
         const wr = $("winrow"),
           wp = $("winplate");
@@ -6324,6 +7839,13 @@ updOpt();
         sub.textContent = s || "";
         menu.style.display = "flex";
         st = "menu";
+      }
+      /* menu de fim de partida (1v1, Versus e Arena): só o essencial */
+      function resMenu() {
+        menu.classList.add("res");
+        $("bmm").style.display = "flex";
+        $("bsl").style.display = "flex";
+        $("brv").style.display = "flex";
       }
       function startRound() {
         PJ.length = 0;
@@ -6462,9 +7984,19 @@ updOpt();
       let pick1 = null;
       function selInfo() {
         const el = document.getElementById("selsub");
-        if (pendMode === "ai") {
+        if (pendMode === "arena") {
+          el.className = "hint";
+          el.innerHTML =
+            '<div class="row"><span>Aperte um botão para entrar · até 4 jogadores</span></div>' +
+            '<div class="row"><span>CPU: botão + CPU · teclado <kbd>I</kbd> / <kbd>8</kbd> · controle <kbd>Y</kbd></span></div>';
+        } else if (pendMode === "ai") {
           el.className = "";
           el.textContent = "Toque num lutador — a IA escolhe o adversário";
+        } else if (pendMode === "2p" && s2.vs) {
+          el.className = "hint";
+          el.innerHTML = IS_TOUCH
+            ? "Toque no seu lutador"
+            : '<div class="row"><span>Aperte qualquer botão para entrar</span></div><div class="row"><span>Sozinho? Depois de escolher, você escolhe o adversário (CPU)</span></div>';
         } else {
           el.className = "hint";
           const row = (n) => {
@@ -6512,6 +8044,7 @@ updOpt();
           );
       }
       function pick(id) {
+        if (pendMode === "arena") return a4Click(id);
         if (id === "?") {
           if (pendMode === "2p") {
             const excl =
@@ -6540,6 +8073,12 @@ updOpt();
       }
       function openSel(m) {
         clearS2Stage();
+        a4Clear();
+        const vs = m === "vs";
+        if (vs) {
+          m = "2p";
+          VDEV[0] = VDEV[1] = null;
+        }
         pendMode = m;
         pick1 = null;
         if (m !== "2p")
@@ -6557,7 +8096,13 @@ updOpt();
           const av = AVall();
           let p2i = av.length - 1;
           while (p2i > 0 && av[p2i] === "?") p2i--;
-          s2 = { c: [0, p2i], lk: [null, null], go: false };
+          s2 = {
+            c: [0, p2i],
+            lk: [null, null],
+            go: false,
+            vs,
+            dv: [null, null],
+          };
           pm2 = [null, null];
           s2render();
         }
@@ -6567,7 +8112,7 @@ updOpt();
       grid.addEventListener(
         "pointerdown",
         (e) => {
-          if (pendMode === "2p") return;
+          if (pendMode === "2p" || pendMode === "arena") return;
           const c = e.target.closest(".card[data-id], #back");
           if (!c || scr() !== "sel") return;
           const L = LS.sel(),
@@ -6579,7 +8124,320 @@ updOpt();
         },
         true,
       );
+      /* ---- Arena: seleção clássica com 4 vagas (aperta pra entrar) ---- */
+      const A4C = ["#ff8a3d", "#38c8ff", "#7be06a", "#ff5fa8"];
+      let A4 = { s: [], go: false };
+      const a4Empty = () => ({ t: "empty", dev: null, c: 0, lk: null, cid: null }),
+        a4Taken = (id, ex) =>
+          !!id &&
+          id !== "?" &&
+          A4.s.some(
+            (s, i) =>
+              i !== ex && (s.lk === id || (s.t === "cpu" && s.cid === id)),
+          ),
+        a4Free = (ex) => {
+          const o = AV().filter((id) => !a4Taken(id, ex));
+          return o[(Math.random() * o.length) | 0];
+        },
+        a4Hum = () => A4.s.filter((s) => s.t === "human"),
+        a4Fighters = () => A4.s.filter((s) => s.t !== "empty"),
+        a4Can = () => {
+          const h = a4Hum();
+          return (
+            !A4.go &&
+            h.length >= 1 &&
+            a4Fighters().length >= 2 &&
+            h.every((s) => s.lk != null)
+          );
+        },
+        a4FirstFree = () => {
+          const i = AVall().findIndex((id) => id !== "?" && !a4Taken(id, -1));
+          return i < 0 ? 0 : i;
+        },
+        a4DevName = (d) =>
+          d === "k1"
+            ? "WASD"
+            : d === "k2"
+              ? "Setas"
+              : "Controle " + (+d.slice(1) + 1);
+      /* remove fichas/rings da seleção da Arena (não vazar para o Versus) */
+      function a4Clear() {
+        grid.querySelectorAll(".acur").forEach((e) => e.remove());
+        grid.querySelectorAll(".card.tk").forEach((c) => c.classList.remove("tk"));
+      }
+      new MutationObserver(() => {
+        if (selEl.style.display === "none") a4Clear();
+      }).observe(selEl, { attributes: true, attributeFilter: ["style"] });
+      function a4Open(keep) {
+        keep = false; /* sempre começa vazio: ninguém pré-selecionado */
+        clearS2Stage();
+        pendMode = "arena";
+        pick1 = null;
+        A4 = { s: [0, 1, 2, 3].map(a4Empty), go: false };
+        const av = AVall();
+        if (keep && LASTA)
+          LASTA.forEach((c) => {
+            if (c.slot < 0 || c.slot > 3) return;
+            A4.s[c.slot] =
+              c.t === "human"
+                ? { t: "human", dev: c.dev, c: Math.max(0, av.indexOf(c.cid)), lk: null, cid: null }
+                : { t: "cpu", dev: null, c: 0, lk: null, cid: c.cid };
+          });
+        grid
+          .querySelectorAll(".card")
+          .forEach((c) =>
+            ["data-c1", "data-c2", "data-l1", "data-l2"].forEach((a) =>
+              c.removeAttribute(a),
+            ),
+          );
+        menu.style.display = "none";
+        selEl.dataset.m = "arena";
+        selEl.style.display = "flex";
+        loadArena();
+        selInfo();
+        a4Render();
+        requestAnimationFrame(() => a4Render());
+      }
+      function a4Join(dev) {
+        const i = A4.s.findIndex((s) => s.t !== "human");
+        if (i < 0) return -1;
+        A4.s[i] = { t: "human", dev, c: a4FirstFree(), lk: null, cid: null };
+        /* sozinho: já entra uma CPU de adversária (um humano novo toma o lugar dela) */
+        if (a4Fighters().length < 2) {
+          const e = A4.s.findIndex((s) => s.t === "empty");
+          if (e >= 0) A4.s[e] = { t: "cpu", dev: null, c: 0, lk: null, cid: a4Free(e) };
+        }
+        return i;
+      }
+      function a4AddCpu() {
+        const e = A4.s.findIndex((s) => s.t === "empty");
+        if (e < 0) return;
+        const id = a4Free(e);
+        A4.s[e] = { t: "cpu", dev: null, c: 0, lk: null, cid: id };
+        if (id && CH[id]) loadLazy(CH[id].P);
+        snd(520, 0.06, "square", 0.05);
+        a4Render();
+      }
+      function a4DelCpu(i) {
+        if (i == null)
+          for (let j = 3; j >= 0; j--)
+            if (A4.s[j].t === "cpu") {
+              i = j;
+              break;
+            }
+        if (i == null || A4.s[i].t !== "cpu") return;
+        A4.s[i] = a4Empty();
+        snd(300, 0.06, "square", 0.05);
+        a4Render();
+      }
+      function a4In(dev, k) {
+        if (A4.go || !CH) return;
+        const i = A4.s.findIndex((s) => s.t === "human" && s.dev === dev);
+        if (i < 0) {
+          if (k === "bk" || k === "ca" || k === "cr") return;
+          if (a4Join(dev) < 0) return;
+          snd(520, 0.08, "square", 0.06);
+          a4Render();
+          return;
+        }
+        const s = A4.s[i],
+          av = AVall(),
+          N = av.length;
+        if (k === "ca") return a4AddCpu();
+        if (k === "cr") return a4DelCpu();
+        if (k === "ok") {
+          if (s.lk != null) {
+            if (a4Can()) a4Start();
+            return;
+          }
+          let id = av[s.c];
+          if (id === "?") id = a4Free(i);
+          if (!id || !CH[id] || a4Taken(id, i)) {
+            snd(180, 0.08, "square", 0.05);
+            return;
+          }
+          s.lk = id;
+          loadLazy(CH[id].P);
+          snd(660, 0.08, "square", 0.06);
+          a4Render();
+          return;
+        }
+        if (k === "bk") {
+          if (s.lk != null) s.lk = null;
+          else {
+            A4.s[i] = a4Empty();
+            if (!a4Hum().length) A4.s = [0, 1, 2, 3].map(a4Empty);
+          }
+          snd(300, 0.06, "square", 0.05);
+          a4Render();
+          return;
+        }
+        if (s.lk != null || !N) return;
+        const ix = ((s.c % N) + N) % N,
+          cur = [...grid.querySelectorAll(".card[data-id]")].find(
+            (c) => c.dataset.id === av[ix],
+          ),
+          t = cur && gridNav(cur, k, null);
+        if (t) {
+          const ni = av.indexOf(t.dataset.id);
+          if (ni >= 0) {
+            s.c = ni;
+            snd(440, 0.04, "square", 0.04);
+            a4Render();
+          }
+        }
+      }
+      function a4Click(id) {
+        if (A4.go) return;
+        let i = A4.s.findIndex((s) => s.t === "human" && s.lk == null);
+        if (i < 0) {
+          const dev = ["k1", "k2"].find((d) => !A4.s.some((s) => s.dev === d));
+          if (!dev) return;
+          i = a4Join(dev);
+          if (i < 0) return;
+        }
+        const ix = AVall().indexOf(id);
+        if (ix < 0) return;
+        A4.s[i].c = ix;
+        a4In(A4.s[i].dev, "ok");
+      }
+      function a4Start() {
+        if (!a4Can() || beginBusy) return;
+        const cfg = [];
+        A4.s.forEach((s, i) => {
+          if (s.t === "empty") return;
+          cfg.push({
+            t: s.t === "human" ? "human" : "ai",
+            dev: s.dev,
+            cid: s.t === "human" ? s.lk : s.cid,
+            slot: i,
+          });
+        });
+        A4.go = true;
+        snd(880, 0.2, "square", 0.07);
+        selEl.style.display = "none";
+        pendMode = "ai";
+        beginArena(cfg);
+      }
+      function a4Render() {
+        if (pendMode !== "arena") return;
+        const av = AVall();
+        $("av").innerHTML = A4.s
+          .map((s, i) => {
+            const id =
+              s.t === "human" ? (s.lk != null ? s.lk : av[s.c]) : s.cid;
+            let img = RND_BODY,
+              hs = hsRatio(scOf("e")),
+              nm = "";
+            if (id && id !== "?" && CH[id]) {
+              img = CH[id].P.id.src;
+              hs = hsRatio(CH[id].P.sc);
+              nm =
+                NAMES[id] && NAMES[id].naturalWidth
+                  ? '<img class="apn" alt="' + CH[id].n + '" src="' + NAMES[id].src + '" />'
+                  : '<b class="apn">' + CH[id].n + "</b>";
+            } else if (id === "?") nm = '<b class="apn">Aleatório</b>';
+            const lab =
+              s.t === "empty"
+                ? "Pressione para entrar"
+                : s.t === "cpu"
+                  ? "CPU"
+                  : s.lk != null
+                    ? "Pronto!"
+                    : "Escolhendo…";
+            const ctl =
+              s.t === "empty"
+                ? '<button type="button" class="apadd" data-a="add">+ CPU</button>'
+                : s.t === "cpu"
+                  ? '<div class="apx"><button type="button" data-a="rr" title="Trocar lutador">↻</button><button type="button" data-a="rm" title="Remover">✕</button></div>'
+                  : "";
+            return (
+              '<div class="ap ' + s.t + (s.lk != null ? " rdy" : "") +
+              '" data-i="' + i + '" style="--pc:' + A4C[i] + ";--hs:" + hs + '">' +
+              '<i class="apt">P' + (i + 1) + "</i>" +
+              (s.t === "human"
+                ? '<span class="apd">' + a4DevName(s.dev) + "</span>"
+                : "") +
+              '<img class="aps" alt="" src="' + img + '" />' +
+              nm + '<small class="aph">' + lab + "</small>" + ctl + "</div>"
+            );
+          })
+          .join("");
+        /* fichas na grade */
+        const cards = [...grid.querySelectorAll(".card[data-id]")];
+        cards.forEach((c) =>
+          c.classList.toggle(
+            "tk",
+            !!c.dataset.id && c.dataset.id !== "?" && a4Taken(c.dataset.id, -1),
+          ),
+        );
+        A4.s.forEach((s, i) => {
+          let el = $("acur" + i);
+          if (!el) {
+            el = document.createElement("div");
+            el.id = "acur" + i;
+            el.innerHTML = "<i></i>";
+            grid.appendChild(el);
+          }
+          const card =
+            s.t === "human" &&
+            cards.find((c) => c.dataset.id === (s.lk != null ? s.lk : av[s.c]));
+          if (!card) {
+            el.style.display = "none";
+            return;
+          }
+          const o = i * 3;
+          el.className = "acur s" + i + (s.lk != null ? " lk" : "");
+          el.style.cssText =
+            "--pc:" + A4C[i] + ";left:" + (card.offsetLeft + o) + "px;top:" + (card.offsetTop + o) +
+            "px;width:" + (card.offsetWidth - o * 2) + "px;height:" + (card.offsetHeight - o * 2) + "px";
+          el.firstChild.textContent = "P" + (i + 1) + (s.lk != null ? " ✓" : "");
+        });
+        const can = a4Can(),
+          hs = a4Hum(),
+          h = $("a4hint");
+        $("a4go").disabled = !can;
+        h.className = can ? "ok" : "";
+        h.textContent = can
+          ? "Tudo pronto — Começar (Enter ou Start)"
+          : !hs.length
+            ? "Aperte um botão no teclado ou controle para entrar"
+            : hs.some((s) => s.lk == null)
+              ? "Escolha seu lutador e confirme"
+              : "Adicione ao menos 1 CPU ou outro jogador";
+      }
+      $("av").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-a]");
+        if (!b || A4.go) return;
+        const i = +b.closest(".ap").dataset.i,
+          a = b.dataset.a;
+        if (a === "add") a4AddCpu();
+        else if (a === "rm") a4DelCpu(i);
+        else if (a === "rr") {
+          const s = A4.s[i];
+          s.cid = null;
+          s.cid = a4Free(i);
+          if (s.cid && CH[s.cid]) loadLazy(CH[s.cid].P);
+          snd(440, 0.05, "square", 0.04);
+          a4Render();
+        }
+      });
+      $("a4go").onclick = a4Start;
+      $("a4bk").onclick = () => $("back").click();
+      addEventListener("resize", () => {
+        if (pendMode === "arena" && vis(selEl)) a4Render();
+      });
       document.getElementById("back").onclick = () => {
+        if (pendMode === "arena" && !A4.go) {
+          if (A4.s.some((s) => s.t === "human" && s.lk != null)) {
+            A4.s.forEach((s) => (s.lk = null));
+            a4Render();
+            return;
+          }
+          selEl.style.display = "none";
+          menu.style.display = "flex";
+          return;
+        }
         if (
           pendMode === "2p" &&
           !s2.go &&
@@ -6675,8 +8533,8 @@ updOpt();
         menu.style.display = "none";
         startRound();
       }
-      document.getElementById("bai").onclick = () => openSel("ai");
-      document.getElementById("b2p").onclick = () => openSel("2p");
+      document.getElementById("bai").onclick = () => openSel("vs");
+      document.getElementById("b2p").onclick = () => openSel("vs");
       function ai(me, o) {
         const i = {},
           d = Math.abs(o.x - me.x),
@@ -6769,6 +8627,10 @@ updOpt();
         if (shake > 0) shake *= 0.85;
         fx.forEach((f) => f.t++);
         fx = fx.filter((f) => f.t < 16);
+        if (st === "arena") {
+          stepArena();
+          return;
+        }
         if (st === "menu") return;
         if (st === "intro") {
           p1.up({}, p2);
@@ -6844,7 +8706,7 @@ updOpt();
                 "Placar final " + p1.wins + " a " + p2.wins + ".",
                 over === "draw" ? null : over.cid,
               );
-              $("brv").style.display = "flex";
+              resMenu();
             } else {
               rd++;
               startRound();
@@ -7205,12 +9067,15 @@ updOpt();
             (Math.random() - 0.5) * shake,
             (Math.random() - 0.5) * shake,
           );
-        const zx = (p1.x + p2.x) / 2;
+        $("pb").classList.toggle("ar", st === "arena");
+        $("pad").classList.toggle("ar", st === "arena");
+        const zx = st === "arena" ? W / 2 : (p1.x + p2.x) / 2;
         x.translate(zx, 260);
         x.scale(zm, zm);
         x.translate(-zx, -260);
         x.drawImage(st === "menu" ? bg : curBg, 0, 0, W, H);
-        if (st !== "menu") {
+        if (st === "arena") drawArenaWorld();
+        else if (st !== "menu") {
           drawPt();
           p1.shadow();
           p2.shadow();
@@ -7259,7 +9124,8 @@ updOpt();
           x.restore();
         });
         x.restore();
-        if (st !== "menu") {
+        if (st === "arena") drawArenaHud();
+        else if (st !== "menu") {
           drawVg();
           bar(24, p1, 1);
           bar(W - 324, p2, -1);
@@ -7312,9 +9178,1280 @@ updOpt();
           if (st === "end") banner(msg, endTxt, 150 - mt);
         }
       }
+      /* =====================================================================
+         ARENA — 2 a 4 lutadores · stock (3 vidas) · mapa "Ilhas do Céu"
+         Morre ao zerar o HP ou ao sair da blastzone. Pulo duplo, plats soft.
+         Caminho separado do 1v1 (p1/p2): fighters[] + stepArena/drawArena*.
+         ===================================================================== */
+      const ARK = 0.27 /* escala dos sprites na Arena */,
+        ARENA_LIVES = 3,
+        ARENA_TIME = 300;
+      const ARENA = {
+        G: 296 /* topo da ilha principal (y em coords lógicas 800x450) */,
+        surf: [
+          { x0: 172, x1: 622, y: 296, soft: false },
+          { x0: 192, x1: 336, y: 153, soft: true },
+          { x0: 472, x1: 612, y: 153, soft: true },
+        ],
+        blast: { l: -150, r: W + 150, t: -270, b: H + 140 },
+        start: { 2: [250, 545], 3: [215, 400, 585], 4: [200, 330, 470, 600] },
+        respawn: [262, 400, 540],
+        respawnY: 120,
+      };
+      let fighters = [],
+        ast = "intro",
+        amt = 0,
+        aTm = ARENA_TIME,
+        aTi = 0,
+        aWinner = null,
+        aMsg = "",
+        aSub = "",
+        LASTA = null;
+      const arenaImg = new Image();
+      arenaImg.dataset.src = "assets/arena.webp?v=1";
+      function loadArena() {
+        if (!arenaImg._lp)
+          arenaImg._lp = new Promise((res) => {
+            arenaImg.onload = () => res();
+            arenaImg.onerror = () => {
+              LOAD.bad.push(arenaImg.dataset.src);
+              res();
+            };
+            arenaImg.src = arenaImg.dataset.src;
+          });
+        return arenaImg._lp;
+      }
+
+      /* ---- input por dispositivo: k1 (WASD), k2 (setas), p0..p3 (controles) ---- */
+      const rawPad = (n) => {
+        const l = navigator.getGamepads ? navigator.getGamepads() : [];
+        const g = l && l[n];
+        return g && g.connected ? g : null;
+      };
+      function devIn(dv, noJump) {
+        if (dv === "k1")
+          return {
+            l: keys.KeyA || keys.vL,
+            r: keys.KeyD || keys.vR,
+            u: noJump ? keys.KeyW || keys.vU || keys.vJ : keys.KeyK || keys.vJ,
+            d: keys.KeyS || keys.vD,
+            h: keys.KeyL || keys.vH,
+            p: keys.KeyJ || keys.vP,
+            k: keys.KeyI || keys.vK,
+            b: keys.Space || keys.vB,
+          };
+        if (dv === "k2")
+          return {
+            l: keys.ArrowLeft,
+            r: keys.ArrowRight,
+            u: noJump ? keys.ArrowUp : keys.Numpad5,
+            d: keys.ArrowDown,
+            h: keys.Numpad6,
+            p: keys.Numpad4,
+            k: keys.Numpad8,
+            b: keys.Numpad0,
+          };
+        if (dv && dv[0] === "p") {
+          const g = rawPad(+dv.slice(1)),
+            o = gin(g);
+          if (!noJump) o.u = !!(g && g.buttons[0] && g.buttons[0].pressed); /* Arena: só ✕/A pula; ↑ não faz nada */
+          return o;
+        }
+        return {};
+      }
+
+      /* ---- IA da Arena: alvo mais próximo, recuperação no ar, plats ---- */
+      function aiArena(me) {
+        const i = {},
+          A = ARENA,
+          S0 = A.surf[0],
+          foes = fighters.filter((f) => f !== me && f.alive());
+        if (!foes.length) return i;
+        let o = foes[0],
+          bd = 1e9;
+        foes.forEach((f) => {
+          const dd = Math.abs(f.x - me.x) + Math.abs(f.wy - me.wy) * 0.8;
+          if (dd < bd) {
+            bd = dd;
+            o = f;
+          }
+        });
+        const dx = o.x - me.x,
+          d = Math.abs(dx),
+          dy = o.wy - me.wy,
+          tw = dx > 0,
+          to = tw ? "r" : "l",
+          aw = tw ? "l" : "r",
+          ctr = (S0.x0 + S0.x1) / 2;
+        if (!me.on) {
+          const offX = me.x < S0.x0 - 6 || me.x > S0.x1 + 6;
+          if (offX || me.wy > S0.y + 8) {
+            i[me.x < ctr ? "r" : "l"] = 1;
+            if (me.jc < 2 && me.vy > -2 && !me.pu) i.u = 1;
+            return i;
+          }
+        }
+        const sf = me.on ? A.surf[me.sup] : null,
+          nearEdge = sf && (tw ? me.x > sf.x1 - 24 : me.x < sf.x0 + 24);
+        const rng = (n) => {
+          const sa = me.atk,
+            sf = me.face;
+          me.atk = n;
+          me.face = tw ? 1 : -1;
+          const r = me.reaches(o, ATK[n]);
+          me.atk = sa;
+          me.face = sf;
+          return r;
+        };
+        const inP = rng("p"),
+          inK = rng("k"),
+          near = inP || inK;
+        if (--me.pt <= 0) {
+          const r = Math.random();
+          me.pt = 6 + ((Math.random() * 10) | 0);
+          if (near) {
+            if (r < 0.5) me.plan = inP ? "p" : "k";
+            else if (r < 0.82) me.plan = inK ? "k" : "p";
+            else if (r < 0.9) {
+              me.plan = "blk";
+              me.pt = 12;
+            } else me.plan = "back";
+          } else if (
+            me.P.hd &&
+            !me.hcd &&
+            d > 90 &&
+            Math.abs(dy) < 40 &&
+            r > 0.75
+          )
+            me.plan = "h";
+          else me.plan = r < 0.08 ? "jump" : "ap";
+        } else if (near && me.plan === "ap") me.pt = 0;
+        if (o.atk && near && !me.atk && Math.random() < 0.05) {
+          me.plan = "blk";
+          me.pt = 16;
+        }
+        if (
+          PJ.some((q) => q.o !== me && Math.abs(q.x - me.x) < 140) &&
+          Math.random() < 0.05
+        ) {
+          me.plan = "blk";
+          me.pt = 16;
+        }
+        switch (me.plan) {
+          case "ap":
+            i[to] = 1;
+            break;
+          case "back":
+            i[aw] = 1;
+            break;
+          case "h":
+            i.h = 1;
+            me.plan = "idle";
+            break;
+          case "blk":
+            i.b = 1;
+            break;
+          case "jump":
+            i.u = 1;
+            i[to] = 1;
+            me.plan = "idle";
+            break;
+          case "p":
+            i.p = 1;
+            me.plan = "idle";
+            break;
+          case "k":
+            i.k = 1;
+            me.plan = "idle";
+            break;
+        }
+        if (dy < -70 && d < 260) {
+          /* alvo mais alto: sobe */
+          if (me.on) {
+            if (!me.pu && Math.random() < 0.1) i.u = 1;
+            i[to] = 1;
+          } else if (me.jc < 2 && me.vy > 0 && !me.pu && Math.random() < 0.08)
+            i.u = 1;
+        } else if (dy > 80 && me.on && me.sup > 0 && Math.random() < 0.06)
+          i.d = 1; /* alvo embaixo: atravessa a plat */
+        else if (nearEdge && i[to]) delete i[to]; /* não cai sozinho da borda */
+        return i;
+      }
+
+      /* ---- projéteis (Ki) e utilitários ---- */
+      function arenaFireball(o) {
+        const P = o.P,
+          hb = P.m && P.m.hb;
+        if (!hb) return;
+        const sc = P.sc,
+          ak = o.ak,
+          reach = hb.dx * sc + 6,
+          y = o.wy - hb.dy * sc;
+        o.hcd = 80;
+        sfxSwing("k");
+        sfxSwing("p");
+        for (const tg of fighters) {
+          if (tg === o || !tg.hurtable()) continue;
+          const along = (tg.x - o.x) * o.face;
+          if (
+            along > -28 * ak &&
+            along < reach + PJ_HIT * ak &&
+            Math.abs(tg.wy - o.wy) < 110 * ak + 40
+          ) {
+            tg.hurt(o, ATK.h);
+            spark(
+              o.x + o.face * Math.max(36 * ak, Math.min(along, reach)),
+              y,
+              o.face,
+              10,
+            );
+            return;
+          }
+        }
+        PJ.push({
+          x: o.x + o.face * reach,
+          y,
+          dir: o.face,
+          o,
+          t: 0,
+          im: P.hb,
+          m: hb,
+          sc,
+        });
+      }
+      function updArenaPJ() {
+        for (let i = PJ.length - 1; i >= 0; i--) {
+          const p = PJ[i],
+            prev = p.x;
+          let dead = false;
+          p.x += p.dir * 8;
+          p.t++;
+          const lo = Math.min(prev, p.x),
+            hi = Math.max(prev, p.x);
+          for (const tg of fighters) {
+            if (tg === p.o || !tg.hurtable()) continue;
+            const hit = PJ_HIT * tg.ak,
+              bh = tg.bodyH();
+            if (
+              tg.x >= lo - hit &&
+              tg.x <= hi + hit &&
+              Math.abs(p.y - (tg.wy - bh / 2)) < bh * 0.6
+            ) {
+              const f0 = p.o.face;
+              p.o.face = p.dir;
+              tg.hurt(p.o, ATK.h);
+              p.o.face = f0;
+              spark(p.x, p.y, p.dir, 10);
+              dead = true;
+              break;
+            }
+          }
+          if (!dead)
+            for (let j = 0; j < PJ.length; j++) {
+              const q = PJ[j];
+              if (
+                j !== i &&
+                q.dir !== p.dir &&
+                Math.abs(q.x - p.x) < 46 &&
+                Math.abs(q.y - p.y) < 60
+              ) {
+                spark(p.x, p.y, p.dir, 10);
+                spark(p.x, p.y, -p.dir, 10);
+                PJ.splice(j, 1);
+                if (j < i) i--;
+                dead = true;
+                break;
+              }
+            }
+          if (!dead && (p.x < -140 || p.x > W + 140)) dead = true;
+          if (dead) PJ.splice(PJ.indexOf(p), 1);
+        }
+      }
+      function nearestOf(f) {
+        let b = null,
+          bd = 1e9;
+        fighters.forEach((g) => {
+          if (g !== f && g.alive()) {
+            const dd = Math.abs(g.x - f.x);
+            if (dd < bd) {
+              bd = dd;
+              b = g;
+            }
+          }
+        });
+        return b;
+      }
+      function sepArena() {
+        const m = 30;
+        for (let a = 0; a < fighters.length; a++)
+          for (let b = a + 1; b < fighters.length; b++) {
+            const A = fighters[a],
+              B = fighters[b];
+            if (!A.alive() || !B.alive() || Math.abs(A.wy - B.wy) > 60) continue;
+            const d = B.x - A.x;
+            if (Math.abs(d) < m) {
+              const s = ((m - Math.abs(d)) / 2) * (d >= 0 ? 1 : -1);
+              A.x -= s;
+              B.x += s;
+            }
+          }
+      }
+      function checkBlast() {
+        const b = ARENA.blast;
+        fighters.forEach((f) => {
+          if (!f.alive()) return;
+          if (f.x < b.l || f.x > b.r || f.wy < b.t || f.wy > b.b)
+            f.loseLife(null, "blast");
+        });
+      }
+
+      /* ---- fluxo da partida ---- */
+      function beginArena(cfg) {
+        if (beginBusy) return;
+        beginBusy = true;
+        const box = $("loading"),
+          txt = $("ltxt");
+        let shown = false;
+        const t = setTimeout(() => {
+          shown = true;
+          txt.textContent = "Carregando arena…";
+          $("lbar").style.display = "none";
+          box.classList.remove("done");
+        }, 200);
+        Promise.all([
+          ...cfg.map((s) => loadLazy(CH[s.cid].P)),
+          loadArena(),
+        ]).then(() => {
+          clearTimeout(t);
+          beginBusy = false;
+          if (LOAD.bad.length) {
+            box.classList.remove("done");
+            loadDone();
+            return;
+          }
+          if (shown) box.classList.add("done");
+          beginArenaNow(cfg);
+        });
+      }
+      function beginArenaNow(cfg) {
+        LASTA = cfg;
+        mode = "arena";
+        G = ARENA.G;
+        curBg = arenaImg;
+        const xs = ARENA.start[cfg.length];
+        fighters = cfg.map((s, i) => {
+          const Pb = CH[s.cid].P,
+            P = Object.create(Pb);
+          P.sc = Pb.sc * ARK;
+          const f = new AF(CH[s.cid].n, P, xs[i], CH[s.cid].col);
+          f.cid = s.cid;
+          f.slot = s.slot;
+          f.dev = s.dev;
+          f.ai = s.t === "ai";
+          f.place(xs[i], ARENA.G - 2);
+          f.face = xs[i] < W / 2 ? 1 : -1;
+          return f;
+        });
+        PJ.length = 0;
+        HQ.length = 0;
+        fx = [];
+        ps = [];
+        slow = 0;
+        zm = 1;
+        shake = 0;
+        freeze = 0;
+        endWin = null;
+        aWinner = null;
+        aTm = ARENA_TIME;
+        aTi = 0;
+        ast = "intro";
+        amt = 150;
+        st = "arena";
+        paused = false;
+        AL.open = false;
+        AU.fightWant = false;
+        $("pause").style.display = "none";
+        $("alobby").style.display = "none";
+        menu.style.display = "none";
+        selEl.style.display = "none";
+        $("brv").style.display = "none";
+        aInit();
+        sfxUI("start");
+      }
+      function stepArena() {
+        if (ast === "intro") {
+          fighters.forEach((f) => f.up({}, nearestOf(f)));
+          sepArena();
+          if (amt === 45) aFight();
+          if (--amt <= 0) ast = "fight";
+          return;
+        }
+        if (ast === "fight") {
+          fighters.forEach((f) =>
+            f.up(
+              f.out || f.rsp ? {} : f.ai ? aiArena(f) : devIn(f.dev),
+              nearestOf(f),
+            ),
+          );
+          flushHits();
+          updArenaPJ();
+          sepArena();
+          checkBlast();
+          if (++aTi >= 60) {
+            aTi = 0;
+            aTm--;
+            if (aTm <= 10 && aTm > 0) sfxTick(aTm);
+          }
+          const alive = fighters.filter((f) => f.lives > 0);
+          if (alive.length <= 1 || aTm <= 0) endArena(alive);
+          return;
+        }
+        if (ast === "end") {
+          fighters.forEach((f) => f.up({}, nearestOf(f)));
+          HQ.length = 0;
+          sepArena();
+          if (--amt <= 0) arenaResult();
+        }
+      }
+      function endArena(alive) {
+        let w = null,
+          m = "K.O.";
+        if (alive.length === 1) w = alive[0];
+        else if (alive.length > 1) {
+          m = "Tempo!";
+          const mx = Math.max(...alive.map((f) => f.lives)),
+            top = alive.filter((f) => f.lives === mx);
+          if (top.length === 1) w = top[0];
+        }
+        aWinner = w;
+        endWin = w;
+        aMsg = m;
+        aSub = w ? "vence a Arena" : "Empate";
+        ast = "end";
+        amt = 200;
+        fighters.forEach((f) => (f.vic = f === w));
+        AU.fightWant = false;
+        aEnd(m, w, w);
+      }
+      function arenaResult() {
+        const w = aWinner,
+          sum = fighters
+            .slice()
+            .sort((a, b) => b.lives - a.lives || b.kos - a.kos)
+            .map((f) => f.n + " · " + f.lives + "♥ · " + f.kos + " KO")
+            .join("\n");
+        fighters = [];
+        PJ.length = 0;
+        showMenu(w ? "venceu!" : "Empate!", sum, w ? w.cid : null);
+        resMenu();
+        $("brv").style.display = "flex";
+      }
+
+      /* ---- desenho ---- */
+      function drawArenaWorld() {
+        fighters.forEach((f) => {
+          if (!f.out && !f.rsp) void 0;
+        });
+        fighters.forEach((f) => {
+          if (f.out || f.rsp) return;
+          if (f.hov > 0) {
+            x.save();
+            x.globalAlpha = 0.5;
+            x.fillStyle = "#bfe3ff";
+            x.beginPath();
+            x.ellipse(f.x, f.wy + 4, 36, 7, 0, 0, 7);
+            x.fill();
+            x.restore();
+          }
+          x.save();
+          if (f.inv > 0 && (T >> 2) & 1) x.globalAlpha = 0.45;
+          f.draw();
+          x.restore();
+        });
+        drawPJ();
+        drawPs();
+      }
+      function rr(x0, y0, w, h, r) {
+        x.beginPath();
+        x.moveTo(x0 + r, y0);
+        x.lineTo(x0 + w - r, y0);
+        x.quadraticCurveTo(x0 + w, y0, x0 + w, y0 + r);
+        x.lineTo(x0 + w, y0 + h - r);
+        x.quadraticCurveTo(x0 + w, y0 + h, x0 + w - r, y0 + h);
+        x.lineTo(x0 + r, y0 + h);
+        x.quadraticCurveTo(x0, y0 + h, x0, y0 + h - r);
+        x.lineTo(x0, y0 + r);
+        x.quadraticCurveTo(x0, y0, x0 + r, y0);
+        x.closePath();
+      }
+      function drawArenaHud() {
+        drawVg();
+        const n = fighters.length,
+          gap = 8,
+          cw = Math.min(160, (W - 16 - (n - 1) * gap) / n),
+          x0 = (W - (n * cw + (n - 1) * gap)) / 2,
+          y0 = 6,
+          chh = 38,
+          cream = "#f3e9d2",
+          FONT = '"Dela Gothic One",Impact,sans-serif';
+        fighters.forEach((f, i) => {
+          const cx = x0 + i * (cw + gap),
+            hit = f.hf > 0,
+            pr = 13,
+            px = cx + pr + 6,
+            py = y0 + chh / 2,
+            tx = cx + pr * 2 + 12,
+            bw = cx + cw - 8 - tx;
+          x.save();
+          x.globalAlpha = f.out ? 0.4 : 1;
+          rr(cx, y0, cw, chh, 8);
+          const gg = x.createLinearGradient(0, y0, 0, y0 + chh);
+          gg.addColorStop(0, "rgba(30,26,52,.94)");
+          gg.addColorStop(1, "rgba(5,4,14,.94)");
+          x.fillStyle = gg;
+          x.fill();
+          x.save();
+          x.clip();
+          x.globalAlpha *= 0.16;
+          x.fillStyle = f.col;
+          x.fillRect(cx, y0, cw, chh);
+          x.globalAlpha *= 2;
+          x.fillStyle = "#fff";
+          x.fillRect(cx, y0, cw, 1.5);
+          x.restore();
+          rr(cx, y0, cw, chh, 8);
+          x.lineWidth = 3.5;
+          x.strokeStyle = "#000";
+          x.stroke();
+          rr(cx, y0, cw, chh, 8);
+          x.lineWidth = 2;
+          x.strokeStyle = hit ? "#ff6b4a" : f.col;
+          x.stroke();
+          x.save();
+          x.beginPath();
+          x.arc(px, py, pr, 0, 7);
+          x.fillStyle = "#0f0d1a";
+          x.fill();
+          x.clip();
+          if (f.P.pf && f.P.pf.complete)
+            x.drawImage(f.P.pf, px - pr, py - pr + 1, pr * 2, (pr * 2 * 4) / 3);
+          x.restore();
+          x.beginPath();
+          x.arc(px, py, pr, 0, 7);
+          x.lineWidth = 3;
+          x.strokeStyle = f.col;
+          x.stroke();
+          x.textBaseline = "middle";
+          x.lineJoin = "round";
+          x.lineWidth = 3;
+          x.strokeStyle = "#0f0d1a";
+          x.font = "10px " + FONT;
+          x.textAlign = "left";
+          x.strokeText(f.n, tx, y0 + 10);
+          x.fillStyle = cream;
+          x.fillText(f.n, tx, y0 + 10);
+          const tag = f.ai ? "CPU" : "P" + (f.slot + 1);
+          x.font = "8px " + FONT;
+          x.textAlign = "right";
+          x.strokeText(tag, cx + cw - 8, y0 + 10);
+          x.fillStyle = f.col;
+          x.fillText(tag, cx + cw - 8, y0 + 10);
+          for (let k = 0; k < ARENA_LIVES; k++) {
+            x.beginPath();
+            x.arc(tx + 4 + k * 11, y0 + 21, 3.8, 0, 7);
+            if (k < f.lives) {
+              x.fillStyle = f.col;
+              x.fill();
+              x.lineWidth = 1.5;
+              x.strokeStyle = "#000";
+              x.stroke();
+            } else {
+              x.lineWidth = 1.5;
+              x.strokeStyle = "rgba(243,233,210,.35)";
+              x.stroke();
+            }
+          }
+          if (f.kos) {
+            x.font = "8px " + FONT;
+            x.textAlign = "right";
+            x.fillStyle = cream;
+            x.fillText(f.kos + " KO", cx + cw - 8, y0 + 21);
+          }
+          const by = y0 + 28,
+            bh = 6,
+            crit = f.hp > 0 && f.hp < 30;
+          rr(tx, by, bw, bh, 3);
+          x.fillStyle = "#14121f";
+          x.fill();
+          if (f.gh > 0) {
+            rr(tx, by, Math.max(2, (bw * f.gh) / 100), bh, 3);
+            x.fillStyle = "#f5c42e";
+            x.fill();
+          }
+          if (f.hp > 0) {
+            rr(tx, by, Math.max(2, (bw * f.hp) / 100), bh, 3);
+            x.fillStyle = crit
+              ? mixHex(f.col, "#ff2a1a", 0.55 + 0.12 * Math.sin(T / 5))
+              : f.col;
+            x.fill();
+          }
+          if (f.hp > 0) {
+            x.fillStyle = "rgba(255,255,255,.28)";
+            x.fillRect(tx + 1, by + 1, Math.max(0, (bw * f.hp) / 100 - 2), 2);
+          }
+          rr(tx, by, bw, bh, 3);
+          x.lineWidth = 1.5;
+          x.strokeStyle = "#000";
+          x.stroke();
+          if (f.out) {
+            x.font = "10px " + FONT;
+            x.textAlign = "center";
+            x.fillStyle = "#ff8a6a";
+            x.strokeText("ELIMINADO", cx + cw / 2, y0 + chh / 2 + 6);
+            x.fillText("ELIMINADO", cx + cw / 2, y0 + chh / 2 + 6);
+          }
+          x.restore();
+        });
+        /* timer */
+        {
+          const urgent = aTm <= 10,
+            txt = Math.floor(aTm / 60) + ":" + String(aTm % 60).padStart(2, "0");
+          const ty = 342;
+          rr(W / 2 - 34, ty - 13, 68, 26, 9);
+          const tg = x.createLinearGradient(0, ty - 13, 0, ty + 13);
+          tg.addColorStop(0, "rgba(34,28,58,.92)");
+          tg.addColorStop(1, "rgba(5,4,14,.92)");
+          x.fillStyle = tg;
+          x.fill();
+          x.lineWidth = 3.5;
+          x.strokeStyle = "#000";
+          x.stroke();
+          rr(W / 2 - 34, ty - 13, 68, 26, 9);
+          x.lineWidth = 2;
+          x.strokeStyle = urgent ? "#ff6b4a" : cream;
+          x.stroke();
+          x.font = "16px " + FONT;
+          x.textAlign = "center";
+          x.textBaseline = "middle";
+          x.lineWidth = 4;
+          x.strokeStyle = "#0f0d1a";
+          x.strokeText(txt, W / 2, ty + 1);
+          x.fillStyle = urgent ? "#ff6b4a" : cream;
+          x.fillText(txt, W / 2, ty + 1);
+        }
+        /* indicadores de quem está fora da tela */
+        fighters.forEach((f) => {
+          if (!f.alive()) return;
+          const cxp = f.x,
+            cyp = f.wy - f.bodyH() / 2;
+          if (cxp >= 0 && cxp <= W && cyp >= 0 && cyp <= H) return;
+          const mx = Math.max(20, Math.min(W - 20, cxp)),
+            my = Math.max(56, Math.min(H - 20, cyp)),
+            ang = Math.atan2(cyp - my, cxp - mx),
+            r = 15;
+          x.save();
+          x.translate(mx, my);
+          x.globalAlpha = 0.92;
+          x.beginPath();
+          x.moveTo(Math.cos(ang) * (r + 11), Math.sin(ang) * (r + 11));
+          x.lineTo(
+            Math.cos(ang + 2.5) * (r + 3),
+            Math.sin(ang + 2.5) * (r + 3),
+          );
+          x.lineTo(
+            Math.cos(ang - 2.5) * (r + 3),
+            Math.sin(ang - 2.5) * (r + 3),
+          );
+          x.closePath();
+          x.fillStyle = f.col;
+          x.fill();
+          x.beginPath();
+          x.arc(0, 0, r, 0, 7);
+          x.fillStyle = "#0f0d1a";
+          x.fill();
+          x.save();
+          x.clip();
+          if (f.P.pf && f.P.pf.complete)
+            x.drawImage(f.P.pf, -r, -r + 1, r * 2, (r * 2 * 4) / 3);
+          x.restore();
+          x.beginPath();
+          x.arc(0, 0, r, 0, 7);
+          x.lineWidth = 3;
+          x.strokeStyle = f.col;
+          x.stroke();
+          x.restore();
+        });
+        if (ast === "intro") {
+          if (amt > 45) banner("Arena", "Ilhas do Céu", 150 - amt);
+          else banner("Lute!", "", 45 - amt);
+        }
+        if (ast === "end") banner(aMsg, aSub, 200 - amt);
+      }
+
+      /* ---- lobby: aperta pra entrar (teclado A/B + até 4 controles) ---- */
+      const AL = { open: false, slots: [], gr: 0, prev: {}, rp: {}, sig: "", kind: "arena", max: 4 };
+      let LASTV = null;
+      const AL_IDS = () => ROSTER.filter(Boolean),
+        alEmpty = () => ({ t: "empty", dev: null, cid: null, ready: false });
+      const alReset = () => {
+        AL.slots = [0, 1, 2, 3].map(alEmpty);
+        AL.sig = "";
+      };
+      alReset();
+      const alTaken = (id, except) =>
+        id !== "?" &&
+        AL.slots.some((s, i) => i !== except && s.t !== "empty" && s.cid === id);
+      const alFree = (i) => {
+        const ids = AL_IDS().filter((id) => !alTaken(id, i));
+        return ids[(Math.random() * ids.length) | 0];
+      };
+      const alOcc = () =>
+          AL.slots.slice(0, AL.max).filter((s) => s.t !== "empty"),
+        canStart = () => {
+          const o = alOcc(),
+            hs = o.filter((s) => s.t === "human");
+          return (
+            o.length >= 2 &&
+            hs.length >= 1 &&
+            hs.every((s) => s.ready) &&
+            o.every((s) => s.t !== "ai" || s.ready)
+          );
+        };
+      const devLabel = (dv) =>
+        dv === "k1"
+          ? "Teclado · WASD"
+          : dv === "k2"
+            ? "Teclado · Setas"
+            : "Controle " + (+dv.slice(1) + 1);
+      const devHint = (dv) =>
+        dv === "k1"
+          ? "A D trocar · J ok · K sair"
+          : dv === "k2"
+            ? "◀ ▶ trocar · Num4 ok · Num5 sair"
+            : "◀ ▶ trocar · ✕/A ok · ○/B sair";
+      function alCycle(i, dir) {
+        const ids = AL_IDS().concat("?"),
+          s = AL.slots[i];
+        let k = ids.indexOf(s.cid);
+        for (let n = 0; n < ids.length; n++) {
+          k = (k + dir + ids.length) % ids.length;
+          if (!alTaken(ids[k], i)) {
+            s.cid = ids[k];
+            break;
+          }
+        }
+        if (s.cid && s.cid !== "?" && CH[s.cid]) loadLazy(CH[s.cid].P);
+        sfxUI("move");
+        alRender();
+      }
+      function alRender(force) {
+        const root = $("alslots");
+        if (!root) return;
+        const sig = JSON.stringify(AL.slots);
+        if (force || sig !== AL.sig) {
+          AL.sig = sig;
+          root.innerHTML = AL.slots
+            .slice(0, AL.max)
+            .map((s, i) => {
+              const id = s.cid,
+                idx = id && id !== "?" ? ROSTER.indexOf(id) : -1,
+                face = idx >= 0 ? FACES[idx] : RND_FACE,
+                col = idx >= 0 && CH[id] ? CH[id].col : "#6fc2ff",
+                nm =
+                  s.t === "empty"
+                    ? "Vazio"
+                    : idx >= 0
+                      ? LAB[idx]
+                      : "Aleatório";
+              let hint = "",
+                btns = "",
+                rdy = "";
+              if (s.t === "empty") {
+                hint = "Aperte um botão<br />no teclado ou controle";
+                btns = '<button data-a="ai" data-i="' + i + '">+ IA</button>';
+              } else if (s.t === "human") {
+                hint = s.ready
+                  ? "Aperte OK de novo ou Enter para começar"
+                  : devHint(s.dev);
+                if (s.ready) rdy = '<span class="alr">PRONTO</span>';
+              } else if (s.pick && !s.ready) {
+                hint = "Escolha o oponente · " + devHint(s.pick);
+                btns =
+                  '<button data-a="prev" data-i="' +
+                  i +
+                  '">◀</button><button data-a="next" data-i="' +
+                  i +
+                  '">▶</button><button data-a="okai" data-i="' +
+                  i +
+                  '">OK</button>';
+              } else {
+                hint = "Controlado pela IA";
+                rdy = '<span class="alr">PRONTO</span>';
+                btns =
+                  '<button data-a="prev" data-i="' +
+                  i +
+                  '">◀</button><button data-a="next" data-i="' +
+                  i +
+                  '">▶</button><button data-a="rm" data-i="' +
+                  i +
+                  '">✕</button>';
+              }
+              const dv =
+                s.t === "ai" ? "CPU" : s.t === "human" ? devLabel(s.dev) : "";
+              return (
+                '<div class="als ' +
+                s.t +
+                (s.ready ? " rdy" : "") +
+                '" style="--c:' +
+                col +
+                '"><i class="alp">P' +
+                (i + 1) +
+                '</i><div class="alf" style="background-image:url(' +
+                face +
+                ')"></div><b class="aln">' +
+                nm +
+                "</b>" +
+                (dv ? '<span class="ald">' + dv + "</span>" : "") +
+                rdy +
+                '<small class="alh">' +
+                hint +
+                '</small><div class="alb">' +
+                btns +
+                "</div></div>"
+              );
+            })
+            .join("");
+        }
+        alUpd();
+      }
+      function alUpd() {
+        const ok = canStart(),
+          b = $("alstart"),
+          hs = alOcc().filter((s) => s.t === "human").length;
+        if (b) b.disabled = !ok;
+        const h = $("alhint");
+        if (h) {
+          const vs = AL.kind === "vs";
+          h.textContent = ok
+            ? "Tudo pronto — aperte Começar, Enter ou Start."
+            : !hs
+              ? vs
+                ? "Aperte um botão no teclado (WASD ou setas) ou no controle para entrar."
+                : "Aperte um botão no teclado (WASD ou setas) ou no controle para entrar. Até 2 teclados e 4 controles."
+              : alOcc().length < 2
+                ? vs
+                  ? "Confirme (OK) para escolher o oponente da IA, ou deixe um segundo jogador entrar."
+                  : "Entre mais um jogador ou adicione uma IA (+ IA)."
+                : alOcc().some((s) => s.t === "ai" && !s.ready)
+                  ? "Escolha o personagem do oponente e confirme (OK)."
+                  : "Todos os jogadores precisam confirmar (OK).";
+        }
+      }
+      $("alslots").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-a]");
+        if (!b) return;
+        const i = +b.dataset.i,
+          a = b.dataset.a,
+          s = AL.slots[i];
+        if (a === "ai" && s.t === "empty")
+          AL.slots[i] = { t: "ai", dev: null, cid: alFree(i), ready: true };
+        else if (a === "rm") {
+          AL.slots[i] = alEmpty();
+          AL.slots.forEach((x) => {
+            if (x.t === "human" && AL.kind === "vs") x.ready = false;
+          });
+        } else if (a === "okai") s.ready = true;
+        else if (a === "prev" || a === "next") {
+          alCycle(i, a === "prev" ? -1 : 1);
+          return;
+        }
+        if (AL.slots[i].cid && AL.slots[i].cid !== "?")
+          loadLazy(CH[AL.slots[i].cid].P);
+        alRender();
+      });
+      const IS_TOUCH =
+          matchMedia("(pointer:coarse)").matches ||
+          matchMedia("(hover:none)").matches ||
+          /[?&]touch=1/.test(location.search),
+        AM = { n: 3, me: null, opp: null, act: 0 };
+      function amBuild() {
+        const vs = AL.kind === "vs",
+          me = AM.me || (AM.me = alFree(0));
+        AL.slots = [0, 1, 2, 3].map(alEmpty);
+        AL.slots[0] = { t: "human", dev: "k1", cid: me, ready: true };
+        if (vs) {
+          if (!AM.opp || AM.opp === me) {
+            const o = AL_IDS().filter((k) => k !== me);
+            AM.opp = o[(Math.random() * o.length) | 0];
+          }
+          AL.slots[1] = { t: "ai", dev: null, cid: AM.opp, ready: true };
+        } else
+          for (let i = 1; i < AM.n; i++)
+            AL.slots[i] = { t: "ai", dev: null, cid: alFree(i), ready: true };
+        AL.slots.forEach((s) => {
+          if (s.cid && s.cid !== "?" && CH[s.cid]) loadLazy(CH[s.cid].P);
+        });
+        amRender();
+      }
+      function amRender() {
+        const vs = AL.kind === "vs",
+          ids = AL_IDS(),
+          me = AL.slots[0].cid,
+          opp = vs ? AL.slots[1].cid : null,
+          cur = vs && AM.act === 1 ? opp : me,
+          idx = cur !== "?" ? ROSTER.indexOf(cur) : -1,
+          faceOf = (id) => {
+            const k = id && id !== "?" ? ROSTER.indexOf(id) : -1;
+            return k >= 0 ? FACES[k] : RND_FACE;
+          };
+        $("amn").textContent =
+          (vs ? (AM.act === 1 ? "Oponente · " : "Você · ") : "") +
+          (idx >= 0 ? LAB[idx] : "Aleatório");
+        $("amn").style.color = idx >= 0 && CH[cur] ? CH[cur].col : "#fff";
+        document
+          .querySelectorAll("#amc button")
+          .forEach((b) => b.classList.toggle("on", +b.dataset.n + 1 === AM.n));
+        if (vs)
+          document.querySelectorAll(".amchip").forEach((c) => {
+            const w = +c.dataset.w,
+              id = w ? opp : me;
+            c.classList.toggle("act", AM.act === w);
+            c.querySelector("i").style.backgroundImage =
+              "url(" + faceOf(id) + ")";
+            c.querySelector("span").textContent = w
+              ? id === "?"
+                ? "CPU ?"
+                : "CPU"
+              : "Você";
+          });
+        $("amg").innerHTML =
+          ids
+            .map((id) => {
+              const k = ROSTER.indexOf(id);
+              return (
+                `<button type="button" data-id="${id}" class="${id === me ? "on" : vs && id === opp ? "op" : ""}" ` +
+                `style="background-image:url(${FACES[k]});--c:${CH[id] ? CH[id].col : "#6fc2ff"}" aria-label="${LAB[k]}"></button>`
+              );
+            })
+            .join("") +
+          `<button type="button" data-id="?" class="${vs ? (opp === "?" ? "op" : "") : me === "?" ? "on" : ""}" style="background-image:url(${RND_FACE})" aria-label="Aleatório"></button>`;
+        alUpd();
+      }
+      $("amc").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-n]");
+        if (!b) return;
+        AM.n = +b.dataset.n + 1;
+        sfxUI("move");
+        amBuild();
+      });
+      $("amg").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-id]");
+        if (!b) return;
+        const id = b.dataset.id;
+        if (AL.kind === "vs") {
+          if (AM.act === 1) {
+            if (id === AL.slots[0].cid) return;
+            AM.opp = id;
+          } else {
+            AM.me = id === "?" ? alFree(0) : id;
+            AM.act = 1;
+            if (AM.opp === AM.me) AM.opp = null;
+          }
+        } else AM.me = id;
+        sfxUI("move");
+        amBuild();
+      });
+      document.querySelectorAll(".amchip").forEach((c) => {
+        c.onclick = () => {
+          AM.act = +c.dataset.w;
+          sfxUI("move");
+          amRender();
+        };
+      });
+      function openLobby(keep, kind) {
+        kind = kind === "vs" ? "vs" : "arena";
+        if (kind === "arena" && !IS_TOUCH) return a4Open(keep);
+        alReset();
+        AL.kind = kind;
+        AL.max = kind === "vs" ? 2 : 4;
+        const last = kind === "vs" ? LASTV : LASTA;
+        if (keep && last)
+          last.forEach((c) => {
+            AL.slots[c.slot] = {
+              t: c.t,
+              dev: c.dev,
+              cid: c.cid,
+              ready: c.t === "ai",
+            };
+          });
+        if (IS_TOUCH) {
+          AM.act = 0;
+          if (keep && last) {
+            const h = last.find((c) => c.t === "human"),
+              a = last.find((c) => c.t === "ai");
+            if (h) AM.me = h.cid;
+            if (kind === "vs") AM.opp = a ? a.cid : null;
+            else AM.n = last.length;
+          } else if (kind === "vs") AM.opp = null;
+        }
+        $("alh1").textContent = kind === "vs" ? "Versus" : "Arena";
+        $("alsub").textContent =
+          kind === "vs"
+            ? "1 ou 2 jogadores · melhor de 3 rounds"
+            : "Ilhas do Céu · até 4 lutadores · 3 vidas";
+        AL.open = true;
+        AL.gr = 20;
+        AL.prev = {};
+        AL.rp = {};
+        menu.style.display = "none";
+        $("alobby").classList.toggle("mob", IS_TOUCH);
+        $("alobby").classList.toggle("vs", kind === "vs");
+        $("alobby").style.display = "flex";
+        loadArena();
+        if (IS_TOUCH) amBuild();
+        alRender(true);
+      }
+      function exitLobby() {
+        AL.open = false;
+        $("alobby").style.display = "none";
+        showMenu("Quinhas Ball Fighters", "");
+      }
+      function versusStart() {
+        const occ = AL.slots
+          .map((s, i) => [s, i])
+          .slice(0, 2)
+          .filter(([s]) => s.t !== "empty");
+        if (occ.length === 2 && occ[0][0].t === "ai") occ.reverse();
+        const used = new Set(
+            occ.filter(([s]) => s.cid !== "?").map(([s]) => s.cid),
+          ),
+          cfg = occ.map(([s, i]) => {
+            let id = s.cid;
+            if (id === "?") {
+              const pool = AL_IDS().filter((k) => !used.has(k));
+              id = pool[(Math.random() * pool.length) | 0];
+              used.add(id);
+            }
+            return { t: s.t, dev: s.dev, cid: id, slot: i };
+          }),
+          hc = cfg.filter((c) => c.t === "human").length;
+        VDEV[0] = cfg[0].dev;
+        VDEV[1] = hc === 2 ? cfg[1].dev : null;
+        LASTV = cfg;
+        AL.open = false;
+        $("alobby").style.display = "none";
+        askStage(hc === 2 ? "2p" : "ai", cfg[0].cid, cfg[1].cid);
+        if (stgSel) stgSel.lob = true;
+      }
+      function tryStart() {
+        if (!AL.open || beginBusy || !canStart()) return;
+        if (AL.kind === "vs") return versusStart();
+        const used = new Set(
+            AL.slots
+              .filter((s) => s.t !== "empty" && s.cid !== "?")
+              .map((s) => s.cid),
+          ),
+          cfg = [];
+        AL.slots.forEach((s, i) => {
+          if (s.t === "empty") return;
+          let id = s.cid;
+          if (id === "?") {
+            const pool = AL_IDS().filter((k) => !used.has(k));
+            id = pool[(Math.random() * pool.length) | 0];
+            used.add(id);
+          }
+          cfg.push({ t: s.t, dev: s.dev, cid: id, slot: i });
+        });
+        beginArena(cfg);
+      }
+      function lobbyTick() {
+        if (!AL.open || beginBusy || IS_TOUCH || !vis($("alobby"))) return;
+        const K = (c) => !!keys[c],
+          snap = {};
+        snap.k1 = {
+          l: K("KeyA"),
+          r: K("KeyD"),
+          u: K("KeyW"),
+          d: K("KeyS"),
+          ok: K("KeyJ"),
+          bk: K("KeyK"),
+          any: [
+            "KeyA",
+            "KeyD",
+            "KeyW",
+            "KeyS",
+            "KeyJ",
+            "KeyI",
+            "KeyL",
+            "KeyK",
+            "Space",
+          ].some(K),
+        };
+        snap.k2 = {
+          l: K("ArrowLeft"),
+          r: K("ArrowRight"),
+          u: K("ArrowUp"),
+          d: K("ArrowDown"),
+          ok: K("Numpad4"),
+          bk: K("Numpad5"),
+          any: [
+            "ArrowLeft",
+            "ArrowRight",
+            "ArrowUp",
+            "ArrowDown",
+            "Numpad4",
+            "Numpad5",
+            "Numpad6",
+            "Numpad8",
+            "Numpad0",
+          ].some(K),
+        };
+        for (let n = 0; n < 4; n++) {
+          const g = rawPad(n);
+          if (!g) continue;
+          const B = (j) => !!(g.buttons[j] && g.buttons[j].pressed),
+            A = g.axes;
+          snap["p" + n] = {
+            l: B(14) || A[0] < -0.5,
+            r: B(15) || A[0] > 0.5,
+            u: B(12) || A[1] < -0.5,
+            d: B(13) || A[1] > 0.5,
+            ok: B(0),
+            bk: B(1),
+            st: B(9),
+            any:
+              g.buttons.some((q) => q.pressed) ||
+              Math.abs(A[0]) > 0.6 ||
+              Math.abs(A[1]) > 0.6,
+          };
+        }
+        /* controle desconectado libera o slot */
+        AL.slots.forEach((s, i) => {
+          if (s.t === "human" && s.dev[0] === "p" && !snap[s.dev]) {
+            AL.slots[i] = alEmpty();
+            alRender();
+          }
+        });
+        for (const dv in snap) {
+          const c = snap[dv],
+            pv = AL.prev[dv] || {},
+            ed = (k) => c[k] && !pv[k],
+            si = AL.slots.findIndex((s) => s.dev === dv);
+          if (c.any) aUnlock();
+          if (si < 0) {
+            if (AL.gr <= 0 && ed("any")) {
+              const e = AL.slots.findIndex((s) => s.t === "empty");
+              if (e >= 0 && e < AL.max) {
+                AL.slots[e] = {
+                  t: "human",
+                  dev: dv,
+                  cid: alFree(e),
+                  ready: false,
+                };
+                loadLazy(CH[AL.slots[e].cid].P);
+                sfxUI("ok");
+                alRender();
+              }
+            }
+            continue;
+          }
+          const s = AL.slots[si];
+          if (c.st && !pv.st) {
+            tryStart();
+            continue;
+          }
+          const pi = s.ready
+            ? AL.slots.findIndex((x) => x.pick === dv && !x.ready)
+            : -1;
+          if (pi >= 0) {
+            for (const k of ["l", "r"]) {
+              const key = dv + k;
+              if (c[k]) {
+                const n = (AL.rp[key] || 0) + 1;
+                AL.rp[key] = n;
+                if (n === 1 || (n > 18 && (n - 18) % 7 === 0))
+                  alCycle(pi, k === "l" ? -1 : 1);
+              } else AL.rp[key] = 0;
+            }
+            if (ed("ok")) {
+              AL.slots[pi].ready = true;
+              sfxUI("ok");
+              alRender();
+            } else if (ed("bk")) {
+              AL.slots[pi] = alEmpty();
+              s.ready = false;
+              sfxUI("back");
+              alRender();
+            }
+            continue;
+          }
+          if (!s.ready) {
+            for (const k of ["l", "r"]) {
+              const key = dv + k;
+              if (c[k]) {
+                const n = (AL.rp[key] || 0) + 1;
+                AL.rp[key] = n;
+                if (n === 1 || (n > 18 && (n - 18) % 7 === 0))
+                  alCycle(si, k === "l" ? -1 : 1);
+              } else AL.rp[key] = 0;
+            }
+            if (ed("ok")) {
+              s.ready = true;
+              if (AL.kind === "vs" && alOcc().length === 1) {
+                const e = AL.slots.findIndex(
+                  (x, j) => j < AL.max && x.t === "empty",
+                );
+                if (e >= 0) {
+                  AL.slots[e] = {
+                    t: "ai",
+                    dev: null,
+                    cid: alFree(e),
+                    ready: false,
+                    pick: dv,
+                  };
+                  loadLazy(CH[AL.slots[e].cid].P);
+                }
+              }
+              sfxUI("ok");
+              alRender();
+            } else if (ed("bk")) {
+              AL.slots[si] = alEmpty();
+              sfxUI("back");
+              alRender();
+            }
+          } else if (ed("bk")) {
+            s.ready = false;
+            sfxUI("back");
+            alRender();
+          } else if (ed("ok")) tryStart();
+        }
+        AL.prev = snap;
+        if (AL.gr > 0) AL.gr--;
+      }
+      addEventListener(
+        "keydown",
+        (e) => {
+          if (!AL.open || !vis($("alobby"))) return;
+          if (e.code === "Enter" || e.code === "NumpadEnter") {
+            const pk = AL.slots.find((x) => x.pick && !x.ready);
+            if (!e.repeat) {
+              if (pk) {
+                pk.ready = true;
+                alRender();
+              } else tryStart();
+            }
+          } else if (e.code === "Escape") exitLobby();
+        },
+        true,
+      );
+      $("bar").onclick = () => openLobby(false, "arena");
+      $("alstart").onclick = tryStart;
+      $("alback").onclick = exitLobby;
+
       let last = 0,
         acc = 0;
       function loop(ts) {
+        lobbyTick();
         padMenu();
         const dt = Math.min(ts - last, 100);
         last = ts;
@@ -7510,12 +10647,12 @@ updOpt();
             const f1 = $("fi"),
               f2 = $("fi2"),
               show = (id) => {
-                if (pendMode === "2p") return;
+                if (pendMode === "2p" || pendMode === "arena") return;
                 fiSet(f1, id, "");
                 fiSet(f2, null);
               };
             const upd = () => {
-              if (pendMode === "2p") return;
+              if (pendMode === "2p" || pendMode === "arena") return;
               const c =
                 grid.querySelector(".card.gf[data-id]") ||
                 grid.querySelector(".card:hover[data-id]");

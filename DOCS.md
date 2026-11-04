@@ -1,6 +1,6 @@
 # Quinhas Ball Fighters — documentação técnica
 
-Documento de referência do jogo (v1.3.16+). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
+Documento de referência do jogo (v1.4.0 — inclui o modo Arena, §14.1). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
 
 ---
 
@@ -70,7 +70,7 @@ loading → title → menu ⇄ sel → stg → (luta: intro/fight/end)
 | ---------- | ------------------ | -------------------------------------------------------------------------- |
 | `#loading` | Boot               | Barra de progresso; lista erros se asset falhar                            |
 | `#title`   | Título             | Clique / qualquer tecla / botão de pad → menu                              |
-| `#menu`    | Menu principal     | Um jogador, Versus, Controles, Áudio, Título; Revanche aparece pós-partida |
+| `#menu`    | Menu principal     | Versus (1-2), Arena (2-4), Controles, Áudio, Título; Revanche / Trocar lutadores / Menu principal aparecem pós-partida |
 | `#sel`     | Seleção de lutador | Grade `#grid` (12 + 3 em breve + Aleatório); previews `#fi`/`#fi2`/`#vs`   |
 | `#stg`     | Seleção de cenário | 5 mapas + Aleatório                                                        |
 | `#hp`      | Controles          | Tabela `#ct` preenchida por `buildHints`                                   |
@@ -92,7 +92,7 @@ loading → title → menu ⇄ sel → stg → (luta: intro/fight/end)
 | -------- | ------------- |
 | Desktop largo (`min-width:1000px` + `min-height:560px`) | Nomes no topo (`#fi`/`#fi2` nameplates); corpos idle grandes face a face atrás da grade; grade 8×2 na base; `#vs` escondido no 2P |
 | Desktop estreito / baixo | 1P: só grade; 2P: faixa compacta `#vs` / `.pv` |
-| Toque (`hover:none` + `pointer:coarse`) | **Sem** preview de corpo (`#fi`/`#fi2`/`#vs` `display:none !important`); botão Versus (`#b2p`) oculto |
+| Toque (`hover:none` + `pointer:coarse`) | **Sem** preview de corpo (`#fi`/`#fi2`/`#vs` `display:none !important`); botão legado `#b2p` sempre oculto (Versus e Arena são os dois modos do menu) |
 
 Altura dos previews: `HM` (metros) → `scOf` → `P.sc` → `hsRatio` → CSS `--hs` (`height: calc(BASE * var(--hs))`, sem `max-width` que esmague o sprite). Aleatório (`?`) usa `RND_BODY` (`rnd_body.webp`, silhueta Eslepe) e `--hs` de `scOf("e")`.
 
@@ -413,6 +413,57 @@ Ao adicionar personagem novo:
 
 ---
 
+## 14.1 Modo Arena (2–4 lutadores · v1.4.0)
+
+Modo estilo Brawlhalla/Smash: stock, mapa com plataformas e blastzones. Vive em **caminho separado** do 1v1 (`p1`/`p2`, `step`, `begin` ficam intactos). Código no bloco `ARENA` perto do fim do `<script>` (antes de `loop`) + classe `AF` logo depois de `F`.
+
+### Regras
+
+- 2 a 4 lutadores, **todos contra todos** (friendly fire sempre on), **3 vidas** (`ARENA_LIVES`).
+- Perde 1 vida ao **zerar HP** ou **sair da blastzone** (`ARENA.blast`). Respawn com HP 100, hover ~0,75 s e i-frames (~3 s, pisca).
+- Vence o **último com vida**; cap de **5:00** (`ARENA_TIME`) → mais vidas; empate de vidas = **Empate** (sem sudden death).
+- **Knockback cresce com o HP perdido** (`AF.hurt`: `kx` + pop vertical). Esfera de Ki com `kb` base maior (8.5).
+- Pulo mais alto + **1 pulo duplo** (`vy -13` / `-13.6`). ↓ em plat soft atravessa; sem air dodge/wall jump.
+- Suicídio (cai sem hit recente, `lastT`≤0) = −1 vida sem crédito de KO; senão `lastBy.kos++`.
+
+### Mapa — Ilhas do Céu
+
+`assets/arena.webp` (1600×900) + thumb `assets/stg/arena.webp`. **Não entra em `MAPS`** (carrega via `loadArena`). Colisão em `ARENA.surf`: chão principal (`y:289`, hard) + 2 plats **soft** (`y:146`). Fundo é só visual. Sprites desenhados a `ARK=0.27` (`P = Object.create(P0); P.sc *= ARK`).
+
+### Lobby “aperta pra entrar” (celular / legado)
+
+No **desktop** a Arena usa a seleção clássica (ver abaixo); o `#alobby` com 4 slots é usado no **celular** (`IS_TOUCH`). Qualquer input num dispositivo livre reivindica o próximo slot:
+
+| Dispositivo | Entra com | Trocar / OK / Sair |
+| ----------- | --------- | ------------------ |
+| `k1` teclado | WASD/J/I/L/Espaço | A D · J · K |
+| `k2` teclado | setas/Numpad | ◀ ▶ · Num4 · Num5 |
+| `p0..p3` controle (índice **cru** de `navigator.getGamepads`) | qualquer botão/stick | ◀ ▶ · ✕/A · ○/B (Start começa) |
+
+Máx. 2 teclados e 4 controles; ≥1 humano, ≥2 lutadores, todos os humanos prontos. Slots vazios podem virar **IA** (`+ IA`). Enter / Start / OK de novo começa; Esc volta. Pad só plugado não entra (precisa mexer); pad desconectado libera o slot. Personagem duplicado é bloqueado (`?` resolve aleatório sem repetir).
+
+### Funções principais
+
+| Função | Papel |
+| ------ | ----- |
+| `AF` | `F` + física de plataforma (`wy`, `on`, `sup`, `jc`, `drop`, `inv`, `rsp`, `lives`, `kos`) |
+| `devIn(dev, noJump)` | input do slot (`k1`/`k2`/`pN`). **Arena** (`noJump` falso): ↑/W não fazem nada; pula só `K` (k1), `Num 5` (k2) e ✕/A (pad) — ✕/A de novo no ar = pulo duplo. **Versus** (`noJump` true): ↑ pula como no 1v1 |
+| `aiArena(me)` | IA: alvo mais próximo, recuperação, sobe/desce plats, não cai sozinha |
+| `beginArena(cfg)` / `beginArenaNow` | carrega lazy + `arena.webp`, cria `fighters[]`, `st="arena"` |
+| `stepArena` | `ast` = `intro` → `fight` → `end`; chama `up`, `flushHits`, `updArenaPJ`, `sepArena`, `checkBlast` |
+| `drawArenaWorld` / `drawArenaHud` | render (lutadores, 4 cards com vidas/HP, timer, indicador fora da tela) |
+| `LASTA` | config da última Arena (Revanche / Reiniciar) |
+
+`cfg` = `[{ t:'human'|'ai', dev, cid, slot }]`. `scr()` devolve `alobby` no lobby e `game` durante a Arena (pausa por qualquer humano: Esc/P/Start de qualquer pad).
+
+---
+
+**Celular (touch):** `IS_TOUCH` (pointer:coarse / hover:none, ou `?touch=1` para testar no desktop) troca o lobby por uma tela simples (`#almob`): quantidade 2/3/4, escolha do lutador e rivais de IA sorteados (`amBuild`). O jogador usa `k1` via analógico/botões virtuais; o botão ✕ "em breve" vira **Pular** (`vJ`) durante a Arena (`#pad.ar`), facilitando o pulo duplo.
+
+**Arena (desktop):** usa a mesma tela clássica de seleção (`#sel`, `data-m="arena"`) com 4 vagas (`A4`, `a4In(dev,k)`): cada dispositivo entra apertando um botão, move o próprio cursor colorido (P1 laranja, P2 azul, P3 verde, P4 rosa) e confirma; CPUs entram pelo botão "+ CPU" (ou `I`/`Num8`/Y para adicionar e `L`/`Num6`/X para remover). Sozinho, já entra uma CPU de adversária. Começa com Enter/Start/botão Começar quando todos os humanos confirmaram e há 2+ lutadores. No celular continua o lobby simples (`#almob`).
+
+**Menu principal (v1.4.0):** só dois modos — **Versus · 1-2 jogadores** (`openSel("vs")`) e **Arena · 2-4 jogadores** (`openLobby(…,"arena")` → `a4Open` no desktop, `#alobby` no celular). Versus usa a seleção clássica (`#sel`, `s2.vs`): cada preview mostra "Pressione para entrar" até alguém entrar (`vsIn(dev,k)`); sozinho, o P1 escolhe também a CPU; com 2 humanos vira o modo `2p`; depois vem a escolha de cenário. Os dispositivos ficam em `VDEV` (lidos por `in1`/`in2`). Nada vem pré-selecionado: o anel do jogador só aparece depois que ele entra (`s2cur`, `a4Clear` limpa os restos da Arena). No celular: toque no seu lutador e depois no adversário (CPU). A tela **Controles** tem abas Versus e Arena (`hpTab`).
+
 ## 15. Glossário rápido
 
 | Termo   | Significado                                           |
@@ -424,6 +475,8 @@ Ao adicionar personagem novo:
 | `HQ`    | Fila de hits do frame                                 |
 | `PJ`    | Projéteis de Ki                                       |
 | `LASTM` | Última luta (revanche)                                |
+| `LASTA` | Última Arena (revanche)                               |
+| `AF`    | Lutador da Arena (`F` + plataforma/stock)             |
 | `gf`    | Classe “foco” de navegação por teclado/pad nos botões |
 
 ---
@@ -432,10 +485,10 @@ Ao adicionar personagem novo:
 
 **Local:** servir a pasta (ex. `python -m http.server`) e abrir no browser. Abrir o `file://` do HTML pode falhar em alguns browsers por CORS/load de assets — preferir HTTP.
 
-**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.3.16** (atualizar strings ao shipar).
+**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.4.0** (atualizar strings ao shipar).
 
 **Git:** commits só com o que for pedido; `.gitignore` impede pastas fonte e lixo de `tools/out` (exceto `*.json`).
 
 ---
 
-_Última revisão alinhada ao código em `index.html` (v1.3.16: lazy load de poses/mapas, pausa centralizada no landscape mobile). Se o código divergir deste doc, o código manda — atualize esta página._
+_Última revisão alinhada ao código em `index.html` (v1.4.0: modo Arena; v1.3.16: lazy load de poses/mapas, pausa centralizada no landscape mobile). Se o código divergir deste doc, o código manda — atualize esta página._

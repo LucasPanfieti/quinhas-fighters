@@ -313,6 +313,8 @@ Mapeamento **intencional estilo PlayStation / face buttons remapeados**:
 | Chute          | 3                     | △              |
 | Esfera de Ki   | 1                     | ○              |
 | Defesa         | 5 (R1)                | R1             |
+| Pulo (Versus)  | 12 / stick ↑ **ou** 0 (✕/A) | ✕ também pula |
+| Especial       | 4 (L1/LB) — UI “Em breve” | L1         |
 | Confirmar menu | 0                     | ✕              |
 | Voltar menu    | 1                     | ○              |
 | Start/Pause    | 9                     | —              |
@@ -423,7 +425,7 @@ Modo estilo Brawlhalla/Smash: stock, mapa com plataformas e blastzones. Vive em 
 - Perde 1 vida ao **zerar HP** ou **sair da blastzone** (`ARENA.blast`). Respawn com HP 100, hover ~0,75 s e i-frames (~3 s, pisca).
 - Vence o **último com vida**; cap de **5:00** (`ARENA_TIME`) → mais vidas; empate de vidas = **Empate** (sem sudden death).
 - **Knockback cresce com o HP perdido** (`AF.hurt`: `kx` + pop vertical). Esfera de Ki com `kb` base maior (8.5).
-- Pulo mais alto + **1 pulo duplo** (`vy -13` / `-13.6`). ↓ em plat soft atravessa; sem air dodge/wall jump.
+- Pulo mais alto + **1 pulo duplo** (`vy -13` / `-13.6`). Teclado: `W`/↑; pad: só ✕/A (stick ↑ não pula). `K`/Num5/L1 = especial em breve. ↓ em plat soft atravessa; sem air dodge/wall jump.
 - Suicídio (cai sem hit recente, `lastT`≤0) = −1 vida sem crédito de KO; senão `lastBy.kos++`.
 
 ### Mapa — Ilhas do Céu
@@ -447,7 +449,7 @@ Máx. 2 teclados e 4 controles; ≥1 humano, ≥2 lutadores, todos os humanos pr
 | Função | Papel |
 | ------ | ----- |
 | `AF` | `F` + física de plataforma (`wy`, `on`, `sup`, `jc`, `drop`, `inv`, `rsp`, `lives`, `kos`) |
-| `devIn(dev, noJump)` | input do slot (`k1`/`k2`/`pN`). **Arena** (`noJump` falso): ↑/W não fazem nada; pula só `K` (k1), `Num 5` (k2) e ✕/A (pad) — ✕/A de novo no ar = pulo duplo. **Versus** (`noJump` true): ↑ pula como no 1v1 |
+| `devIn(dev, noJump)` | input do slot (`k1`/`k2`/`pN`). Teclado: `W`/↑ pulam nos dois modos. **Arena** (`noJump` falso): pad só ✕/A pula (stick ↑ ignorado). **Versus** (`noJump` true): pad pula com stick/↑ **ou** ✕/A (`gin`) |
 | `aiArena(me)` | IA: alvo mais próximo, recuperação, sobe/desce plats, não cai sozinha |
 | `beginArena(cfg)` / `beginArenaNow` | carrega lazy + `arena.webp`, cria `fighters[]`, `st="arena"` |
 | `stepArena` | `ast` = `intro` → `fight` → `end`; chama `up`, `flushHits`, `updArenaPJ`, `sepArena`, `checkBlast` |

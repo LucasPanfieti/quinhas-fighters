@@ -3045,6 +3045,17 @@
         align-items: center;
         gap: 1px;
       }
+      #ct .gcombo {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      #ct .gor {
+        font: 600 11px/1 var(--ui);
+        font-style: normal;
+        opacity: 0.55;
+        color: var(--bone);
+      }
       #prompts .bi {
         width: 22px;
         height: 22px;
@@ -4029,23 +4040,28 @@
                 <th>P1</th>
                 <th>P2</th>
               </tr>
-              <tr data-m="vs">
-                <td>Movimento</td>
-                <td data-ct="move" data-p="0"></td>
-                <td data-ct="move" data-p="1"></td>
-              </tr>
-              <tr data-m="ar">
-                <td>Movimento</td>
+              <tr>
+                <td>Andar</td>
                 <td data-ct="amove" data-p="0"></td>
                 <td data-ct="amove" data-p="1"></td>
+              </tr>
+              <tr data-m="vs">
+                <td>Pular</td>
+                <td data-ct="vjump" data-p="0"></td>
+                <td data-ct="vjump" data-p="1"></td>
               </tr>
               <tr data-m="ar">
                 <td>Pular <span class="soon">2× = pulo duplo</span></td>
                 <td data-ct="ajump" data-p="0"></td>
                 <td data-ct="ajump" data-p="1"></td>
               </tr>
+              <tr data-m="vs">
+                <td>Agachar</td>
+                <td data-ct="adrop" data-p="0"></td>
+                <td data-ct="adrop" data-p="1"></td>
+              </tr>
               <tr data-m="ar">
-                <td>Descer da plataforma</td>
+                <td>Descer / Agachar</td>
                 <td data-ct="adrop" data-p="0"></td>
                 <td data-ct="adrop" data-p="1"></td>
               </tr>
@@ -4069,7 +4085,7 @@
                 <td data-ct="block" data-p="0"></td>
                 <td data-ct="block" data-p="1"></td>
               </tr>
-              <tr data-m="vs">
+              <tr>
                 <td>Especial <span class="soon">Em breve</span></td>
                 <td data-ct="special" data-p="0"></td>
                 <td data-ct="special" data-p="1"></td>
@@ -4775,7 +4791,7 @@
         ).filter((g) => g && g.connected);
         return l[n] || null;
       };
-      /* luta: □/X soco, △/Y chute, ○/B esfera de ki, R1/RB defesa; ✕/A reservado (especial). Menus usam A/B à parte. */
+      /* luta: □/X soco, △/Y chute, ○/B esfera de ki, R1/RB defesa; ✕/A também pula (Versus). L1/LB = especial (em breve). Menus usam A/B à parte. */
       const gin = (g) => {
         if (!g) return {};
         const B = (i) => !!(g.buttons[i] && g.buttons[i].pressed),
@@ -4783,7 +4799,7 @@
         return {
           l: B(14) || A[0] < -0.4,
           r: B(15) || A[0] > 0.4,
-          u: B(12) || A[1] < -0.55,
+          u: B(12) || A[1] < -0.55 || B(0),
           d: B(13) || A[1] > 0.55,
           p: B(2),
           k: B(3),
@@ -4995,8 +5011,8 @@
         punch: ["X", "#3b82f6"],
         kick: ["Y", "#f5c518"],
         hadouken: ["B", "#e8403a"],
-        special: ["A", "#5bc236"],
-        jump: ["Y", "#f5c518"],
+        special: ["LB", "#9aa3b5"],
+        jump: ["A", "#5bc236"],
       };
       const PC = {
         ok: ["cross", "#7aa7ff"],
@@ -5004,8 +5020,8 @@
         punch: ["square", "#ff8fe0"],
         kick: ["triangle", "#4be0a8"],
         hadouken: ["circle", "#ff6b7a"],
-        special: ["cross", "#7aa7ff"],
-        jump: ["triangle", "#4be0a8"],
+        special: ["L1", "#9aa3b5"],
+        jump: ["cross", "#7aa7ff"],
       };
       const PSH = {
         cross: '<path d="M7.5 7.5l9 9M16.5 7.5l-9 9"/>',
@@ -5049,6 +5065,12 @@
             (k === "p" ? "R1" : k === "x" ? "RB" : "RB / R1") +
             "</kbd>"
           );
+        if (a === "special")
+          return (
+            "<kbd>" +
+            (k === "p" ? "L1" : k === "x" ? "LB" : "LB / L1") +
+            "</kbd>"
+          );
         const one = (t) =>
           t === "p" ? svgP(PC[a][0], PC[a][1]) : svgX(XC[a][0], XC[a][1]);
         return (
@@ -5062,12 +5084,9 @@
         );
       }
       const KB = {
-        move: [
-          "<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>",
-          "<kbd>▲</kbd><kbd>◀</kbd><kbd>▼</kbd><kbd>▶</kbd>",
-        ],
         amove: ["<kbd>A</kbd><kbd>D</kbd>", "<kbd>◀</kbd><kbd>▶</kbd>"],
-        ajump: ["<kbd>K</kbd>", "<kbd>Num 5</kbd>"],
+        vjump: ["<kbd>W</kbd>", "<kbd>▲</kbd>"],
+        ajump: ["<kbd>W</kbd>", "<kbd>▲</kbd>"],
         adrop: ["<kbd>S</kbd>", "<kbd>▼</kbd>"],
         punch: ["<kbd>J</kbd>", "<kbd>Num 4</kbd>"],
         kick: ["<kbd>I</kbd>", "<kbd>Num 8</kbd>"],
@@ -5139,17 +5158,23 @@
         document.querySelectorAll("#ct td[data-ct]").forEach((td) => {
           const a = td.dataset.ct,
             i = +td.dataset.p;
-          td.innerHTML = padOn
-            ? a === "amove"
-              ? gI("move", kind(i))
-              : a === "ajump"
-                ? gI("special", kind(i))
-                : a === "adrop"
-                  ? '<span class="gi">' + DPAD + "</span><kbd>↓</kbd>"
-                  : gI(a, kind(i))
-            : KB[a]
-              ? KB[a][i]
-              : "";
+          if (a === "amove" || a === "adrop") {
+            td.innerHTML = KB[a] ? KB[a][padOn ? 1 : i] : "";
+          } else if (a === "vjump") {
+            /* Versus: ↑ ou ✕/A pula */
+            td.innerHTML = padOn
+              ? '<span class="gcombo"><kbd>▲</kbd><i class="gor">ou</i>' +
+                gI("jump", kind(i)) +
+                "</span>"
+              : KB.vjump[i];
+          } else if (a === "ajump") {
+            /* Arena: teclado ↑/W; pad só ✕/A */
+            td.innerHTML = padOn ? gI("jump", kind(i)) : KB.ajump[i];
+          } else if (padOn) {
+            td.innerHTML = gI(a, kind(i));
+          } else {
+            td.innerHTML = KB[a] ? KB[a][i] : "";
+          }
         });
       }
       function hintTick() {
@@ -5328,8 +5353,8 @@
       }
       let helpFrom = "menu";
       const HNOTE = {
-        vs: "Versus: ↑ pula. No celular, analógico à esquerda e ações à direita.",
-        ar: "Arena: ↑ não faz nada — pule com o botão de pulo (✕ / A no controle) e aperte de novo no ar para o pulo duplo. No celular, use o botão de pulo.",
+        vs: "Versus: no controle, ↑ ou ✕/A pula. No celular, analógico à esquerda e ações à direita.",
+        ar: "Arena: no controle só ✕/A pula (↑ não). No ar, aperte de novo pro pulo duplo. No celular, use o botão de pulo.",
       };
       function hpTab(t) {
         $("hp").dataset.t = t;
@@ -9229,11 +9254,12 @@ updOpt();
         return g && g.connected ? g : null;
       };
       function devIn(dv, noJump) {
+        /* noJump true = Versus (stick/↑ também pula via gin); false = Arena (teclado ↑/W pula; pad só ✕/A) */
         if (dv === "k1")
           return {
             l: keys.KeyA || keys.vL,
             r: keys.KeyD || keys.vR,
-            u: noJump ? keys.KeyW || keys.vU || keys.vJ : keys.KeyK || keys.vJ,
+            u: keys.KeyW || keys.vU || keys.vJ,
             d: keys.KeyS || keys.vD,
             h: keys.KeyL || keys.vH,
             p: keys.KeyJ || keys.vP,
@@ -9244,7 +9270,7 @@ updOpt();
           return {
             l: keys.ArrowLeft,
             r: keys.ArrowRight,
-            u: noJump ? keys.ArrowUp : keys.Numpad5,
+            u: keys.ArrowUp,
             d: keys.ArrowDown,
             h: keys.Numpad6,
             p: keys.Numpad4,
@@ -9254,7 +9280,8 @@ updOpt();
         if (dv && dv[0] === "p") {
           const g = rawPad(+dv.slice(1)),
             o = gin(g);
-          if (!noJump) o.u = !!(g && g.buttons[0] && g.buttons[0].pressed); /* Arena: só ✕/A pula; ↑ não faz nada */
+          if (!noJump)
+            o.u = !!(g && g.buttons[0] && g.buttons[0].pressed); /* Arena: só ✕/A pula; ↑ não faz nada */
           return o;
         }
         return {};

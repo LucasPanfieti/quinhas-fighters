@@ -2266,13 +2266,6 @@
         #tip {
           display: none;
         }
-        #selsub.hint .row {
-          display: none;
-        }
-        #selsub.hint::before {
-          content: "Toque no 1º lutador (P1) e depois no 2º (P2)";
-          font-style: italic;
-        }
         #selsub,
         #psub,
         #sub {
@@ -3556,6 +3549,9 @@
       #stage:has(#hp[style*="flex"]) #prompts {
         display: none !important;
       }
+      #sel[data-cpu] .card[data-l2]::after {
+        content: "CPU ✓";
+      }
       #hptabs {
         display: flex;
         gap: 8px;
@@ -4766,14 +4762,28 @@
         if (n === 1 && s2.lk[0] != null) return "CPU" + st;
         return null;
       };
+      /* borda de seleção só para quem já entrou (nada pré-selecionado) */
+      const s2cur = (n) =>
+        !s2.vs ||
+        s2.dv[n] != null ||
+        (n === 1 && s2.lk[0] != null && !IS_TOUCH);
       function s2render() {
         const av = AVall();
+        selEl.toggleAttribute("data-cpu", !!s2.vs && s2.dv[1] == null);
+        if (s2.vs && IS_TOUCH) {
+          const el = $("selsub");
+          el.className = "";
+          el.textContent =
+            s2.lk[0] == null
+              ? "Toque no seu lutador"
+              : "Agora toque no adversário (CPU)";
+        }
         grid.querySelectorAll(".card[data-id]").forEach((c) => {
           const i = av.indexOf(c.dataset.id);
           [0, 1].forEach((n) => {
             c.toggleAttribute(
               "data-c" + (n + 1),
-              s2.c[n] === i && vsLbl(n) != null,
+              s2.c[n] === i && s2cur(n),
             );
             c.toggleAttribute(
               "data-l" + (n + 1),
@@ -7919,7 +7929,7 @@ updOpt();
         } else if (pendMode === "2p" && s2.vs) {
           el.className = "hint";
           el.innerHTML = IS_TOUCH
-            ? "Toque no seu lutador e depois no do adversário (CPU)"
+            ? "Toque no seu lutador"
             : '<div class="row"><span>Aperte qualquer botão para entrar</span></div><div class="row"><span>Sozinho? Depois de escolher, você escolhe o adversário (CPU)</span></div>';
         } else {
           el.className = "hint";
@@ -7997,6 +8007,7 @@ updOpt();
       }
       function openSel(m) {
         clearS2Stage();
+        a4Clear();
         const vs = m === "vs";
         if (vs) {
           m = "2p";
@@ -8083,7 +8094,16 @@ updOpt();
             : d === "k2"
               ? "Setas"
               : "Controle " + (+d.slice(1) + 1);
+      /* remove fichas/rings da seleção da Arena (não vazar para o Versus) */
+      function a4Clear() {
+        grid.querySelectorAll(".acur").forEach((e) => e.remove());
+        grid.querySelectorAll(".card.tk").forEach((c) => c.classList.remove("tk"));
+      }
+      new MutationObserver(() => {
+        if (selEl.style.display === "none") a4Clear();
+      }).observe(selEl, { attributes: true, attributeFilter: ["style"] });
       function a4Open(keep) {
+        keep = false; /* sempre começa vazio: ninguém pré-selecionado */
         clearS2Stage();
         pendMode = "arena";
         pick1 = null;

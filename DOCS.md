@@ -70,7 +70,7 @@ loading → title → menu ⇄ sel → stg → (luta: intro/fight/end)
 | ---------- | ------------------ | -------------------------------------------------------------------------- |
 | `#loading` | Boot               | Barra de progresso; lista erros se asset falhar                            |
 | `#title`   | Título             | Clique / qualquer tecla / botão de pad → menu                              |
-| `#menu`    | Menu principal     | Um jogador, Versus, Controles, Áudio, Título; Revanche aparece pós-partida |
+| `#menu`    | Menu principal     | Versus (1-2), Arena (2-4), Controles, Áudio, Título; Revanche / Trocar lutadores / Menu principal aparecem pós-partida |
 | `#sel`     | Seleção de lutador | Grade `#grid` (12 + 3 em breve + Aleatório); previews `#fi`/`#fi2`/`#vs`   |
 | `#stg`     | Seleção de cenário | 5 mapas + Aleatório                                                        |
 | `#hp`      | Controles          | Tabela `#ct` preenchida por `buildHints`                                   |
@@ -92,7 +92,7 @@ loading → title → menu ⇄ sel → stg → (luta: intro/fight/end)
 | -------- | ------------- |
 | Desktop largo (`min-width:1000px` + `min-height:560px`) | Nomes no topo (`#fi`/`#fi2` nameplates); corpos idle grandes face a face atrás da grade; grade 8×2 na base; `#vs` escondido no 2P |
 | Desktop estreito / baixo | 1P: só grade; 2P: faixa compacta `#vs` / `.pv` |
-| Toque (`hover:none` + `pointer:coarse`) | **Sem** preview de corpo (`#fi`/`#fi2`/`#vs` `display:none !important`); botão Versus (`#b2p`) oculto |
+| Toque (`hover:none` + `pointer:coarse`) | **Sem** preview de corpo (`#fi`/`#fi2`/`#vs` `display:none !important`); botão legado `#b2p` sempre oculto (Versus e Arena são os dois modos do menu) |
 
 Altura dos previews: `HM` (metros) → `scOf` → `P.sc` → `hsRatio` → CSS `--hs` (`height: calc(BASE * var(--hs))`, sem `max-width` que esmague o sprite). Aleatório (`?`) usa `RND_BODY` (`rnd_body.webp`, silhueta Eslepe) e `--hs` de `scOf("e")`.
 
@@ -430,9 +430,9 @@ Modo estilo Brawlhalla/Smash: stock, mapa com plataformas e blastzones. Vive em 
 
 `assets/arena.webp` (1600×900) + thumb `assets/stg/arena.webp`. **Não entra em `MAPS`** (carrega via `loadArena`). Colisão em `ARENA.surf`: chão principal (`y:289`, hard) + 2 plats **soft** (`y:146`). Fundo é só visual. Sprites desenhados a `ARK=0.27` (`P = Object.create(P0); P.sc *= ARK`).
 
-### Lobby “aperta pra entrar”
+### Lobby “aperta pra entrar” (celular / legado)
 
-Menu → **Arena · até 4** (`#bar`, escondido em touch) → `#alobby` com 4 slots. Qualquer input num dispositivo livre reivindica o próximo slot:
+No **desktop** a Arena usa a seleção clássica (ver abaixo); o `#alobby` com 4 slots é usado no **celular** (`IS_TOUCH`). Qualquer input num dispositivo livre reivindica o próximo slot:
 
 | Dispositivo | Entra com | Trocar / OK / Sair |
 | ----------- | --------- | ------------------ |
@@ -462,7 +462,7 @@ Máx. 2 teclados e 4 controles; ≥1 humano, ≥2 lutadores, todos os humanos pr
 
 **Arena (desktop):** usa a mesma tela clássica de seleção (`#sel`, `data-m="arena"`) com 4 vagas (`A4`, `a4In(dev,k)`): cada dispositivo entra apertando um botão, move o próprio cursor colorido (P1 laranja, P2 azul, P3 verde, P4 rosa) e confirma; CPUs entram pelo botão "+ CPU" (ou `I`/`Num8`/Y para adicionar e `L`/`Num6`/X para remover). Sozinho, já entra uma CPU de adversária. Começa com Enter/Start/botão Começar quando todos os humanos confirmaram e há 2+ lutadores. No celular continua o lobby simples (`#almob`).
 
-**Menu principal (v1.4.0):** só dois modos — **Versus · 1-2 jogadores** e **Arena · 2-4 jogadores**. Os dois usam o mesmo lobby "aperta pra entrar" (`openLobby(keep, kind)` com `kind` = `"vs"` ou `"arena"`). No Versus há 2 slots; se entra só um jogador, ao confirmar (OK) aparece o slot da IA com `pick` para ele escolher o oponente; com 2 humanos vira o modo `2p`. Depois vem a escolha de cenário e o 1v1 normal. Os dispositivos escolhidos ficam em `VDEV` (usado por `in1`/`in2`); `LASTV` guarda a última configuração para "Trocar lutadores". No Versus a seleção é a tela de lutadores clássica (`#sel`, `s2.vs`); cada preview mostra "Pressione para entrar" até alguém entrar (`vsIn(dev,k)`). Sem segundo jogador, o P1 escolhe também a CPU. No celular: toque no seu lutador e depois no adversário.
+**Menu principal (v1.4.0):** só dois modos — **Versus · 1-2 jogadores** (`openSel("vs")`) e **Arena · 2-4 jogadores** (`openLobby(…,"arena")` → `a4Open` no desktop, `#alobby` no celular). Versus usa a seleção clássica (`#sel`, `s2.vs`): cada preview mostra "Pressione para entrar" até alguém entrar (`vsIn(dev,k)`); sozinho, o P1 escolhe também a CPU; com 2 humanos vira o modo `2p`; depois vem a escolha de cenário. Os dispositivos ficam em `VDEV` (lidos por `in1`/`in2`). Nada vem pré-selecionado: o anel do jogador só aparece depois que ele entra (`s2cur`, `a4Clear` limpa os restos da Arena). No celular: toque no seu lutador e depois no adversário (CPU). A tela **Controles** tem abas Versus e Arena (`hpTab`).
 
 ## 15. Glossário rápido
 

@@ -3236,17 +3236,90 @@
         opacity: 0.45;
         pointer-events: none;
       }
-      #menu.arres #bai,
-      #menu.arres #b2p,
-      #menu.arres #bar,
-      #menu.arres #bop,
-      #menu.arres #bhp,
-      #menu.arres #btt {
+      #menu.res #bai,
+      #menu.res #b2p,
+      #menu.res #bar,
+      #menu.res #bop,
+      #menu.res #bhp,
+      #menu.res #btt {
         display: none !important;
       }
-      #menu.arres #sub {
+      #menu.res #sub {
         white-space: pre-line;
         max-width: min(92vw, 720px);
+      }
+      /* menus: só o necessário (sem Controles de teclado no celular; sem "título" na pausa) */
+      @media (hover: none) and (pointer: coarse) {
+        #bhp,
+        #php {
+          display: none !important;
+        }
+      }
+      #ptit {
+        display: none !important;
+      }
+      #hp .hnote {
+        font: 600 clamp(12px, 2.4vw, 15px) / 1.35 var(--ui);
+        color: #cfe3ff;
+        text-align: center;
+        max-width: min(640px, 94vw);
+        margin: 0;
+      }
+      /* telas baixas (celular deitado / janela pequena): botões e logo mais compactos */
+      @media (max-height: 480px) {
+        #menu .go,
+        #pause .go {
+          min-height: clamp(34px, 10.4vh, 44px);
+          font-size: clamp(13px, 4.2vh, 17px);
+        }
+        #menu {
+          gap: clamp(4px, 1.3vh, 8px);
+        }
+        #menu .mlogo {
+          max-height: min(20vh, 120px);
+        }
+        #menu #sub {
+          margin: 0;
+          font-size: clamp(11px, 3.2vh, 14px);
+        }
+        #menu .winrow .nplate {
+          height: clamp(30px, 9vh, 48px);
+        }
+        #alslots {
+          flex-wrap: nowrap;
+        }
+        .als {
+          width: calc(25% - 8px);
+          min-height: 0;
+          padding: 6px 6px 8px;
+          gap: 4px;
+        }
+        .als .alf {
+          width: min(72px, 21vh);
+        }
+        .als .alh {
+          min-height: 0;
+          font-size: 10px;
+        }
+        .als .alb button {
+          padding: 5px 8px;
+        }
+        #alobby #alact {
+          flex-direction: row;
+          gap: 12px;
+        }
+        #alobby #alact .go {
+          width: auto;
+          padding: 0 clamp(22px, 5vw, 36px);
+        }
+        #ct td,
+        #ct th {
+          padding-top: 3px;
+          padding-bottom: 3px;
+        }
+        #hp {
+          gap: 6px;
+        }
       }
       #alact {
         display: flex;
@@ -3564,6 +3637,9 @@
           <p id="help">
             Celular: analógico à esquerda, ações à direita. Menus: Enter
             confirma, Esc volta.
+          </p>
+          <p class="hnote">
+            Arena: ↑ pula, ↑ de novo no ar dá pulo duplo, ↓ desce da plataforma.
           </p>
           <button class="go alt" id="hback">Voltar</button>
         </div>
@@ -4774,7 +4850,8 @@
       $("bmm").onclick = () => showMenu("Quinhas Ball Fighters", "");
       $("bsl").onclick = () => {
         menu.style.display = "none";
-        openLobby(true);
+        if (mode === "arena" && LASTA) openLobby(true);
+        else openSel(mode === "2p" ? "2p" : "ai");
       };
       $("brv").onclick = () => {
         if (mode === "arena" && LASTA) beginArena(LASTA);
@@ -7084,7 +7161,7 @@ updOpt();
         const brand = t === "Quinhas Ball Fighters",
           win = !!(winCid && NAMES[winCid] && NAMES[winCid].naturalWidth);
         menu.classList.toggle("brand", brand);
-        menu.classList.remove("arres");
+        menu.classList.remove("res");
         $("bmm").style.display = "none";
         $("bsl").style.display = "none";
         menu.classList.toggle("win", win);
@@ -7106,6 +7183,13 @@ updOpt();
         sub.textContent = s || "";
         menu.style.display = "flex";
         st = "menu";
+      }
+      /* menu de fim de partida (1v1, Versus e Arena): só o essencial */
+      function resMenu() {
+        menu.classList.add("res");
+        $("bmm").style.display = "flex";
+        $("bsl").style.display = "flex";
+        $("brv").style.display = "flex";
       }
       function startRound() {
         PJ.length = 0;
@@ -7630,7 +7714,7 @@ updOpt();
                 "Placar final " + p1.wins + " a " + p2.wins + ".",
                 over === "draw" ? null : over.cid,
               );
-              $("brv").style.display = "flex";
+              resMenu();
             } else {
               rd++;
               startRound();
@@ -8567,9 +8651,7 @@ updOpt();
         fighters = [];
         PJ.length = 0;
         showMenu(w ? "venceu!" : "Empate!", sum, w ? w.cid : null);
-        menu.classList.add("arres");
-        $("bmm").style.display = "flex";
-        $("bsl").style.display = "flex";
+        resMenu();
         $("brv").style.display = "flex";
       }
 

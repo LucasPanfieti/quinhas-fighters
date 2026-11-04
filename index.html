@@ -1805,14 +1805,9 @@
         left: calc(50% + var(--r));
         top: 50%;
       }
-      .acts .b.soon {
+      .acts .b[data-k="vJ"] {
         left: 50%;
         top: calc(50% + var(--r));
-        opacity: 0.42;
-        pointer-events: none;
-        box-shadow:
-          0 0 0 1.5px rgba(122, 167, 255, 0.45),
-          0 3px 0 rgba(0, 0, 0, 0.25);
       }
       .acts .b[data-k="vB"] {
         left: auto;
@@ -1822,15 +1817,6 @@
         width: calc(var(--bs) * 0.92);
         height: calc(var(--bs) * 0.92);
         z-index: 2;
-        font:
-          700 clamp(11px, 2.8vw, 14px)/1 system-ui,
-          sans-serif;
-        letter-spacing: 0.04em;
-        color: rgba(223, 240, 255, 0.95);
-        box-shadow:
-          0 0 0 1.5px rgba(255, 176, 74, 0.7),
-          0 3px 0 rgba(0, 0, 0, 0.35),
-          0 5px 12px rgba(0, 0, 0, 0.3);
       }
       .b {
         pointer-events: auto;
@@ -1861,27 +1847,44 @@
         -webkit-backdrop-filter: blur(2px);
       }
       .b .psi {
-        width: 52%;
-        height: 52%;
+        width: 56%;
+        height: 56%;
         display: block;
         pointer-events: none;
-        opacity: 0.95;
+        object-fit: contain;
+        opacity: 0.85;
       }
+      .b.on .psi {
+        opacity: 1;
+      }
+      /* Cores face buttons PS: □ rosa, △ verde, ○ vermelho, ✕ azul; defesa laranja */
       .b[data-k="vP"] {
         box-shadow:
-          0 0 0 1.5px rgba(255, 143, 224, 0.65),
+          0 0 0 1.5px rgba(255, 143, 224, 0.75),
           0 3px 0 rgba(0, 0, 0, 0.35),
           0 5px 12px rgba(0, 0, 0, 0.3);
       }
       .b[data-k="vK"] {
         box-shadow:
-          0 0 0 1.5px rgba(75, 224, 168, 0.65),
+          0 0 0 1.5px rgba(75, 224, 168, 0.75),
           0 3px 0 rgba(0, 0, 0, 0.35),
           0 5px 12px rgba(0, 0, 0, 0.3);
       }
       .b[data-k="vH"] {
         box-shadow:
-          0 0 0 1.5px rgba(255, 107, 122, 0.65),
+          0 0 0 1.5px rgba(255, 107, 122, 0.75),
+          0 3px 0 rgba(0, 0, 0, 0.35),
+          0 5px 12px rgba(0, 0, 0, 0.3);
+      }
+      .b[data-k="vJ"] {
+        box-shadow:
+          0 0 0 1.5px rgba(122, 167, 255, 0.8),
+          0 3px 0 rgba(0, 0, 0, 0.35),
+          0 5px 12px rgba(0, 0, 0, 0.3);
+      }
+      .b[data-k="vB"] {
+        box-shadow:
+          0 0 0 1.5px rgba(255, 176, 74, 0.8),
           0 3px 0 rgba(0, 0, 0, 0.35),
           0 5px 12px rgba(0, 0, 0, 0.3);
       }
@@ -1913,6 +1916,12 @@
         background: linear-gradient(
           rgba(255, 176, 184, 0.9),
           rgba(224, 64, 80, 0.85)
+        );
+      }
+      .b[data-k="vJ"].on {
+        background: linear-gradient(
+          rgba(170, 200, 255, 0.92),
+          rgba(70, 110, 220, 0.88)
         );
       }
       .b[data-k="vB"].on {
@@ -3874,24 +3883,6 @@
         background: #0a0a14 center 12% / cover no-repeat;
         box-shadow: 0 0 0 2px #000;
       }
-      /* Arena no celular: botão de pulo (substitui o ✕ "em breve") */
-      #pad .b .ia {
-        display: none;
-      }
-      #pad.ar .b.soon {
-        opacity: 1;
-        pointer-events: auto;
-        box-shadow:
-          0 0 0 1.5px rgba(255, 224, 138, 0.8),
-          0 3px 0 rgba(0, 0, 0, 0.35),
-          0 5px 12px rgba(0, 0, 0, 0.3);
-      }
-      #pad.ar .b.soon .ix {
-        display: none;
-      }
-      #pad.ar .b.soon .ia {
-        display: block;
-      }
     </style>
   </head>
   <body>
@@ -4162,75 +4153,19 @@
   </div>
   <div class="acts">
             <button type="button" class="b" data-k="vK" aria-label="Chute">
-              <svg class="psi" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M12 5.5l6.2 11H5.8z"
-                  fill="none"
-                  stroke="#4be0a8"
-                  stroke-width="2.2"
-                  stroke-linejoin="round"
-                />
-              </svg>
+              <img class="psi" src="assets/ui/pad-kick.webp?v=3" alt="" draggable="false" />
             </button>
             <button type="button" class="b" data-k="vP" aria-label="Soco">
-              <svg class="psi" viewBox="0 0 24 24" aria-hidden="true">
-                <rect
-                  x="6.5"
-                  y="6.5"
-                  width="11"
-                  height="11"
-                  rx="1"
-                  fill="none"
-                  stroke="#ff8fe0"
-                  stroke-width="2.2"
-                />
-              </svg>
+              <img class="psi" src="assets/ui/pad-punch.webp?v=3" alt="" draggable="false" />
             </button>
-            <button
-              type="button"
-              class="b"
-              data-k="vH"
-              aria-label="Esfera de Ki"
-            >
-              <svg class="psi" viewBox="0 0 24 24" aria-hidden="true">
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="5.4"
-                  fill="none"
-                  stroke="#ff6b7a"
-                  stroke-width="2.2"
-                />
-              </svg>
+            <button type="button" class="b" data-k="vH" aria-label="Esfera de Ki">
+              <img class="psi" src="assets/ui/pad-ki.webp?v=3" alt="" draggable="false" />
             </button>
-            <button
-              type="button"
-              class="b soon"
-              data-k="vJ"
-              aria-label="Pular (Arena)"
-            >
-              <svg class="psi ia" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M12 18V6M6.5 11.5L12 6l5.5 5.5"
-                  fill="none"
-                  stroke="#ffe08a"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <svg class="psi ix" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M7.5 7.5l9 9M16.5 7.5l-9 9"
-                  fill="none"
-                  stroke="#7aa7ff"
-                  stroke-width="2.2"
-                  stroke-linecap="round"
-                />
-              </svg>
+            <button type="button" class="b" data-k="vJ" aria-label="Pular">
+              <img class="psi" src="assets/ui/pad-jump.webp?v=3" alt="" draggable="false" />
             </button>
             <button type="button" class="b" data-k="vB" aria-label="Defesa">
-              R1
+              <img class="psi" src="assets/ui/pad-block.webp?v=3" alt="" draggable="false" />
             </button>
   </div>
  </div>
@@ -5353,8 +5288,8 @@
       }
       let helpFrom = "menu";
       const HNOTE = {
-        vs: "Versus: no controle, ↑ ou ✕/A pula. No celular, analógico à esquerda e ações à direita.",
-        ar: "Arena: no controle só ✕/A pula (↑ não). No ar, aperte de novo pro pulo duplo. No celular, use o botão de pulo.",
+        vs: "Versus: no controle, ↑ ou ✕/A pula. No celular: analógico (↑ também pula) + soco, chute, ki, pulo e defesa.",
+        ar: "Arena: no controle só ✕/A pula (↑ não). No celular o pad é o mesmo do Versus — ↑ no analógico e o botão de pulo; no ar, de novo = pulo duplo.",
       };
       function hpTab(t) {
         $("hp").dataset.t = t;
@@ -5827,7 +5762,7 @@
         return {
           l: keys.KeyA || keys.vL || g.l,
           r: keys.KeyD || keys.vR || g.r,
-          u: keys.KeyW || keys.vU || g.u,
+          u: keys.KeyW || keys.vU || keys.vJ || g.u,
           d: keys.KeyS || keys.vD || g.d,
           h: keys.KeyL || keys.vH || g.h,
           p: keys.KeyJ || keys.vP || g.p,
@@ -9093,7 +9028,6 @@ updOpt();
             (Math.random() - 0.5) * shake,
           );
         $("pb").classList.toggle("ar", st === "arena");
-        $("pad").classList.toggle("ar", st === "arena");
         const zx = st === "arena" ? W / 2 : (p1.x + p2.x) / 2;
         x.translate(zx, 260);
         x.scale(zm, zm);

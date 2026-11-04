@@ -25,10 +25,14 @@ Abra `http://localhost:8080`.
 
 No celular: analógico à esquerda, botões à direita (gire na horizontal).
 
+## Modo Arena (2–4 lutadores)
+
+Menu → **Arena · até 4**. Aperte um botão no teclado (WASD ou setas — máx. 2 teclados) ou em qualquer controle (até 4) para entrar num slot; slots livres podem virar IA. Stock de 3 vidas no mapa **Ilhas do Céu**: perde vida quem zera o HP ou cai fora do mapa. Pulo duplo (↑/W ou ✕/A de novo no ar); ↓ atravessa as plataformas. Detalhes em [DOCS.md](DOCS.md) §14.1.
+
 ## Documentação
 
 Tudo o que importa para entender ou modificar o jogo (arquitetura, roster, combate, input, áudio, tools) está em **[DOCS.md](DOCS.md)**.
 
 ## Versão
 
-**v1.3.16** — ver `#tver` / `#ver` em `index.html`.
+**v1.4.0** — ver `#tver` / `#ver` em `index.html`.

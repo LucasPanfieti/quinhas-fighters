@@ -1,6 +1,6 @@
 # Quinhas Ball Fighters — documentação técnica
 
-Documento de referência do jogo (v1.3.16+). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
+Documento de referência do jogo (v1.4.0 — inclui o modo Arena, §14.1). Serve para humanos e para IAs: descreve arquitetura, fluxo, dados, combate, input, áudio e pipeline de assets. A fonte da verdade do runtime é o arquivo único `index.html`.
 
 ---
 
@@ -413,6 +413,53 @@ Ao adicionar personagem novo:
 
 ---
 
+## 14.1 Modo Arena (2–4 lutadores · v1.4.0)
+
+Modo estilo Brawlhalla/Smash: stock, mapa com plataformas e blastzones. Vive em **caminho separado** do 1v1 (`p1`/`p2`, `step`, `begin` ficam intactos). Código no bloco `ARENA` perto do fim do `<script>` (antes de `loop`) + classe `AF` logo depois de `F`.
+
+### Regras
+
+- 2 a 4 lutadores, **todos contra todos** (friendly fire sempre on), **3 vidas** (`ARENA_LIVES`).
+- Perde 1 vida ao **zerar HP** ou **sair da blastzone** (`ARENA.blast`). Respawn com HP 100, hover ~0,75 s e i-frames (~3 s, pisca).
+- Vence o **último com vida**; cap de **5:00** (`ARENA_TIME`) → mais vidas; empate de vidas = **Empate** (sem sudden death).
+- **Knockback cresce com o HP perdido** (`AF.hurt`: `kx` + pop vertical). Esfera de Ki com `kb` base maior (8.5).
+- Pulo mais alto + **1 pulo duplo** (`vy -13` / `-13.6`). ↓ em plat soft atravessa; sem air dodge/wall jump.
+- Suicídio (cai sem hit recente, `lastT`≤0) = −1 vida sem crédito de KO; senão `lastBy.kos++`.
+
+### Mapa — Ilhas do Céu
+
+`assets/arena.webp` (1600×900) + thumb `assets/stg/arena.webp`. **Não entra em `MAPS`** (carrega via `loadArena`). Colisão em `ARENA.surf`: chão principal (`y:289`, hard) + 2 plats **soft** (`y:146`). Fundo é só visual. Sprites desenhados a `ARK=0.27` (`P = Object.create(P0); P.sc *= ARK`).
+
+### Lobby “aperta pra entrar”
+
+Menu → **Arena · até 4** (`#bar`, escondido em touch) → `#alobby` com 4 slots. Qualquer input num dispositivo livre reivindica o próximo slot:
+
+| Dispositivo | Entra com | Trocar / OK / Sair |
+| ----------- | --------- | ------------------ |
+| `k1` teclado | WASD/J/I/L/Espaço | A D · J · K |
+| `k2` teclado | setas/Numpad | ◀ ▶ · Num4 · Num5 |
+| `p0..p3` controle (índice **cru** de `navigator.getGamepads`) | qualquer botão/stick | ◀ ▶ · ✕/A · ○/B (Start começa) |
+
+Máx. 2 teclados e 4 controles; ≥1 humano, ≥2 lutadores, todos os humanos prontos. Slots vazios podem virar **IA** (`+ IA`). Enter / Start / OK de novo começa; Esc volta. Pad só plugado não entra (precisa mexer); pad desconectado libera o slot. Personagem duplicado é bloqueado (`?` resolve aleatório sem repetir).
+
+### Funções principais
+
+| Função | Papel |
+| ------ | ----- |
+| `AF` | `F` + física de plataforma (`wy`, `on`, `sup`, `jc`, `drop`, `inv`, `rsp`, `lives`, `kos`) |
+| `devIn(dev)` | input do slot (`k1`/`k2`/`pN`); no pad ✕/A também pula |
+| `aiArena(me)` | IA: alvo mais próximo, recuperação, sobe/desce plats, não cai sozinha |
+| `beginArena(cfg)` / `beginArenaNow` | carrega lazy + `arena.webp`, cria `fighters[]`, `st="arena"` |
+| `stepArena` | `ast` = `intro` → `fight` → `end`; chama `up`, `flushHits`, `updArenaPJ`, `sepArena`, `checkBlast` |
+| `drawArenaWorld` / `drawArenaHud` | render (lutadores, 4 cards com vidas/HP, timer, indicador fora da tela) |
+| `LASTA` | config da última Arena (Revanche / Reiniciar) |
+
+`cfg` = `[{ t:'human'|'ai', dev, cid, slot }]`. `scr()` devolve `alobby` no lobby e `game` durante a Arena (pausa por qualquer humano: Esc/P/Start de qualquer pad).
+
+---
+
+**Celular (touch):** `IS_TOUCH` (pointer:coarse / hover:none, ou `?touch=1` para testar no desktop) troca o lobby por uma tela simples (`#almob`): quantidade 2/3/4, escolha do lutador e rivais de IA sorteados (`amBuild`). O jogador usa `k1` via analógico/botões virtuais; o botão ✕ "em breve" vira **Pular** (`vJ`) durante a Arena (`#pad.ar`), facilitando o pulo duplo.
+
 ## 15. Glossário rápido
 
 | Termo   | Significado                                           |
@@ -424,6 +471,8 @@ Ao adicionar personagem novo:
 | `HQ`    | Fila de hits do frame                                 |
 | `PJ`    | Projéteis de Ki                                       |
 | `LASTM` | Última luta (revanche)                                |
+| `LASTA` | Última Arena (revanche)                               |
+| `AF`    | Lutador da Arena (`F` + plataforma/stock)             |
 | `gf`    | Classe “foco” de navegação por teclado/pad nos botões |
 
 ---
@@ -432,10 +481,10 @@ Ao adicionar personagem novo:
 
 **Local:** servir a pasta (ex. `python -m http.server`) e abrir no browser. Abrir o `file://` do HTML pode falhar em alguns browsers por CORS/load de assets — preferir HTTP.
 
-**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.3.16** (atualizar strings ao shipar).
+**Produção:** publicar `index.html` + pasta `assets/` juntos. Versão exibida na UI: **v1.4.0** (atualizar strings ao shipar).
 
 **Git:** commits só com o que for pedido; `.gitignore` impede pastas fonte e lixo de `tools/out` (exceto `*.json`).
 
 ---
 
-_Última revisão alinhada ao código em `index.html` (v1.3.16: lazy load de poses/mapas, pausa centralizada no landscape mobile). Se o código divergir deste doc, o código manda — atualize esta página._
+_Última revisão alinhada ao código em `index.html` (v1.4.0: modo Arena; v1.3.16: lazy load de poses/mapas, pausa centralizada no landscape mobile). Se o código divergir deste doc, o código manda — atualize esta página._

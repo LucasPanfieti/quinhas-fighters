@@ -3551,6 +3551,28 @@
       #ptit {
         display: none !important;
       }
+      #hptabs {
+        display: flex;
+        gap: 8px;
+        width: min(360px, 92vw);
+      }
+      #hptabs .hpt {
+        flex: 1;
+        margin: 0;
+        min-height: 38px;
+        padding: 6px 10px;
+        font-size: clamp(13px, 2.4vw, 16px);
+        opacity: 0.7;
+      }
+      #hptabs .hpt.on {
+        opacity: 1;
+        background: linear-gradient(180deg, #2f6bff, #1a3fb3);
+        box-shadow: 0 0 0 2px #7aa7ff;
+      }
+      #hp[data-t="vs"] #ct tr[data-m="ar"],
+      #hp[data-t="ar"] #ct tr[data-m="vs"] {
+        display: none;
+      }
       #hp .hnote {
         font: 600 clamp(12px, 2.4vw, 15px) / 1.35 var(--ui);
         color: #cfe3ff;
@@ -3937,6 +3959,10 @@
         </div>
         <div id="hp">
           <h1>Controles</h1>
+          <div id="hptabs">
+            <button type="button" class="go alt hpt on" data-t="vs">Versus</button>
+            <button type="button" class="go alt hpt" data-t="ar">Arena</button>
+          </div>
           <div id="ct-wrap">
             <table id="ct">
               <tr>
@@ -3944,10 +3970,25 @@
                 <th>P1</th>
                 <th>P2</th>
               </tr>
-              <tr>
+              <tr data-m="vs">
                 <td>Movimento</td>
                 <td data-ct="move" data-p="0"></td>
                 <td data-ct="move" data-p="1"></td>
+              </tr>
+              <tr data-m="ar">
+                <td>Movimento</td>
+                <td data-ct="amove" data-p="0"></td>
+                <td data-ct="amove" data-p="1"></td>
+              </tr>
+              <tr data-m="ar">
+                <td>Pular <span class="soon">2× = pulo duplo</span></td>
+                <td data-ct="ajump" data-p="0"></td>
+                <td data-ct="ajump" data-p="1"></td>
+              </tr>
+              <tr data-m="ar">
+                <td>Descer da plataforma</td>
+                <td data-ct="adrop" data-p="0"></td>
+                <td data-ct="adrop" data-p="1"></td>
               </tr>
               <tr>
                 <td>Soco</td>
@@ -3969,7 +4010,7 @@
                 <td data-ct="block" data-p="0"></td>
                 <td data-ct="block" data-p="1"></td>
               </tr>
-              <tr>
+              <tr data-m="vs">
                 <td>Especial <span class="soon">Em breve</span></td>
                 <td data-ct="special" data-p="0"></td>
                 <td data-ct="special" data-p="1"></td>
@@ -3985,9 +4026,7 @@
             Celular: analógico à esquerda, ações à direita. Menus: Enter
             confirma, Esc volta.
           </p>
-          <p class="hnote">
-            Arena: ↑ pula, ↑ de novo no ar dá pulo duplo, ↓ desce da plataforma.
-          </p>
+          <p class="hnote" id="hnote"></p>
           <button class="go alt" id="hback">Voltar</button>
         </div>
         <div id="op">
@@ -4954,6 +4993,9 @@
           "<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>",
           "<kbd>▲</kbd><kbd>◀</kbd><kbd>▼</kbd><kbd>▶</kbd>",
         ],
+        amove: ["<kbd>A</kbd><kbd>D</kbd>", "<kbd>◀</kbd><kbd>▶</kbd>"],
+        ajump: ["<kbd>K</kbd>", "<kbd>Num 5</kbd>"],
+        adrop: ["<kbd>S</kbd>", "<kbd>▼</kbd>"],
         punch: ["<kbd>J</kbd>", "<kbd>Num 4</kbd>"],
         kick: ["<kbd>I</kbd>", "<kbd>Num 8</kbd>"],
         hadouken: ["<kbd>L</kbd>", "<kbd>Num 6</kbd>"],
@@ -5024,7 +5066,17 @@
         document.querySelectorAll("#ct td[data-ct]").forEach((td) => {
           const a = td.dataset.ct,
             i = +td.dataset.p;
-          td.innerHTML = padOn ? gI(a, kind(i)) : KB[a] ? KB[a][i] : "";
+          td.innerHTML = padOn
+            ? a === "amove"
+              ? gI("move", kind(i))
+              : a === "ajump"
+                ? gI("special", kind(i))
+                : a === "adrop"
+                  ? '<span class="gi">' + DPAD + "</span><kbd>↓</kbd>"
+                  : gI(a, kind(i))
+            : KB[a]
+              ? KB[a][i]
+              : "";
         });
       }
       function hintTick() {
@@ -5113,7 +5165,7 @@
             (e) => vis(e),
           ),
         sel: () => [...grid.querySelectorAll(".card:not(.lock)"), $("back")],
-        help: () => [$("hback")],
+        help: () => [...document.querySelectorAll("#hptabs .hpt"), $("hback")],
         opt: () => [$("omrow"), $("osrow"), $("omu"), $("oback")],
         pause: () => [...$("pause").querySelectorAll(".go")],
         stage: () => [...$("stg").querySelectorAll(".stc"), $("stback")],
@@ -5202,10 +5254,26 @@
         st = "menu";
       }
       let helpFrom = "menu";
+      const HNOTE = {
+        vs: "Versus: ↑ pula. No celular, analógico à esquerda e ações à direita.",
+        ar: "Arena: ↑ não faz nada — pule com o botão de pulo (✕ / A no controle) e aperte de novo no ar para o pulo duplo. No celular, use o botão de pulo.",
+      };
+      function hpTab(t) {
+        $("hp").dataset.t = t;
+        document
+          .querySelectorAll("#hptabs .hpt")
+          .forEach((b) => b.classList.toggle("on", b.dataset.t === t));
+        $("hnote").textContent = HNOTE[t];
+      }
+      document
+        .querySelectorAll("#hptabs .hpt")
+        .forEach((b) => (b.onclick = () => hpTab(b.dataset.t)));
+      hpTab("vs");
       $("pb").onclick = () => setPause(true);
       $("pcont").onclick = () => setPause(false);
       $("php").onclick = () => {
         helpFrom = "pause";
+        hpTab(st === "arena" ? "ar" : "vs");
         $("pause").style.display = "none";
         $("hp").style.display = "flex";
       };
@@ -5238,6 +5306,7 @@
       };
       $("bhp").onclick = () => {
         helpFrom = "menu";
+        hpTab("vs");
         menu.style.display = "none";
         $("hp").style.display = "flex";
       };
@@ -9073,7 +9142,7 @@ updOpt();
           return {
             l: keys.KeyA || keys.vL,
             r: keys.KeyD || keys.vR,
-            u: keys.KeyW || keys.vU || keys.vJ,
+            u: noJump ? keys.KeyW || keys.vU || keys.vJ : keys.KeyK || keys.vJ,
             d: keys.KeyS || keys.vD,
             h: keys.KeyL || keys.vH,
             p: keys.KeyJ || keys.vP,
@@ -9084,7 +9153,7 @@ updOpt();
           return {
             l: keys.ArrowLeft,
             r: keys.ArrowRight,
-            u: keys.ArrowUp,
+            u: noJump ? keys.ArrowUp : keys.Numpad5,
             d: keys.ArrowDown,
             h: keys.Numpad6,
             p: keys.Numpad4,
@@ -9094,7 +9163,7 @@ updOpt();
         if (dv && dv[0] === "p") {
           const g = rawPad(+dv.slice(1)),
             o = gin(g);
-          if (!noJump && g && g.buttons[0] && g.buttons[0].pressed) o.u = true; /* ✕/A pula (Arena) */
+          if (!noJump) o.u = !!(g && g.buttons[0] && g.buttons[0].pressed); /* Arena: só ✕/A pula; ↑ não faz nada */
           return o;
         }
         return {};

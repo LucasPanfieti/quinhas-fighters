@@ -447,7 +447,7 @@ Máx. 2 teclados e 4 controles; ≥1 humano, ≥2 lutadores, todos os humanos pr
 | Função | Papel |
 | ------ | ----- |
 | `AF` | `F` + física de plataforma (`wy`, `on`, `sup`, `jc`, `drop`, `inv`, `rsp`, `lives`, `kos`) |
-| `devIn(dev)` | input do slot (`k1`/`k2`/`pN`); no pad ✕/A também pula |
+| `devIn(dev, noJump)` | input do slot (`k1`/`k2`/`pN`). **Arena** (`noJump` falso): ↑/W não fazem nada; pula só `K` (k1), `Num 5` (k2) e ✕/A (pad) — ✕/A de novo no ar = pulo duplo. **Versus** (`noJump` true): ↑ pula como no 1v1 |
 | `aiArena(me)` | IA: alvo mais próximo, recuperação, sobe/desce plats, não cai sozinha |
 | `beginArena(cfg)` / `beginArenaNow` | carrega lazy + `arena.webp`, cria `fighters[]`, `st="arena"` |
 | `stepArena` | `ast` = `intro` → `fight` → `end`; chama `up`, `flushHits`, `updArenaPJ`, `sepArena`, `checkBlast` |

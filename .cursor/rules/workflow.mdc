@@ -1,0 +1,57 @@
+---
+description: Protocolo de qualidade obrigatório - antes, durante, depois e revisão crítica em toda solicitação
+alwaysApply: true
+---
+
+# Protocolo de qualidade (obrigatório, toda solicitação)
+
+Vale para qualquer pedido, grande ou pequeno. Pedido pequeno percorre tudo rápido; nada é pulado.
+
+## Antes
+
+- Entenda o pedido e o resultado esperado. Se há mais de uma leitura razoável e o código e o histórico não decidem, pergunte.
+- Leia o código real do assunto (`Grep`, função inteira, quem chama) e a skill certa (`quinhas-fighters` indica).
+- Identifique riscos e dependências: o outro modo, o outro dispositivo, o doc, o `?v=` de asset.
+- Pesquise referência quando a decisão depende de fora (`quinhas-research`). Cite a fonte.
+- Reproduza o bug ou veja a tela atual. Planeje a melhor solução, não a primeira.
+
+## Durante
+
+- Alterações organizadas e específicas. Menor mudança que resolve, uma preocupação por vez.
+- Preserve o que existe. Sem refactor, renome ou "melhoria" que ninguém pediu.
+- Sem solução frágil: nada de número mágico "ajustado no olho", gambiarra de timing ou exceção só para o caso testado.
+- Mantenha a identidade visual (`docs/visual-identity.md`).
+- Não termine pela metade. Se um pedaço não cabe agora, diga qual e por quê; não deixe estado quebrado.
+
+## Depois (evidência real)
+
+1. `python .cursor/skills/quinhas-qa/scripts/check_syntax.py`.
+2. Rode o jogo no browser e percorra o fluxo alterado.
+3. **Console sem erro**: confira exceções e falhas de carregamento (receita de console em `quinhas-qa`).
+4. Teste o que é relacionado: o outro modo, a tela vizinha, o outro dispositivo.
+5. Confira visualmente (screenshot ou medida) em várias resoluções: desktop largo, desktop baixo, celular em pé e deitado.
+6. Corrija o que achar e **repita** os passos afetados.
+7. Alinhe o doc que a mudança tocou.
+
+## Revisão crítica (antes de entregar)
+
+Responda para si, de verdade:
+
+1. Fiz exatamente o que foi pedido?
+2. O resultado está visualmente profissional?
+3. Existe uma forma melhor de implementar?
+4. Posso ter quebrado algo?
+5. Testei os principais cenários?
+6. Deixei passar algum detalhe visual ou técnico?
+
+Se a resposta a 3 ou 6 é "sim", melhore antes de entregar. Não entregue a primeira versão só porque funciona; busque a melhor versão viável.
+
+## Transparência
+
+- Nunca declare algo concluído ou validado sem evidência rodada.
+- Sem browser, sem pad, sem celular real: diga o que não foi testado e como foi coberto (stub, emulação).
+- Bug achado e não corrigido entra no resumo.
+
+## Fim da tarefa
+
+Diga o que mudou e onde (arquivo e função), o que foi verificado e como, e o que ficou sem verificar. Sem listar arquivos que não mudaram.

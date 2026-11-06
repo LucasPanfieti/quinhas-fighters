@@ -602,6 +602,18 @@
       #op.muted .arow {
         opacity: 0.45;
       }
+      #odrow {
+        cursor: pointer;
+      }
+      #op.muted #odrow {
+        opacity: 1;
+      }
+      #odv::before {
+        content: "‹ ";
+      }
+      #odv::after {
+        content: " ›";
+      }
       .go {
         width: var(--go-w);
         min-height: 44px;
@@ -874,6 +886,9 @@
         background-color: #0c0c12;
         background-size: cover;
         background-position: center;
+        box-shadow:
+          0 0 0 2px rgba(255, 210, 90, 0.55),
+          0 6px 14px rgba(0, 0, 0, 0.6);
       }
       .card.rnd span {
         background: linear-gradient(transparent, rgba(8, 8, 14, 0.94));
@@ -948,37 +963,80 @@
         color: #38c8ff;
         border: 1.5px solid #38c8ff;
       }
-      .card[data-l1]::before {
-        content: "P1 ✓";
-        background: var(--ember);
-        color: var(--ink);
-        animation: none;
-      }
+      /* confirmado: some a etiqueta. O lock é a moldura, não um selo. */
+      .card[data-l1]::before,
       .card[data-l2]::after {
-        content: "P2 ✓";
-        background: #38c8ff;
-        color: var(--ink);
-        animation: none;
+        content: none;
+      }
+      /* solo vs CPU: slot 2 é CPU, não P2 */
+      #sel[data-cpu] .card[data-c2]::after {
+        content: "CPU";
+        color: #c8d0e0;
+        border-color: #9aa8c0;
+      }
+      #sel[data-cpu] .card[data-c2] {
+        box-shadow:
+          0 0 0 2px #9aa8c0,
+          0 0 14px rgba(160, 176, 200, 0.45);
+      }
+      #sel[data-cpu] .card[data-c1][data-c2] {
+        box-shadow:
+          -5px 0 0 2px var(--ember),
+          5px 0 0 2px #9aa8c0,
+          0 0 18px rgba(255, 255, 255, 0.35);
+      }
+      #sel[data-cpu] .card[data-l2]::after {
+        content: none;
+      }
+      #sel[data-cpu] .card[data-l2] {
+        box-shadow:
+          0 0 0 3px #9aa8c0,
+          inset 0 -52px 42px -14px rgba(154, 168, 192, 0.72);
       }
       .card[data-c1] {
         box-shadow:
-          0 0 0 3px var(--ember),
-          0 0 24px rgba(232, 116, 59, 0.8);
+          0 0 0 2px var(--ember),
+          0 0 14px rgba(232, 116, 59, 0.55);
       }
       .card[data-c2] {
         box-shadow:
-          0 0 0 3px #38c8ff,
-          0 0 24px rgba(56, 200, 255, 0.8);
+          0 0 0 2px #38c8ff,
+          0 0 14px rgba(56, 200, 255, 0.55);
       }
+      /* dois cursores no mesmo card: metades se misturam */
       .card[data-c1][data-c2] {
         box-shadow:
-          -5px 0 0 3px var(--ember),
-          5px 0 0 3px #38c8ff,
-          0 0 24px rgba(255, 255, 255, 0.4);
+          -5px 0 0 2px var(--ember),
+          5px 0 0 2px #38c8ff,
+          0 0 18px rgba(255, 255, 255, 0.35);
       }
-      .card[data-l1],
+      /* lock estilo SF/Injustice: moldura para e o retrato ganha a cor do jogador por baixo */
+      .card[data-l1] {
+        box-shadow:
+          0 0 0 3px var(--ember),
+          inset 0 -52px 42px -14px rgba(232, 116, 59, 0.78);
+      }
       .card[data-l2] {
-        transform: translateY(-3px) scale(1.04);
+        box-shadow:
+          0 0 0 3px #38c8ff,
+          inset 0 -52px 42px -14px rgba(56, 200, 255, 0.72);
+      }
+      .card[data-l1][data-l2],
+      .card[data-c1][data-l2],
+      .card[data-l1][data-c2] {
+        box-shadow:
+          -6px 0 0 0 var(--ember),
+          6px 0 0 0 #38c8ff,
+          inset 34px 0 26px -18px rgba(232, 116, 59, 0.55),
+          inset -34px 0 26px -18px rgba(56, 200, 255, 0.5);
+      }
+      #sel[data-cpu] .card[data-c1][data-l2],
+      #sel[data-cpu] .card[data-l1][data-l2] {
+        box-shadow:
+          -6px 0 0 0 var(--ember),
+          6px 0 0 0 #9aa8c0,
+          inset 34px 0 26px -18px rgba(232, 116, 59, 0.55),
+          inset -34px 0 26px -18px rgba(154, 168, 192, 0.55);
       }
 
       #sel:not([data-m="2p"]) #vs {
@@ -1045,6 +1103,24 @@
       }
       .pv.ready img {
         animation: pop 0.4s;
+      }
+      .pv.ready small::before {
+        content: "✓ ";
+        font-weight: 700;
+      }
+      .pv.ready {
+        filter: drop-shadow(0 0 12px color-mix(in srgb, currentColor 40%, transparent));
+      }
+      #fi.rdy small::before,
+      #fi2.rdy small::before {
+        content: "✓ ";
+      }
+      /* pronto = ✓ + brilho no sprite — sem outline no painel (virava barra na tela toda) */
+      #fi.rdy > img:first-of-type {
+        filter: drop-shadow(0 0 18px color-mix(in srgb, var(--ember) 55%, transparent));
+      }
+      #fi2.rdy > img:first-of-type {
+        filter: drop-shadow(0 0 18px color-mix(in srgb, #38c8ff 55%, transparent));
       }
       .pv.wait > img:first-of-type {
         opacity: 0.28;
@@ -1566,9 +1642,10 @@
           width: min(360px, 92vw);
           flex-grow: 0;
         }
-        /* dicas de teclado no rodapé colidem com Voltar nesta tela */
+        /* desktop largo: prompts um pouco mais compactos */
         #stage:has(#sel[style*="flex"]) #prompts {
-          display: none;
+          gap: 10px 16px;
+          font-size: 11px;
         }
       }
       @keyframes kb {
@@ -2883,20 +2960,26 @@
         z-index: 8;
         display: flex;
         justify-content: center;
-        gap: clamp(14px, 3vw, 34px);
+        align-items: center;
+        flex-wrap: wrap;
+        gap: clamp(10px, 2.2vw, 28px);
+        row-gap: 4px;
         pointer-events: none;
         opacity: 0;
         transition: opacity 0.3s;
-        font: 700 13px/1 var(--ui);
-        letter-spacing: 0.16em;
+        font: 700 12px/1 var(--ui);
+        letter-spacing: 0.12em;
         text-transform: uppercase;
         color: #bfe0ff;
         text-shadow: 0 1px 0 #000;
+        padding: 6px 12px;
+        box-sizing: border-box;
       }
       #prompts span {
         display: flex;
         align-items: center;
         gap: 4px;
+        white-space: nowrap;
       }
       #prompts kbd {
         margin: 0 2px 0 0;
@@ -2914,6 +2997,15 @@
         #prompts {
         opacity: 0.9;
       }
+      /* Versus / select: Voltar sobe; prompts ficam na faixa abaixo dele */
+      #sel:not([data-m="arena"]) {
+        padding-bottom: max(88px, calc(var(--safe-b) + 76px));
+      }
+      #stage:has(#sel[style*="flex"]:not([data-m="arena"])) #prompts {
+        bottom: max(14px, var(--safe-b));
+        font-size: 11px;
+        letter-spacing: 0.1em;
+      }
       /* touch / mobile: menu é toque — sem dicas de teclado */
       @media (pointer: coarse), (hover: none) {
         #prompts {
@@ -2921,7 +3013,8 @@
         }
       }
       @media (max-height: 520px) {
-        #prompts {
+        /* Arena já esconde #selsub — mantém prompts; resto esconde */
+        #stage:not(:has(#sel[data-m="arena"][style*="flex"])) #prompts {
           display: none;
         }
       }
@@ -3142,38 +3235,168 @@
         display: none !important;
       }
       #sel[data-m="arena"] {
-        justify-content: center;
+        justify-content: flex-start;
+        gap: clamp(4px, 1vh, 10px);
+        padding-top: clamp(4px, 1vh, 12px);
+        padding-bottom: max(10px, var(--safe-b));
+      }
+      #sel[data-m="arena"] > h1 {
+        margin: 0;
+        font-size: clamp(18px, 4.2vh, 34px);
+      }
+      /* Arena desktop: atalhos só em #prompts (mobile: #prompts some → mostra #selsub) */
+      @media (hover: hover) and (pointer: fine) {
+        #sel[data-m="arena"] > #selsub {
+          display: none;
+        }
+      }
+      /* título → party → grade → ações grudadas embaixo */
+      #sel[data-m="arena"] > #av {
+        margin: 0;
+        flex: 0 0 auto;
+        width: min(820px, 94vw);
       }
       #sel[data-m="arena"] > #grid {
         position: relative;
-        margin-top: 0;
-        margin-bottom: 0;
+        margin: 0;
+        flex: 0 1 auto;
+        --gmaxh: min(34dvh, 240px);
+        width: min(
+          760px,
+          90vw,
+          calc(var(--gmaxh) * var(--gc) * 3 / (var(--gr) * 4))
+        );
+      }
+      #sel[data-m="arena"] > #a4hint {
+        margin: 0;
+        font-size: clamp(10px, 1.6vh, 13px);
+      }
+      #sel[data-m="arena"] > #a4act {
+        margin-top: auto;
+        position: relative;
+        z-index: 7;
+        gap: 8px;
+        padding: 6px 0 max(4px, var(--safe-b));
+      }
+      #sel[data-m="arena"] > #a4act .go {
+        min-height: 40px;
+        padding: 8px 18px;
+        font-size: clamp(13px, 2.2vh, 16px);
+      }
+      /* party compacta pra caber com grade + Começar */
+      #sel[data-m="arena"] .ap {
+        min-height: calc(clamp(32px, 7.5vh, 70px) + 4.2em);
+        padding: 18px 4px 5px;
+        gap: 2px;
+      }
+      #sel[data-m="arena"] .ap .aps {
+        height: calc(clamp(32px, 7.5vh, 70px) * var(--hs, 1));
+      }
+      #sel[data-m="arena"] .ap .apx button {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        min-height: 36px;
+        font-size: 14px;
+      }
+      #sel[data-m="arena"] .ap .apadd {
+        min-height: 32px;
+        padding: 4px 10px;
+        font-size: 11px;
+      }
+      /* ≤640px: Começar/Voltar fixos; prompts acima deles */
+      @media (max-height: 640px) {
+        #sel[data-m="arena"] {
+          justify-content: flex-start;
+          gap: 4px;
+          padding-top: 4px;
+          padding-bottom: max(96px, calc(var(--safe-b) + 88px));
+        }
+        #stage:has(#sel[data-m="arena"][style*="flex"]) #prompts {
+          bottom: max(52px, calc(var(--safe-b) + 46px));
+        }
+        #sel[data-m="arena"] > h1 {
+          font-size: 16px;
+        }
+        #sel[data-m="arena"] > #a4hint {
+          font-size: 10px;
+        }
+        #sel[data-m="arena"] .ap {
+          min-height: calc(26px + 3.2em);
+          padding: 14px 2px 4px;
+        }
+        #sel[data-m="arena"] .ap .aps {
+          height: calc(26px * var(--hs, 1));
+        }
+        #sel[data-m="arena"] > #grid {
+          --gmaxh: min(30dvh, 180px);
+          flex-shrink: 1;
+        }
+        #sel[data-m="arena"] > #a4act {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          margin-top: 0;
+          padding: 4px max(12px, var(--safe-r)) max(6px, var(--safe-b))
+            max(12px, var(--safe-l));
+        }
+        #sel[data-m="arena"] > #a4act .go {
+          min-height: 36px;
+          padding: 6px 14px;
+          font-size: 13px;
+        }
+      }
+      @media (max-height: 420px) {
+        #sel[data-m="arena"] > h1 {
+          display: none;
+        }
+        #sel[data-m="arena"] > #a4hint {
+          display: none !important;
+        }
+        #sel[data-m="arena"] > #grid {
+          --gmaxh: min(42dvh, 160px);
+        }
+        #sel[data-m="arena"] .ap {
+          min-height: calc(22px + 2.6em);
+          padding: 14px 2px 2px;
+        }
+        #sel[data-m="arena"] .ap .aps {
+          height: calc(22px * var(--hs, 1));
+        }
+        #sel[data-m="arena"] .ap .apx button {
+          width: 28px;
+          height: 28px;
+          min-width: 28px;
+          min-height: 28px;
+        }
+      }
+      /* Arena alta: folga pros prompts; ≤640px usa padding do media query */
+      @media (min-height: 641px) {
+        #sel[data-m="arena"] {
+          padding-bottom: max(88px, calc(var(--safe-b) + 76px));
+        }
       }
       #stage:has(#sel[data-m="arena"][style*="flex"]) #prompts {
-        display: none;
+        bottom: max(14px, var(--safe-b));
+        font-size: 10px;
       }
       #grid .card.tk {
         filter: grayscale(0.9) brightness(0.5);
       }
+      /* Arena: mesmo anel do Versus — um cursor = borda cheia; vários no mesmo card = metades */
+      #sel[data-m="arena"] .card.pin {
+        box-shadow: var(--mix);
+      }
       .acur {
         position: absolute;
-        z-index: 4;
+        z-index: 5;
+        width: 0;
+        height: 0;
+        border: 0;
+        background: none;
+        box-shadow: none;
         pointer-events: none;
-        box-sizing: border-box;
-        border-radius: 9px;
-        border: 3px solid var(--pc);
-        box-shadow:
-          0 0 0 1px #000,
-          0 0 16px var(--pc);
-        transition:
-          left 0.11s,
-          top 0.11s,
-          width 0.11s,
-          height 0.11s;
-        animation: apul 1s ease-in-out infinite;
-      }
-      .acur.lk {
-        background: color-mix(in srgb, var(--pc) 24%, transparent);
         animation: none;
       }
       .acur i {
@@ -3204,6 +3427,9 @@
       .acur.s3 i {
         bottom: -3px;
         right: -3px;
+      }
+      .acur.lk i {
+        display: none;
       }
       @keyframes apul {
         50% {
@@ -3240,13 +3466,86 @@
         min-height: calc(clamp(52px, 13vh, 118px) + 6.2em);
         transition:
           border-color 0.15s,
-          box-shadow 0.15s;
+          box-shadow 0.15s,
+          transform 0.15s;
+      }
+      .ap.empty {
+        border-style: dashed;
+        border-color: color-mix(in srgb, var(--pc) 55%, #6a7a9a);
+        background: linear-gradient(
+          180deg,
+          rgba(12, 16, 36, 0.35),
+          rgba(8, 12, 30, 0.72)
+        );
+      }
+      .ap.cpu {
+        border-color: color-mix(in srgb, var(--pc) 50%, #889);
+      }
+      .ap.cpu::after {
+        content: "CPU";
+        position: absolute;
+        top: 22px;
+        left: 6px;
+        font:
+          700 9px/1 var(--ui),
+          sans-serif;
+        letter-spacing: 0.12em;
+        padding: 3px 6px;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.55);
+        color: #c8d4e8;
+        border: 1px solid rgba(200, 212, 232, 0.35);
+      }
+      .ap.human:not(.rdy) {
+        animation: apul 1.1s ease-in-out infinite;
+      }
+      .ap.gf,
+      .ap.foc {
+        outline: none;
+        border-color: #fff;
+        border-style: solid;
+        box-shadow:
+          0 0 0 3px var(--pc),
+          0 0 22px color-mix(in srgb, var(--pc) 70%, transparent);
+        transform: translateY(-2px) scale(1.02);
+        z-index: 2;
+      }
+      .ap.pop {
+        animation: appop 0.35s ease-out;
+      }
+      .ap.bye {
+        animation: apbye 0.22s ease-in forwards;
+      }
+      @keyframes appop {
+        from {
+          transform: scale(0.86);
+          opacity: 0.4;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      @keyframes apbye {
+        to {
+          transform: scale(0.9);
+          opacity: 0;
+        }
       }
       .ap.rdy {
         border-color: var(--pc);
+        border-style: solid;
         box-shadow:
           0 0 0 1px var(--pc),
           0 0 20px color-mix(in srgb, var(--pc) 55%, transparent);
+        background: linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--pc) 18%, rgba(8, 12, 30, 0.7)),
+          rgba(8, 12, 30, 0.92)
+        );
+      }
+      .ap.rdy .aph::before {
+        content: "✓ ";
       }
       .ap .apt {
         position: absolute;
@@ -3313,31 +3612,35 @@
       }
       .ap .apx {
         position: absolute;
-        top: 3px;
+        top: 4px;
         right: 4px;
         display: flex;
-        gap: 3px;
+        gap: 4px;
+        z-index: 2;
       }
       .ap .apx button,
       .ap .apadd {
         font: inherit;
         color: #dff0ff;
-        background: rgba(10, 16, 40, 0.8);
-        border: 1.5px solid rgba(120, 170, 255, 0.5);
-        border-radius: 6px;
+        background: rgba(10, 16, 40, 0.85);
+        border: 1.5px solid rgba(120, 170, 255, 0.55);
+        border-radius: 8px;
         cursor: pointer;
         pointer-events: auto;
       }
       .ap .apx button {
-        width: 22px;
-        height: 22px;
+        width: max(36px, 44px);
+        height: max(36px, 44px);
+        min-width: 44px;
+        min-height: 44px;
         padding: 0;
-        font-size: 13px;
+        font-size: 16px;
         line-height: 1;
       }
       .ap .apadd {
-        font-size: 11px;
-        padding: 3px 12px;
+        font-size: 12px;
+        padding: 8px 14px;
+        min-height: 44px;
         letter-spacing: 0.06em;
       }
       .ap .apx button:hover,
@@ -3446,7 +3749,8 @@
           height: calc(clamp(40px, 11vh, 70px) * var(--hs, 1));
         }
       }
-      @media (max-height: 480px) {
+      /* só desktop fino esconde selsub; no touch o #prompts já some */
+      @media (max-height: 480px) and (hover: hover) and (pointer: fine) {
         #sel[data-m="arena"] > #selsub {
           display: none;
         }
@@ -3626,9 +3930,6 @@
       #hp .hnote,
       #stage:has(#hp[style*="flex"]) #prompts {
         display: none !important;
-      }
-      #sel[data-cpu] .card[data-l2]::after {
-        content: "CPU ✓";
       }
       #hptabs {
         display: flex;
@@ -3906,7 +4207,7 @@
             <img alt="Quinhas Ball Fighters" src="assets/title.webp?v=5" />
           </div>
           <p id="tp">Toque na tela ou aperte qualquer tecla</p>
-          <p id="tver">v1.4.0</p>
+          <p id="tver">v1.5.0</p>
         </div>
         <button id="fs" type="button" aria-label="Tela cheia">⛶</button>
         <div id="prompts">
@@ -3932,16 +4233,17 @@
           <button class="go alt" id="b2p">Versus · 2 jogadores</button>
           <button class="go alt" id="bar">Arena · 2-4 jogadores</button>
    <button class="go alt" id="bhp">Controles</button>
-   <button class="go alt" id="bop">Áudio</button>
+   <button class="go alt" id="bop">Opções</button>
           <button class="go alt" id="bsl" style="display: none">Trocar lutadores</button>
           <button class="go alt" id="bmm" style="display: none">Menu principal</button>
           <button class="go alt" id="btt">Voltar ao título</button>
    <p id="tip">Dica: gire o celular na horizontal para jogar melhor.</p>
-          <p id="ver">v1.4.0</p>
+          <p id="ver">v1.5.0</p>
   </div>
         <div id="sel">
           <h1>Escolha seu lutador</h1>
           <p id="selsub"></p>
+          <div id="av"></div>
           <div id="grid"></div>
           <div id="fi">
             <img alt="" /><small></small
@@ -3962,7 +4264,6 @@
               ><small></small>
             </div>
           </div>
-          <div id="av"></div>
           <p id="a4hint"></p>
           <div id="a4act">
             <button class="go" id="a4go" type="button">Começar</button>
@@ -4096,7 +4397,10 @@
           <button class="go alt" id="hback">Voltar</button>
         </div>
         <div id="op">
-          <h1>Áudio</h1>
+          <h1>Opções</h1>
+          <div class="arow" id="odrow" data-diff="1" tabindex="-1">
+            <div class="alab"><span>Dificuldade</span><b id="odv">Normal</b></div>
+          </div>
           <div class="arow" id="omrow" data-vol="m" tabindex="-1">
             <div class="alab"><span>Música</span><b id="omv">100%</b></div>
             <input
@@ -4742,7 +5046,13 @@
           b: B(5),
         };
       };
-      let s2 = { c: [0, 0], lk: [null, null], go: false, dv: [null, null] },
+      let s2 = {
+          c: [0, 0],
+          lk: [null, null],
+          go: false,
+          dv: [null, null],
+          hum: [false, false],
+        },
         pm2 = [null, null],
         s2StageT = 0;
       const clearS2Stage = () => {
@@ -4767,6 +5077,8 @@
         if (!s2.vs) return "P" + (n + 1) + st;
         if (s2.dv[n] != null || (!IS_TOUCH && n === 0 && s2.lk[0] != null))
           return "P" + (n + 1) + st;
+        /* humano no slot 2 (mesmo desconectado) */
+        if (n === 1 && s2.hum[1]) return "P2" + st;
         if (IS_TOUCH) return (n ? "CPU" : "Você") + st;
         if (n === 1 && s2.lk[0] != null) return "CPU" + st;
         return null;
@@ -4775,10 +5087,15 @@
       const s2cur = (n) =>
         !s2.vs ||
         s2.dv[n] != null ||
-        (n === 1 && s2.lk[0] != null && !IS_TOUCH);
+        (n === 1 &&
+          s2.lk[0] != null &&
+          !IS_TOUCH &&
+          !s2.hum[1] &&
+          s2.lk[1] == null);
       function s2render() {
         const av = AVall();
-        selEl.toggleAttribute("data-cpu", !!s2.vs && s2.dv[1] == null);
+        /* solo CPU = nenhum humano entrou no slot 2 */
+        selEl.toggleAttribute("data-cpu", !!s2.vs && !s2.hum[1]);
         if (s2.vs && IS_TOUCH) {
           const el = $("selsub");
           el.className = "";
@@ -4790,9 +5107,10 @@
         grid.querySelectorAll(".card[data-id]").forEach((c) => {
           const i = av.indexOf(c.dataset.id);
           [0, 1].forEach((n) => {
+            /* cursor só enquanto escolhe — confirmado fica só com o ✓ */
             c.toggleAttribute(
               "data-c" + (n + 1),
-              s2.c[n] === i && s2cur(n),
+              s2.c[n] === i && s2cur(n) && s2.lk[n] == null,
             );
             c.toggleAttribute(
               "data-l" + (n + 1),
@@ -4867,7 +5185,7 @@
               if (!a || !b || !CH[a] || !CH[b]) return;
               VDEV[0] = s2.vs ? s2.dv[0] : null;
               VDEV[1] = s2.vs ? s2.dv[1] : null;
-              const cpu = s2.vs && s2.dv[1] == null;
+              const cpu = s2.vs && !s2.hum[1];
               askStage(cpu ? "ai" : "2p", a, b);
               if (stgSel) stgSel.vs = !!s2.vs;
             }, 900);
@@ -4878,7 +5196,28 @@
           if (s2.lk[n] != null) {
             s2.lk[n] = null;
             s2render();
-          } else if (leave) document.getElementById("back").click();
+          } else if (leave) {
+            /* sai ao menu direto — não via #back (selStackBack↔s2in loop) */
+            clearS2Stage();
+            s2.go = false;
+            s2.dv = [null, null];
+            s2.lk = [null, null];
+            s2.hum = [false, false];
+            holdMenuPad();
+            selEl.style.display = "none";
+            menu.style.display = "flex";
+            hSig = "";
+          }
+          return;
+        }
+        /* Y/△ = Aleatório (Injustice) */
+        if (k === "ca") {
+          if (s2.lk[n] != null) return;
+          const qi = av.indexOf("?");
+          if (qi < 0) return;
+          s2.c[n] = qi;
+          snd(520, 0.05, "square", 0.04);
+          s2render();
           return;
         }
         if (s2.lk[n] != null) return;
@@ -4903,11 +5242,22 @@
         if (s2.go) return;
         let n = s2.dv.indexOf(dev);
         if (n < 0) {
-          if (k === "bk") return;
-          n = s2.dv[0] == null ? 0 : s2.dv[1] == null ? 1 : -1;
-          if (n < 0) return;
-          if (n === 1 && s2.lk[1] != null) return;
+          /* fora do slot: B/○ sai da seleção (não entra — "any" já entra nos outros botões) */
+          if (k === "bk") {
+            if (s2.dv.every((d) => d == null))
+              document.getElementById("back").click();
+            return;
+          }
+          /* reconectou: retoma slot com pick confirmado sem device */
+          n = [0, 1].find((i) => s2.dv[i] == null && s2.lk[i] != null);
+          if (n == null) {
+            n = s2.dv[0] == null ? 0 : s2.dv[1] == null ? 1 : -1;
+            if (n < 0) return;
+            /* slot 2 já travado como CPU — humano não toma */
+            if (n === 1 && s2.lk[1] != null) return;
+          }
           s2.dv[n] = dev;
+          s2.hum[n] = true;
           snd(520, 0.08, "square", 0.06);
           s2render();
           return;
@@ -4922,8 +5272,12 @@
         }
         if (k === "bk" && s2.lk[n] == null) {
           s2.dv[n] = null;
+          s2.hum[n] = false;
           snd(300, 0.06, "square", 0.05);
           s2render();
+          /* último humano saiu → mesmo efeito de Voltar / Esc */
+          if (s2.dv.every((d) => d == null))
+            document.getElementById("back").click();
           return;
         }
         s2in(n, k);
@@ -4978,8 +5332,6 @@
         "</g></svg>";
       const DPAD =
         '<svg class="bi" viewBox="0 0 24 24"><path d="M9 2h6v7h7v6h-7v7H9v-7H2V9h7z" fill="#dff0ff" stroke="#000" stroke-width="1.3" stroke-linejoin="round"/></svg>';
-      const STICKI =
-        '<svg class="bi" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#141a33" stroke="#7d8bb8" stroke-width="1.4"/><circle cx="12" cy="12" r="7.2" fill="none" stroke="#5a90c8" stroke-width="1.2" opacity=".7"/><circle cx="14.2" cy="10.2" r="3.4" fill="#dff0ff" stroke="#000" stroke-width="1.2"/></svg>';
       const MENUI =
         '<svg class="bi" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#141a33" stroke="#7d8bb8" stroke-width="1.4"/><path d="M7 9h10M7 12h10M7 15h10" stroke="#dff0ff" stroke-width="2" stroke-linecap="round"/></svg>';
       function padKind(g) {
@@ -4990,9 +5342,17 @@
           ? "p"
           : "x";
       }
+      /* kind ativo: Xbox (x) / PlayStation (p) / teclado (null) */
+      function activePadKind() {
+        if (IN !== "pad") return null;
+        for (let i = 0; i < 4; i++) {
+          const g = gpad(i);
+          if (g) return padKind(g);
+        }
+        return "x";
+      }
       function gI(a, k) {
-        if (a === "move")
-          return '<span class="gi">' + DPAD + STICKI + "</span>";
+        if (a === "move") return '<span class="gi">' + DPAD + "</span>";
         if (a === "start") return '<span class="gi">' + MENUI + "</span>";
         if (a === "block")
           return (
@@ -5006,15 +5366,20 @@
             (k === "p" ? "L1" : k === "x" ? "LB" : "LB / L1") +
             "</kbd>"
           );
+        /* aliases de UI: random/+CPU = Y/△ (kick), −CPU = X/□ (punch) */
+        const map = { random: "kick", addcpu: "kick", rmcpu: "punch" };
+        const act = map[a] || a;
         const one = (t) =>
-          t === "p" ? svgP(PC[a][0], PC[a][1]) : svgX(XC[a][0], XC[a][1]);
+          t === "p"
+            ? svgP(PC[act][0], PC[act][1])
+            : svgX(XC[act][0], XC[act][1]);
         return (
           '<span class="gi">' +
           (k === "b"
             ? one("x") +
               '<i style="opacity:.6;font-style:normal">/</i>' +
               one("p")
-            : one(k)) +
+            : one(k || "x")) +
           "</span>"
         );
       }
@@ -5031,7 +5396,11 @@
         start: ["<kbd>Esc</kbd> <kbd>P</kbd>", "<kbd>Esc</kbd> <kbd>P</kbd>"],
       };
       let IN = "kb",
-        hSig = "";
+        hSig = "",
+        /* cedo: buildHints→scr() no boot; evitar TDZ de let */
+        pendMode = "ai",
+        p1 = null,
+        p2 = null;
       addEventListener(
         "keydown",
         () => {
@@ -5047,7 +5416,7 @@
           k1 = ks[1],
           has = [k0 !== "-", k1 !== "-"],
           two = has[0] && has[1],
-          pk = has[0] ? k0 : has[1] ? k1 : "b";
+          pk = has[0] ? k0 : has[1] ? k1 : "x";
         const tag = (n) =>
           '<i class="tg p' + (n + 1) + '">P' + (n + 1) + "</i>";
         const coarse =
@@ -5055,40 +5424,81 @@
           (matchMedia("(pointer:coarse)").matches ||
             matchMedia("(hover:none)").matches);
         const pr = document.getElementById("prompts");
+        let onSel = false,
+          onArena = false,
+          onVs = false;
+        try {
+          onSel = typeof scr === "function" && scr() === "sel";
+          onArena = onSel && pendMode === "arena";
+          onVs = onSel && pendMode === "2p" && !!(s2 && s2.vs);
+        } catch (e) {}
+        const usePad = IN === "pad" && (has[0] || has[1]);
+        /* dois humanos no Versus — não basta 2 pads plugados (solo CPU) */
+        const twoHum =
+          onVs &&
+          two &&
+          s2 &&
+          s2.dv &&
+          s2.dv[0] != null &&
+          s2.dv[1] != null;
         if (pr) {
           if (coarse) {
             pr.hidden = true;
             pr.innerHTML = "";
           } else {
             pr.hidden = false;
-            if (IN === "pad" && (has[0] || has[1])) {
-              pr.innerHTML = two
-                ? "<span>" +
+            let html = "";
+            if (usePad) {
+              if (twoHum) {
+                html =
+                  "<span>" +
                   gI("move", k0) +
-                  'Navegar</span><span class="pg">' +
+                  "Navegar</span>" +
+                  '<span class="pg">' +
                   tag(0) +
                   gI("ok", k0) +
-                  "Confirmar " +
                   gI("back", k0) +
-                  'Voltar</span><span class="pg">' +
+                  gI("random", k0) +
+                  "</span>" +
+                  '<span class="pg">' +
                   tag(1) +
                   gI("ok", k1) +
-                  "Confirmar " +
                   gI("back", k1) +
-                  "Voltar</span>"
-                : "<span>" +
+                  gI("random", k1) +
+                  "</span>";
+              } else {
+                html =
+                  "<span>" +
                   gI("move", pk) +
                   "Navegar</span><span>" +
                   gI("ok", pk) +
                   "Confirmar</span><span>" +
                   gI("back", pk) +
                   "Voltar</span>";
-            } else
-              pr.innerHTML =
+                if (onArena)
+                  html +=
+                    "<span>" +
+                    gI("addcpu", pk) +
+                    "+CPU</span><span>" +
+                    gI("rmcpu", pk) +
+                    "−CPU</span>";
+                else if (onVs)
+                  html +=
+                    "<span>" + gI("random", pk) + "Aleatório</span>";
+              }
+            } else {
+              html =
                 "<span><kbd>↑</kbd><kbd>↓</kbd>Navegar</span><span><kbd>Enter</kbd>Confirmar</span><span><kbd>Esc</kbd>Voltar</span>";
+              if (onArena)
+                html +=
+                  "<span><kbd>I</kbd>+CPU</span><span><kbd>L</kbd>−CPU</span>";
+              else if (onVs)
+                html += "<span><kbd>I</kbd>Aleatório</span>";
+            }
+            pr.innerHTML = html;
           }
         }
-        const padOn = coarse || (IN === "pad" && (has[0] || has[1]));
+        const padOn = coarse || usePad;
         const kind = (i) => (ks[i] !== "-" ? ks[i] : coarse ? "p" : pk);
         document.querySelectorAll("#ct td[data-ct]").forEach((td) => {
           const a = td.dataset.ct,
@@ -5096,14 +5506,16 @@
           if (a === "amove" || a === "adrop") {
             td.innerHTML = KB[a] ? KB[a][padOn ? 1 : i] : "";
           } else if (a === "vjump") {
-            /* Versus: ↑ ou ✕/A pula */
-            td.innerHTML = padOn
-              ? '<span class="gcombo"><kbd>▲</kbd><i class="gor">ou</i>' +
-                gI("jump", kind(i)) +
-                "</span>"
-              : KB.vjump[i];
+            /* Versus: pad ↑ ou ✕/A; mobile só botão de pulo (analógico não pula) */
+            td.innerHTML = coarse
+              ? gI("jump", kind(i))
+              : padOn
+                ? '<span class="gcombo"><kbd>▲</kbd><i class="gor">ou</i>' +
+                  gI("jump", kind(i)) +
+                  "</span>"
+                : KB.vjump[i];
           } else if (a === "ajump") {
-            /* Arena: teclado ↑/W; pad só ✕/A */
+            /* Arena: teclado ↑/W; pad/mobile só botão ✕/A / pulo */
             td.innerHTML = padOn ? gI("jump", kind(i)) : KB.ajump[i];
           } else if (padOn) {
             td.innerHTML = gI(a, kind(i));
@@ -5131,7 +5543,10 @@
             window.matchMedia &&
             (matchMedia("(pointer:coarse)").matches ||
               matchMedia("(hover:none)").matches),
-          sig = IN + ks.join("") + (touchy ? "c" : "");
+          modeSig =
+            (typeof scr === "function" ? scr() : "") +
+            (typeof pendMode !== "undefined" ? pendMode : ""),
+          sig = IN + ks.join("") + (touchy ? "c" : "") + modeSig;
         if (sig === hSig) return;
         hSig = sig;
         buildHints(ks);
@@ -5197,9 +5612,12 @@
           ].filter(
             (e) => vis(e),
           ),
-        sel: () => [...grid.querySelectorAll(".card:not(.lock)"), $("back")],
+        sel: () =>
+          pendMode === "arena"
+            ? [$("a4go"), $("a4bk")].filter((e) => e && vis(e))
+            : [...grid.querySelectorAll(".card:not(.lock)"), $("back")],
         help: () => [...document.querySelectorAll("#hptabs .hpt"), $("hback")],
-        opt: () => [$("omrow"), $("osrow"), $("omu"), $("oback")],
+        opt: () => [$("odrow"), $("omrow"), $("osrow"), $("omu"), $("oback")],
         pause: () => [...$("pause").querySelectorAll(".go")],
         stage: () => [...$("stg").querySelectorAll(".stc"), $("stback")],
       };
@@ -5288,8 +5706,8 @@
       }
       let helpFrom = "menu";
       const HNOTE = {
-        vs: "Versus: no controle, ↑ ou ✕/A pula. No celular: analógico (↑ também pula) + soco, chute, ki, pulo e defesa.",
-        ar: "Arena: no controle só ✕/A pula (↑ não). No celular o pad é o mesmo do Versus — ↑ no analógico e o botão de pulo; no ar, de novo = pulo duplo.",
+        vs: "Versus: no controle ↑ ou ✕/A pula. Select: Y/△ aleatório · ○/B volta. No celular: analógico só move; pulo no botão.",
+        ar: "Arena: luta só ✕/A pula. Select: Y/+CPU · X/−CPU · ↑ party · ↓ Começar/Voltar. No celular: analógico só move; pulo no botão (ar = duplo).",
       };
       function hpTab(t) {
         $("hp").dataset.t = t;
@@ -5390,6 +5808,142 @@
         aVol();
         updOpt();
       };
+      $("odrow").onclick = () => cycleDiff(1);
+      /* Contrato UI: A/Enter confirma · B/Esc desfaz/volta · Y Arena=+CPU Versus=random · X/−CPU
+         Pilha Back: desfaz etapa → sai slot → tela anterior → menu (nunca encadear até título no mesmo B). */
+      function holdMenuPad() {
+        pm = Object.assign({}, pm, {
+          bk: true,
+          any: true,
+          ok: true,
+          st: true,
+        });
+      }
+      /* Back na select = mesma pilha do pad (não pular direto pro menu) */
+      function selStackBack() {
+        if (pendMode === "arena" && !A4.go) {
+          if (a4Focus.mode === "acts") {
+            a4Focus = { mode: "grid", slot: 0, dev: null };
+            kb = true;
+            a4Render();
+            return;
+          }
+          if (a4Focus.mode === "party") {
+            a4Focus = { mode: "grid", slot: 0, dev: null };
+            a4Render();
+            return;
+          }
+          const hum = typeof a4Hum === "function" ? a4Hum() : [];
+          if (hum.length) {
+            const lockedI = A4.s.findIndex(
+              (s) => s.t === "human" && s.lk != null,
+            );
+            const i =
+              lockedI >= 0
+                ? lockedI
+                : A4.s.findIndex((s) => s.t === "human");
+            if (i < 0) return;
+            const s = A4.s[i];
+            if (s.lk != null) {
+              A4.s[i].lk = null;
+              a4Render();
+              return;
+            }
+            if (s.dev != null) {
+              a4In(s.dev, "bk");
+              return;
+            }
+            A4.s[i] = a4Empty();
+            a4Render();
+            return;
+          }
+          a4Leave();
+          return;
+        }
+        if (pendMode === "2p" && !s2.go) {
+          if (s2.vs) {
+            for (let n = 1; n >= 0; n--)
+              if (s2.dv[n] != null && s2.lk[n] != null) {
+                vsIn(s2.dv[n], "bk");
+                return;
+              }
+            for (let n = 1; n >= 0; n--)
+              if (s2.dv[n] != null) {
+                vsIn(s2.dv[n], "bk");
+                return;
+              }
+          } else {
+            if (s2.lk[1] != null) {
+              s2in(1, "bk");
+              return;
+            }
+            if (s2.lk[0] != null) {
+              s2in(0, "bk");
+              return;
+            }
+            /* sem locks: sai ao menu (não chamar s2in leave → evita loop com #back) */
+          }
+          clearS2Stage();
+          s2.go = false;
+          s2.dv = [null, null];
+          s2.lk = [null, null];
+          s2.hum = [false, false];
+          holdMenuPad();
+          selEl.style.display = "none";
+          menu.style.display = "flex";
+          hSig = "";
+          return;
+        }
+        if (pick1) {
+          pick1 = null;
+          selInfo();
+          return;
+        }
+        clearS2Stage();
+        s2.go = false;
+        s2.dv = [null, null];
+        s2.lk = [null, null];
+        s2.hum = [false, false];
+        holdMenuPad();
+        selEl.style.display = "none";
+        menu.style.display = "flex";
+        hSig = "";
+      }
+      function uiBack() {
+        const s = scr();
+        if (s === "stage") $("stback").click();
+        else if (s === "sel") selStackBack();
+        else if (s === "help") $("hback").click();
+        else if (s === "opt") $("oback").click();
+        else if (s === "menu") toTitle();
+        /* alobby: só lobbyTick / Esc */
+      }
+      function uiConfirm() {
+        const s = scr();
+        if (s === "title") {
+          $("title").click();
+          return;
+        }
+        if (s === "sel" && pendMode === "arena") {
+          if (a4Focus.mode === "party") {
+            a4PartyAct("ok");
+            return;
+          }
+          /* grid: só Start se pronto — não clicar Começar desabilitado */
+          if (a4Focus.mode !== "acts") {
+            if (a4Can()) a4Start();
+            return;
+          }
+        }
+        const L = LS[s] && LS[s]();
+        if (!L || !L.length) return;
+        const i = Math.max(0, Math.min(mi, L.length - 1));
+        if (L[i].dataset && L[i].dataset.vol) {
+          if (L[i].dataset.vol === "s" && !AU.vol.mute) sfxUI("ok");
+          return;
+        }
+        L[i].click();
+      }
       function press(k) {
         if (!p1) return;
         const s = scr();
@@ -5410,27 +5964,28 @@
           return;
         }
         if (k === "bk") {
-          if (s === "stage") $("stback").click();
-          else if (s === "sel") $("back").click();
-          else if (s === "help") $("hback").click();
-          else if (s === "opt") $("oback").click();
-          else if (s === "menu") toTitle();
+          uiBack();
           return;
         }
         const L = LS[s] && LS[s]();
         if (!L || !L.length) return;
         let i = Math.min(mi, L.length - 1);
         if (k === "ok" || k === "st") {
-          if (L[i].dataset && L[i].dataset.vol) {
-            if (L[i].dataset.vol === "s" && !AU.vol.mute) sfxUI("ok");
-            return;
-          }
-          L[i].click();
+          uiConfirm();
           return;
         }
         const n = L.length;
         if (s === "opt") {
           const row = L[i];
+          if (
+            (k === "l" || k === "r") &&
+            row &&
+            row.dataset &&
+            row.dataset.diff
+          ) {
+            cycleDiff(k === "r" ? 1 : -1);
+            return;
+          }
           if (
             (k === "l" || k === "r") &&
             row &&
@@ -5479,10 +6034,16 @@
         document
           .querySelectorAll(".gf")
           .forEach((e) => e.classList.remove("gf"));
+        const arenaActs =
+          s === "sel" &&
+          pendMode === "arena" &&
+          typeof a4Focus !== "undefined" &&
+          a4Focus.mode === "acts";
         if (
           kb &&
           LS[s] &&
-          !(s === "sel" && (pendMode === "2p" || pendMode === "arena"))
+          (!(s === "sel" && (pendMode === "2p" || pendMode === "arena")) ||
+            arenaActs)
         ) {
           const L = LS[s]();
           if (!L.length) return;
@@ -5510,6 +6071,11 @@
  aSync(s);
 }
       function padMenu() {
+        /* lobby tem input próprio em lobbyTick — não reprocessar B/A aqui */
+        if (p1 && scr() === "alobby") {
+          uiTick();
+          return;
+        }
         if (p1 && scr() === "sel" && pendMode === "arena") {
           for (let i = 0; i < 4; i++) {
             const g = rawPad(i);
@@ -5519,7 +6085,9 @@
                 (s) => s.t === "human" && s.dev === "p" + i,
               );
               if (si >= 0 && !A4.go) {
-                A4.s[si] = a4Empty();
+                /* desconectou: mantém pick confirmado; senão libera o slot */
+                if (A4.s[si].lk != null) A4.s[si].dev = null;
+                else A4.s[si] = a4Empty();
                 a4Render();
               }
               continue;
@@ -5549,7 +6117,11 @@
               }
             pm2[i] = d;
           }
-          pm = {};
+          /* se B saiu da select, não zerar pm senão o menu lê edge e vai ao título */
+          pm =
+            scr() === "sel"
+              ? {}
+              : { bk: true, ok: true, st: true, any: true };
           uiTick();
           return;
         }
@@ -5561,8 +6133,9 @@
               if (s2.vs && !s2.go) {
                 const j = s2.dv.indexOf("p" + i);
                 if (j >= 0) {
+                  /* desconectou: mantém hum só se já confirmou (rejoin); senão libera solo-CPU */
                   s2.dv[j] = null;
-                  s2.lk[j] = null;
+                  if (s2.lk[j] == null) s2.hum[j] = false;
                   s2render();
                 }
               }
@@ -5577,20 +6150,24 @@
               d: B(13) || A[1] > 0.5,
               ok: B(0),
               bk: B(1),
+              ca: B(3),
             };
             if (!pm2[i]) {
               pm2[i] = d;
               continue;
             }
-            for (const k of ["l", "r", "u", "d", "ok", "bk"])
+            for (const k of ["l", "r", "u", "d", "ok", "bk", "ca"])
               if (d[k] && !pm2[i][k]) {
                 if (s2.vs) vsIn("p" + i, k);
                 else s2in(i, k, true);
               }
             pm2[i] = d;
           }
-          pm = Object.assign({}, pm2[0] || {});
- uiTick();
+          pm =
+            scr() === "sel"
+              ? Object.assign({}, pm2[0] || {})
+              : { bk: true, ok: true, st: true, any: true };
+          uiTick();
           return;
         }
         const gs = [gpad(0), gpad(1), gpad(2), gpad(3)].filter(Boolean);
@@ -5665,13 +6242,14 @@
             if (M1) a4In("k1", M1);
             else if (M2) a4In("k2", M2);
             else if (en) {
-              if (a4Can()) a4Start();
+              if (a4Focus.mode === "acts") uiConfirm();
+              else if (a4Can()) a4Start();
               else {
                 const j = A4.s.find((s) => s.t === "human" && s.lk == null);
                 if (j) a4In(j.dev, "ok");
                 else if (!a4Hum().length) a4In("k1", "ok");
               }
-            } else $("back").click();
+            } else selStackBack();
             return;
           }
         }
@@ -5683,6 +6261,7 @@
               KeyS: "d",
               KeyJ: "ok",
               KeyK: "bk",
+              KeyI: "ca",
             }[e.code],
             m2 = {
               ArrowLeft: "l",
@@ -5691,6 +6270,7 @@
               ArrowDown: "d",
               Numpad4: "ok",
               Numpad5: "bk",
+              Numpad8: "ca",
             }[e.code];
           const en =
               e.code === "Enter" ||
@@ -5704,6 +6284,8 @@
                 m2 === "ok" ||
                 m1 === "bk" ||
                 m2 === "bk" ||
+                m1 === "ca" ||
+                m2 === "ca" ||
                 en ||
                 es)
             )
@@ -5716,11 +6298,11 @@
                   (q) => s2.dv[q] != null && s2.lk[q] == null,
                 );
                 vsIn(j != null ? s2.dv[j] : s2.dv[0] || "k1", "ok");
-              } else document.getElementById("back").click();
+              } else selStackBack();
             } else if (m1) s2in(0, m1);
             else if (m2) s2in(1, m2);
             else if (en) s2in(s2.lk[0] == null ? 0 : 1, "ok");
-            else document.getElementById("back").click();
+            else selStackBack();
             return;
           }
         }
@@ -5762,7 +6344,8 @@
         return {
           l: keys.KeyA || keys.vL || g.l,
           r: keys.KeyD || keys.vR || g.r,
-          u: keys.KeyW || keys.vU || keys.vJ || g.u,
+          /* mobile: analógico ↑ NÃO pula — só o botão vJ (e W / pad) */
+          u: keys.KeyW || keys.vJ || g.u,
           d: keys.KeyS || keys.vD || g.d,
           h: keys.KeyL || keys.vH || g.h,
           p: keys.KeyJ || keys.vP || g.p,
@@ -5804,6 +6387,27 @@
         try {
           localStorage.setItem("qf_au", JSON.stringify(AU.vol));
         } catch (e) {}
+      }
+      const DIFFS = ["e", "n", "h"];
+      const DIFFL = { e: "Fácil", n: "Normal", h: "Difícil" };
+      let DIFF = "n";
+      try {
+        const saved = localStorage.getItem("qf_diff");
+        if (DIFFL[saved]) DIFF = saved;
+      } catch (e) {}
+      function cycleDiff(dir) {
+        const i = Math.max(0, DIFFS.indexOf(DIFF));
+        DIFF = DIFFS[(i + dir + DIFFS.length) % DIFFS.length];
+        try {
+          localStorage.setItem("qf_diff", DIFF);
+        } catch (e) {}
+        sfxUI("ok");
+        updOpt();
+      }
+      function aiTune() {
+        if (DIFF === "e") return { wait: 1.85, brave: 0.34, blk: 0.012, dodge: 0.02 };
+        if (DIFF === "h") return { wait: 0.72, brave: 0.94, blk: 0.1, dodge: 0.08 };
+        return { wait: 1.2, brave: 0.62, blk: 0.04, dodge: 0.045 };
       }
 let ac;
       function aInit() {
@@ -6420,6 +7024,7 @@ let ac;
         if (g("omv")) g("omv").textContent = q(AU.vol.m);
         if (g("osv")) g("osv").textContent = q(AU.vol.s);
         g("omu").textContent = AU.vol.mute ? "Som: desligado" : "Som: ligado";
+        if (g("odv")) g("odv").textContent = DIFFL[DIFF] || "Normal";
         g("op").classList.toggle("muted", !!AU.vol.mute);
       }
 updOpt();
@@ -6530,7 +7135,7 @@ updOpt();
                 break;
               }
             }
-          if (dead) PJ.splice(PJ.indexOf(p), 1);
+          if (dead) PJ.splice(i, 1);
         }
       }
       function drawPJ() {
@@ -7558,7 +8163,7 @@ updOpt();
           }
           /* deslize / knockback */
           this.x += this.kx;
-          this.kx *= this.on ? 0.86 : this.stun > 0 || this.ko ? 0.955 : 0.9;
+          this.kx *= this.on ? 0.82 : this.stun > 0 || this.ko ? 0.93 : 0.88;
           if (Math.abs(this.kx) < 0.05) this.kx = 0;
           /* gravidade + pouso nas superfícies */
           const prev = this.wy;
@@ -7655,15 +8260,17 @@ updOpt();
             this.hp -= a.d;
             const lost = 1 - Math.max(0, this.hp) / 100,
               proj = a === ATK.h,
-              base = proj ? 8.5 : a.kb;
+              base = proj ? 7 : a.kb,
+              /* Brawlhalla: dano baixo empurra pouco; só mata de verdade no fim do estoque */
+              scale = 0.55 + lost * 0.85;
             this.atk = null;
             this.blk = false;
             this.t = 0;
-            this.stun = a.st + ((lost * 10) | 0);
-            this.kx = by.face * base * (1 + lost * 1.5) * 1.05;
-            const up = (proj ? 3 : a.kb * 0.35) + lost * a.kb * 1.1;
-            if (up > 2.8) {
-              this.vy = -Math.min(19, up);
+            this.stun = a.st + ((lost * 8) | 0);
+            this.kx = by.face * base * scale;
+            const up = base * 0.16 + lost * base * 0.5;
+            if (up > 2.6) {
+              this.vy = -Math.min(13, up);
               this.on = false;
               this.sup = -1;
               this.jc = Math.max(this.jc, 1);
@@ -7753,9 +8360,7 @@ updOpt();
         else if (stgSel && stgSel.lob) openLobby(true, "vs");
         else openSel(stgSel.m);
       };
-      let p1,
-        p2,
-        mode = "ai",
+      let mode = "ai",
         st = "menu",
         rd = 1,
         tm = 60,
@@ -7866,8 +8471,7 @@ updOpt();
         SOON_COL = { a: "#F96B5B", x: "#2C393F", v: "#F2F0F2" },
         FACE_OF = (id) => FACES[ROSTER.indexOf(id)];
       const NAMES = {};
-      let CH = {},
-        pendMode = "ai";
+      let CH = {};
       function setNamePlate(root, id) {
         if (!root) return;
         const plate = root.querySelector(".nplate"),
@@ -7944,19 +8548,46 @@ updOpt();
       let pick1 = null;
       function selInfo() {
         const el = document.getElementById("selsub");
+        const pk = activePadKind();
         if (pendMode === "arena") {
           el.className = "hint";
-          el.innerHTML =
-            '<div class="row"><span>Aperte um botão para entrar · até 4 jogadores</span></div>' +
-            '<div class="row"><span>CPU: botão + CPU · teclado <kbd>I</kbd> / <kbd>8</kbd> · controle <kbd>Y</kbd></span></div>';
+          if (IS_TOUCH) {
+            el.textContent = "Toque para entrar · use +CPU nas vagas";
+          } else if (pk) {
+            el.innerHTML =
+              '<div class="row"><span>Aperte para entrar · </span>' +
+              gI("back", pk) +
+              "<span>volta</span></div>" +
+              '<div class="row"><span>CPU: </span>' +
+              gI("addcpu", pk) +
+              "<span>adiciona</span><span class=\"sep\">·</span>" +
+              gI("rmcpu", pk) +
+              "<span>remove</span></div>";
+          } else {
+            el.innerHTML =
+              '<div class="row"><span>Aperte para entrar · <kbd>Esc</kbd> volta</span></div>' +
+              '<div class="row"><span>CPU: <kbd>I</kbd> adiciona · <kbd>L</kbd> remove</span></div>';
+          }
         } else if (pendMode === "ai") {
           el.className = "";
           el.textContent = "Toque num lutador — a IA escolhe o adversário";
         } else if (pendMode === "2p" && s2.vs) {
           el.className = "hint";
-          el.innerHTML = IS_TOUCH
-            ? "Toque no seu lutador"
-            : '<div class="row"><span>Aperte qualquer botão para entrar</span></div><div class="row"><span>Sozinho? Depois de escolher, você escolhe o adversário (CPU)</span></div>';
+          if (IS_TOUCH) {
+            el.textContent = "Toque no seu lutador";
+          } else if (pk) {
+            el.innerHTML =
+              '<div class="row"><span>Aperte para entrar · </span>' +
+              gI("back", pk) +
+              "<span>desfaz ou volta</span></div>" +
+              '<div class="row">' +
+              gI("random", pk) +
+              "<span>aleatório · sozinho: depois escolhe o adversário (CPU)</span></div>";
+          } else {
+            el.innerHTML =
+              '<div class="row"><span>Aperte para entrar · <kbd>Esc</kbd> desfaz ou volta</span></div>' +
+              '<div class="row"><span><kbd>I</kbd> aleatório · sozinho: depois escolhe o adversário (CPU)</span></div>';
+          }
         } else {
           el.className = "hint";
           const row = (n) => {
@@ -8040,6 +8671,7 @@ updOpt();
           VDEV[0] = VDEV[1] = null;
         }
         pendMode = m;
+        hSig = "";
         pick1 = null;
         if (m !== "2p")
           grid
@@ -8062,6 +8694,7 @@ updOpt();
             go: false,
             vs,
             dv: [null, null],
+            hum: [false, false],
           };
           pm2 = [null, null];
           s2render();
@@ -8087,6 +8720,8 @@ updOpt();
       /* ---- Arena: seleção clássica com 4 vagas (aperta pra entrar) ---- */
       const A4C = ["#ff8a3d", "#38c8ff", "#7be06a", "#ff5fa8"];
       let A4 = { s: [], go: false };
+      /* foco party (Brawlhalla): grade | fila #av */
+      let a4Focus = { mode: "grid", slot: 0, dev: null };
       const a4Empty = () => ({ t: "empty", dev: null, c: 0, lk: null, cid: null }),
         a4Taken = (id, ex) =>
           !!id &&
@@ -8123,16 +8758,21 @@ updOpt();
       /* remove fichas/rings da seleção da Arena (não vazar para o Versus) */
       function a4Clear() {
         grid.querySelectorAll(".acur").forEach((e) => e.remove());
-        grid.querySelectorAll(".card.tk").forEach((c) => c.classList.remove("tk"));
+        grid.querySelectorAll(".card.tk, .card.pin").forEach((c) => {
+          c.classList.remove("tk", "pin");
+          c.style.removeProperty("--mix");
+        });
       }
       new MutationObserver(() => {
         if (selEl.style.display === "none") a4Clear();
       }).observe(selEl, { attributes: true, attributeFilter: ["style"] });
       function a4Open(keep) {
-        keep = false; /* sempre começa vazio: ninguém pré-selecionado */
+        /* keep=true (pause → seleção): restaura LASTA; senão começa vazio */
         clearS2Stage();
         pendMode = "arena";
         pick1 = null;
+        a4Focus = { mode: "grid", slot: 0, dev: null };
+        hSig = "";
         A4 = { s: [0, 1, 2, 3].map(a4Empty), go: false };
         const av = AVall();
         if (keep && LASTA)
@@ -8140,7 +8780,13 @@ updOpt();
             if (c.slot < 0 || c.slot > 3) return;
             A4.s[c.slot] =
               c.t === "human"
-                ? { t: "human", dev: c.dev, c: Math.max(0, av.indexOf(c.cid)), lk: null, cid: null }
+                ? {
+                    t: "human",
+                    dev: c.dev,
+                    c: Math.max(0, av.indexOf(c.cid)),
+                    lk: null,
+                    cid: null,
+                  }
                 : { t: "cpu", dev: null, c: 0, lk: null, cid: c.cid };
           });
         grid
@@ -8159,24 +8805,32 @@ updOpt();
         requestAnimationFrame(() => a4Render());
       }
       function a4Join(dev) {
-        const i = A4.s.findIndex((s) => s.t !== "human");
+        /* reconecta humano com pick e sem device */
+        let i = A4.s.findIndex((s) => s.t === "human" && s.dev == null);
+        if (i >= 0) {
+          A4.s[i].dev = dev;
+          return i;
+        }
+        /* Brawlhalla/Smash: slot vazio; se cheio, humano toma o lugar de uma CPU */
+        i = A4.s.findIndex((s) => s.t === "empty");
+        if (i < 0) i = A4.s.findIndex((s) => s.t === "cpu");
         if (i < 0) return -1;
         A4.s[i] = { t: "human", dev, c: a4FirstFree(), lk: null, cid: null };
-        /* sozinho: já entra uma CPU de adversária (um humano novo toma o lugar dela) */
-        if (a4Fighters().length < 2) {
-          const e = A4.s.findIndex((s) => s.t === "empty");
-          if (e >= 0) A4.s[e] = { t: "cpu", dev: null, c: 0, lk: null, cid: a4Free(e) };
-        }
         return i;
       }
       function a4AddCpu() {
         const e = A4.s.findIndex((s) => s.t === "empty");
-        if (e < 0) return;
+        if (e < 0) {
+          snd(180, 0.08, "square", 0.05);
+          return -1;
+        }
         const id = a4Free(e);
         A4.s[e] = { t: "cpu", dev: null, c: 0, lk: null, cid: id };
         if (id && CH[id]) loadLazy(CH[id].P);
         snd(520, 0.06, "square", 0.05);
-        a4Render();
+        a4Focus.slot = e;
+        a4Render(e);
+        return e;
       }
       function a4DelCpu(i) {
         if (i == null)
@@ -8185,26 +8839,121 @@ updOpt();
               i = j;
               break;
             }
-        if (i == null || A4.s[i].t !== "cpu") return;
+        if (i == null || A4.s[i].t !== "cpu") {
+          snd(180, 0.08, "square", 0.05);
+          return;
+        }
+        const root = $("av"),
+          el = root && root.querySelector('.ap[data-i="' + i + '"]');
+        if (el) {
+          el.classList.add("bye");
+          setTimeout(() => {
+            A4.s[i] = a4Empty();
+            snd(300, 0.06, "square", 0.05);
+            a4Render();
+          }, 180);
+          return;
+        }
         A4.s[i] = a4Empty();
         snd(300, 0.06, "square", 0.05);
         a4Render();
+      }
+      function a4CycleCpu(i) {
+        const s = A4.s[i];
+        if (!s || s.t !== "cpu") return;
+        s.cid = a4Free(i);
+        if (s.cid && CH[s.cid]) loadLazy(CH[s.cid].P);
+        snd(440, 0.05, "square", 0.04);
+        a4Render();
+      }
+      /* ações na fila party (#av) com foco de pad */
+      function a4PartyAct(k) {
+        if (A4.go) return;
+        const i = Math.max(0, Math.min(3, a4Focus.slot | 0)),
+          s = A4.s[i];
+        if (k === "l" || k === "r") {
+          a4Focus.slot = (i + (k === "r" ? 1 : -1) + 4) % 4;
+          snd(440, 0.04, "square", 0.04);
+          a4Render();
+          return;
+        }
+        if (k === "d") {
+          /* party no topo → ↓ volta pra grade */
+          a4Focus = { mode: "grid", slot: 0, dev: null };
+          snd(440, 0.04, "square", 0.04);
+          a4Render();
+          return;
+        }
+        if (k === "u") {
+          /* sobe pra Começar/Voltar? não — party já é o topo; fica no slot */
+          return;
+        }
+        if (k === "ca") return a4AddCpu();
+        if (k === "cr") {
+          if (s.t === "cpu") return a4DelCpu(i);
+          return a4DelCpu();
+        }
+        if (k === "ok") {
+          if (s.t === "empty") return a4AddCpu();
+          if (s.t === "cpu") return a4CycleCpu(i);
+          if (s.t === "human" && s.lk != null && a4Can()) return a4Start();
+          return;
+        }
+        if (k === "bk") {
+          if (s.t === "cpu") return a4DelCpu(i);
+          a4Focus = { mode: "grid", slot: 0, dev: null };
+          a4Render();
+        }
       }
       function a4In(dev, k) {
         if (A4.go || !CH) return;
         const i = A4.s.findIndex((s) => s.t === "human" && s.dev === dev);
         if (i < 0) {
-          if (k === "bk" || k === "ca" || k === "cr") return;
+          if (k === "bk") {
+            if (!a4Hum().length) document.getElementById("back").click();
+            return;
+          }
+          if (k === "ca") return a4AddCpu();
+          if (k === "cr") return a4DelCpu();
           if (a4Join(dev) < 0) return;
+          a4Focus = { mode: "grid", slot: 0, dev: null };
           snd(520, 0.08, "square", 0.06);
           a4Render();
           return;
         }
+        /* Y sempre +CPU; X remove (atalhos globais estilo Smash) */
+        if (k === "ca") return a4AddCpu();
+        if (k === "cr") return a4DelCpu();
+        /* party/acts só pro device que entrou — outros humanos ficam na grade */
+        if (
+          (a4Focus.mode === "party" || a4Focus.mode === "acts") &&
+          a4Focus.dev === dev
+        ) {
+          if (a4Focus.mode === "acts") {
+            if (k === "u") {
+              a4Focus = { mode: "grid", slot: 0, dev: null };
+              kb = true;
+              a4Render();
+              return;
+            }
+            if (k === "l" || k === "r") {
+              mi = k === "r" ? 1 : 0;
+              sfxUI("move");
+              return;
+            }
+            if (k === "ok" || k === "st") return uiConfirm();
+            if (k === "bk") {
+              a4Focus = { mode: "grid", slot: 0, dev: null };
+              a4Render();
+              return;
+            }
+            return;
+          }
+          return a4PartyAct(k);
+        }
         const s = A4.s[i],
           av = AVall(),
           N = av.length;
-        if (k === "ca") return a4AddCpu();
-        if (k === "cr") return a4DelCpu();
         if (k === "ok") {
           if (s.lk != null) {
             if (a4Can()) a4Start();
@@ -8226,13 +8975,32 @@ updOpt();
           if (s.lk != null) s.lk = null;
           else {
             A4.s[i] = a4Empty();
-            if (!a4Hum().length) A4.s = [0, 1, 2, 3].map(a4Empty);
+            if (!a4Hum().length) {
+              A4.s = [0, 1, 2, 3].map(a4Empty);
+              snd(300, 0.06, "square", 0.05);
+              a4Render();
+              document.getElementById("back").click();
+              return;
+            }
           }
           snd(300, 0.06, "square", 0.05);
           a4Render();
           return;
         }
-        if (s.lk != null || !N) return;
+        if (s.lk != null || !N) {
+          if (k === "u") {
+            a4Focus = { mode: "party", slot: Math.max(0, i), dev };
+            snd(440, 0.04, "square", 0.04);
+            a4Render();
+          } else if (k === "d") {
+            a4Focus = { mode: "acts", slot: Math.max(0, i), dev };
+            mi = 0;
+            kb = true;
+            snd(440, 0.04, "square", 0.04);
+            a4Render();
+          }
+          return;
+        }
         const ix = ((s.c % N) + N) % N,
           cur = [...grid.querySelectorAll(".card[data-id]")].find(
             (c) => c.dataset.id === av[ix],
@@ -8245,6 +9013,18 @@ updOpt();
             snd(440, 0.04, "square", 0.04);
             a4Render();
           }
+        } else if (k === "u") {
+          /* topo da grade → party */
+          a4Focus = { mode: "party", slot: Math.max(0, i), dev };
+          snd(440, 0.04, "square", 0.04);
+          a4Render();
+        } else if (k === "d") {
+          /* base da grade → Começar/Voltar */
+          a4Focus = { mode: "acts", slot: Math.max(0, i), dev };
+          mi = 0;
+          kb = true;
+          snd(440, 0.04, "square", 0.04);
+          a4Render();
         }
       }
       function a4Click(id) {
@@ -8279,9 +9059,10 @@ updOpt();
         pendMode = "ai";
         beginArena(cfg);
       }
-      function a4Render() {
+      function a4Render(popI) {
         if (pendMode !== "arena") return;
-        const av = AVall();
+        const av = AVall(),
+          focParty = a4Focus.mode === "party";
         $("av").innerHTML = A4.s
           .map((s, i) => {
             const id =
@@ -8299,38 +9080,67 @@ updOpt();
             } else if (id === "?") nm = '<b class="apn">Aleatório</b>';
             const lab =
               s.t === "empty"
-                ? "Pressione para entrar"
+                ? a4Hum().length
+                  ? "Vazio · + CPU"
+                  : "Aperte para entrar"
                 : s.t === "cpu"
-                  ? "CPU"
+                  ? "Bot"
                   : s.lk != null
                     ? "Pronto!"
                     : "Escolhendo…";
             const ctl =
               s.t === "empty"
-                ? '<button type="button" class="apadd" data-a="add">+ CPU</button>'
+                ? a4Hum().length
+                  ? '<button type="button" class="apadd" data-a="add">+ CPU</button>'
+                  : ""
                 : s.t === "cpu"
-                  ? '<div class="apx"><button type="button" data-a="rr" title="Trocar lutador">↻</button><button type="button" data-a="rm" title="Remover">✕</button></div>'
+                  ? '<div class="apx"><button type="button" data-a="rr" title="Trocar lutador">↻</button><button type="button" data-a="rm" title="Remover CPU">✕</button></div>'
                   : "";
+            const cls =
+              "ap " +
+              s.t +
+              (s.lk != null ? " rdy" : "") +
+              (focParty && a4Focus.slot === i ? " foc" : "") +
+              (popI === i ? " pop" : "");
             return (
-              '<div class="ap ' + s.t + (s.lk != null ? " rdy" : "") +
-              '" data-i="' + i + '" style="--pc:' + A4C[i] + ";--hs:" + hs + '">' +
-              '<i class="apt">P' + (i + 1) + "</i>" +
+              '<div class="' +
+              cls +
+              '" data-i="' +
+              i +
+              '" style="--pc:' +
+              A4C[i] +
+              ";--hs:" +
+              hs +
+              '">' +
+              '<i class="apt">P' +
+              (i + 1) +
+              "</i>" +
               (s.t === "human"
                 ? '<span class="apd">' + a4DevName(s.dev) + "</span>"
                 : "") +
-              '<img class="aps" alt="" src="' + img + '" />' +
-              nm + '<small class="aph">' + lab + "</small>" + ctl + "</div>"
+              '<img class="aps" alt="" src="' +
+              img +
+              '" />' +
+              nm +
+              '<small class="aph">' +
+              lab +
+              "</small>" +
+              ctl +
+              "</div>"
             );
           })
           .join("");
-        /* fichas na grade */
+        /* fichas na grade — mesmo anel do Versus (mistura quando coincidem) */
         const cards = [...grid.querySelectorAll(".card[data-id]")];
-        cards.forEach((c) =>
+        cards.forEach((c) => {
+          c.classList.remove("pin");
+          c.style.removeProperty("--mix");
           c.classList.toggle(
             "tk",
             !!c.dataset.id && c.dataset.id !== "?" && a4Taken(c.dataset.id, -1),
-          ),
-        );
+          );
+        });
+        const onCard = new Map();
         A4.s.forEach((s, i) => {
           let el = $("acur" + i);
           if (!el) {
@@ -8342,81 +9152,118 @@ updOpt();
           const card =
             s.t === "human" &&
             cards.find((c) => c.dataset.id === (s.lk != null ? s.lk : av[s.c]));
-          if (!card) {
+          const hideRing =
+            (a4Focus.mode === "party" && i === a4Focus.slot) ||
+            (a4Focus.mode === "acts" && A4.s[i].dev === a4Focus.dev);
+          if (!card || hideRing) {
             el.style.display = "none";
             return;
           }
-          const o = i * 3;
+          if (!onCard.has(card)) onCard.set(card, []);
+          onCard.get(card).push({ c: A4C[i], lk: s.lk != null });
           el.className = "acur s" + i + (s.lk != null ? " lk" : "");
           el.style.cssText =
-            "--pc:" + A4C[i] + ";left:" + (card.offsetLeft + o) + "px;top:" + (card.offsetTop + o) +
-            "px;width:" + (card.offsetWidth - o * 2) + "px;height:" + (card.offsetHeight - o * 2) + "px";
-          el.firstChild.textContent = "P" + (i + 1) + (s.lk != null ? " ✓" : "");
+            "--pc:" +
+            A4C[i] +
+            ";left:" +
+            card.offsetLeft +
+            "px;top:" +
+            card.offsetTop +
+            "px;width:" +
+            card.offsetWidth +
+            "px;height:" +
+            card.offsetHeight +
+            "px";
+          el.firstChild.textContent = s.lk != null ? "" : "P" + (i + 1);
+        });
+        const wash = (c) => "color-mix(in srgb, " + c + " 70%, transparent)";
+        const mixOf = (slots) => {
+          const cols = slots.map((s) => s.c);
+          const locked = slots.every((s) => s.lk);
+          if (cols.length <= 1) {
+            return locked
+              ? "0 0 0 3px " +
+                  cols[0] +
+                  ", inset 0 -52px 42px -14px " +
+                  wash(cols[0])
+              : "0 0 0 2px " + cols[0] + ", 0 0 14px " + cols[0];
+          }
+          const edge =
+            cols.length === 2
+              ? "-6px 0 0 0 " +
+                cols[0] +
+                ", 6px 0 0 0 " +
+                cols[1]
+              : cols.length === 3
+                ? "-6px 0 0 0 " +
+                  cols[0] +
+                  ", 6px 0 0 0 " +
+                  cols[1] +
+                  ", 0 6px 0 0 " +
+                  cols[2]
+                : "-6px 0 0 0 " +
+                  cols[0] +
+                  ", 6px 0 0 0 " +
+                  cols[1] +
+                  ", 0 -6px 0 0 " +
+                  cols[2] +
+                  ", 0 6px 0 0 " +
+                  cols[3];
+          if (!locked) return edge + ", 0 0 16px rgba(255,255,255,.32)";
+          return (
+            edge +
+            ", inset 32px 0 24px -16px " +
+            wash(cols[0]) +
+            ", inset -32px 0 24px -16px " +
+            wash(cols[1] || cols[0])
+          );
+        };
+        onCard.forEach((cols, card) => {
+          card.classList.add("pin");
+          card.style.setProperty("--mix", mixOf(cols));
         });
         const can = a4Can(),
           hs = a4Hum(),
           h = $("a4hint");
         $("a4go").disabled = !can;
         h.className = can ? "ok" : "";
+        /* a4hint = só status; atalhos ficam em #prompts */
         h.textContent = can
-          ? "Tudo pronto — Começar (Enter ou Start)"
+          ? "Tudo pronto — pode começar"
           : !hs.length
-            ? "Aperte um botão no teclado ou controle para entrar"
-            : hs.some((s) => s.lk == null)
-              ? "Escolha seu lutador e confirme"
-              : "Adicione ao menos 1 CPU ou outro jogador";
+            ? "Aperte para entrar"
+            : focParty
+              ? "Party — escolha o slot"
+              : hs.some((s) => s.lk == null)
+                ? "Escolha e confirme o lutador"
+                : a4Fighters().length < 2
+                  ? "Falta adversário (+CPU ou outro jogador)"
+                  : "Todos devem confirmar para começar";
       }
       $("av").addEventListener("click", (e) => {
         const b = e.target.closest("button[data-a]");
         if (!b || A4.go) return;
         const i = +b.closest(".ap").dataset.i,
           a = b.dataset.a;
+        a4Focus.slot = i;
         if (a === "add") a4AddCpu();
         else if (a === "rm") a4DelCpu(i);
-        else if (a === "rr") {
-          const s = A4.s[i];
-          s.cid = null;
-          s.cid = a4Free(i);
-          if (s.cid && CH[s.cid]) loadLazy(CH[s.cid].P);
-          snd(440, 0.05, "square", 0.04);
-          a4Render();
-        }
+        else if (a === "rr") a4CycleCpu(i);
       });
+      function a4Leave() {
+        A4.s = [0, 1, 2, 3].map(a4Empty);
+        a4Focus = { mode: "grid", slot: 0, dev: null };
+        holdMenuPad();
+        selEl.style.display = "none";
+        menu.style.display = "flex";
+        hSig = "";
+      }
       $("a4go").onclick = a4Start;
-      $("a4bk").onclick = () => $("back").click();
+      $("a4bk").onclick = () => a4Leave();
       addEventListener("resize", () => {
         if (pendMode === "arena" && vis(selEl)) a4Render();
       });
-      document.getElementById("back").onclick = () => {
-        if (pendMode === "arena" && !A4.go) {
-          if (A4.s.some((s) => s.t === "human" && s.lk != null)) {
-            A4.s.forEach((s) => (s.lk = null));
-            a4Render();
-            return;
-          }
-          selEl.style.display = "none";
-          menu.style.display = "flex";
-          return;
-        }
-        if (
-          pendMode === "2p" &&
-          !s2.go &&
-          (s2.lk[0] != null || s2.lk[1] != null)
-        ) {
-          s2.lk = [null, null];
-          s2render();
-          return;
-        }
-        if (pick1) {
-          pick1 = null;
-          selInfo();
-          return;
-        }
-        clearS2Stage();
-        s2.go = false;
-        selEl.style.display = "none";
-        menu.style.display = "flex";
-      };
+      document.getElementById("back").onclick = () => selStackBack();
       /* carrega o resto dos sprites do lutador / o fundo da fase só quando precisa */
       function loadLazy(P) {
         if (!P || !P._lz) return Promise.resolve();
@@ -8499,9 +9346,10 @@ updOpt();
         const i = {},
           d = Math.abs(o.x - me.x),
           tw = o.x > me.x;
+        const t = aiTune();
         if (--me.pt <= 0) {
           const r = Math.random();
-          me.pt = 14 + ((Math.random() * 22) | 0);
+          me.pt = Math.max(10, ((14 + ((Math.random() * 22) | 0)) * t.wait) | 0);
           if (me.P.hd && !me.hcd && d > 150 && r > 0.8) me.plan = "h";
           else if (d > 175) me.plan = r < 0.8 ? "ap" : "jump";
           else if (d > 125)
@@ -8518,14 +9366,19 @@ updOpt();
                     : r < 0.9
                       ? "back"
                       : "jump";
+          if (
+            (me.plan === "p" || me.plan === "k" || me.plan === "h") &&
+            Math.random() > t.brave
+          )
+            me.plan = Math.random() < 0.5 ? "ap" : "back";
         }
-        if (o.atk && d < 170 && Math.random() < 0.04) {
+        if (o.atk && d < 170 && Math.random() < t.blk) {
           me.plan = "blk";
           me.pt = 22;
         }
         if (
           PJ.some((q) => q.o === o && Math.abs(q.x - me.x) < 220) &&
-          Math.random() < 0.06
+          Math.random() < t.dodge
         ) {
           me.plan = "blk";
           me.pt = 20;
@@ -9188,12 +10041,13 @@ updOpt();
         return g && g.connected ? g : null;
       };
       function devIn(dv, noJump) {
-        /* noJump true = Versus (stick/↑ também pula via gin); false = Arena (teclado ↑/W pula; pad só ✕/A) */
+        /* noJump true = Versus (stick/↑ do pad também pula via gin); false = Arena (teclado ↑/W; pad só ✕/A).
+           Analógico virtual (vU) nunca pula — só o botão vJ. */
         if (dv === "k1")
           return {
             l: keys.KeyA || keys.vL,
             r: keys.KeyD || keys.vR,
-            u: keys.KeyW || keys.vU || keys.vJ,
+            u: keys.KeyW || keys.vJ,
             d: keys.KeyS || keys.vD,
             h: keys.KeyL || keys.vH,
             p: keys.KeyJ || keys.vP,
@@ -9267,12 +10121,13 @@ updOpt();
         const inP = rng("p"),
           inK = rng("k"),
           near = inP || inK;
+        const t = aiTune();
         if (--me.pt <= 0) {
           const r = Math.random();
-          me.pt = 6 + ((Math.random() * 10) | 0);
+          me.pt = Math.max(8, ((8 + ((Math.random() * 14) | 0)) * t.wait) | 0);
           if (near) {
-            if (r < 0.5) me.plan = inP ? "p" : "k";
-            else if (r < 0.82) me.plan = inK ? "k" : "p";
+            if (r < 0.5 * t.brave) me.plan = inP ? "p" : "k";
+            else if (r < 0.82 * t.brave) me.plan = inK ? "k" : "p";
             else if (r < 0.9) {
               me.plan = "blk";
               me.pt = 12;
@@ -9286,14 +10141,15 @@ updOpt();
           )
             me.plan = "h";
           else me.plan = r < 0.08 ? "jump" : "ap";
-        } else if (near && me.plan === "ap") me.pt = 0;
-        if (o.atk && near && !me.atk && Math.random() < 0.05) {
+          if (me.plan === "h" && Math.random() > t.brave) me.plan = "ap";
+        } else if (near && me.plan === "ap" && t.brave > 0.85) me.pt = 0;
+        if (o.atk && near && !me.atk && Math.random() < t.blk) {
           me.plan = "blk";
           me.pt = 16;
         }
         if (
           PJ.some((q) => q.o !== me && Math.abs(q.x - me.x) < 140) &&
-          Math.random() < 0.05
+          Math.random() < t.dodge
         ) {
           me.plan = "blk";
           me.pt = 16;
@@ -9425,7 +10281,7 @@ updOpt();
               }
             }
           if (!dead && (p.x < -140 || p.x > W + 140)) dead = true;
-          if (dead) PJ.splice(PJ.indexOf(p), 1);
+          if (dead) PJ.splice(i, 1);
         }
       }
       function nearestOf(f) {
@@ -9460,7 +10316,7 @@ updOpt();
       function checkBlast() {
         const b = ARENA.blast;
         fighters.forEach((f) => {
-          if (!f.alive()) return;
+          if (!f.alive() || !f.hurtable()) return;
           if (f.x < b.l || f.x > b.r || f.wy < b.t || f.wy > b.b)
             f.loseLife(null, "blast");
         });
@@ -9470,6 +10326,7 @@ updOpt();
       function beginArena(cfg) {
         if (beginBusy) return;
         beginBusy = true;
+        LOAD.bad = [];
         const box = $("loading"),
           txt = $("ltxt");
         let shown = false;
@@ -9486,8 +10343,17 @@ updOpt();
           clearTimeout(t);
           beginBusy = false;
           if (LOAD.bad.length) {
-            box.classList.remove("done");
+            A4.go = false;
+            pendMode = "arena";
+            selEl.dataset.m = "arena";
+            selEl.style.display = "flex";
+            cfg.forEach((s) => {
+              const P = CH[s.cid] && CH[s.cid].P;
+              if (P) P._lp = null;
+            });
             loadDone();
+            box.classList.add("done");
+            a4Render();
             return;
           }
           if (shown) box.classList.add("done");
@@ -9928,8 +10794,8 @@ updOpt();
                 btns = "",
                 rdy = "";
               if (s.t === "empty") {
-                hint = "Aperte um botão<br />no teclado ou controle";
-                btns = '<button data-a="ai" data-i="' + i + '">+ IA</button>';
+                hint = "Aperte para entrar<br />ou adicione CPU";
+                btns = '<button data-a="ai" data-i="' + i + '">+ CPU</button>';
               } else if (s.t === "human") {
                 hint = s.ready
                   ? "Aperte OK de novo ou Enter para começar"
@@ -9996,9 +10862,7 @@ updOpt();
           h.textContent = ok
             ? "Tudo pronto — aperte Começar, Enter ou Start."
             : !hs
-              ? vs
-                ? "Aperte um botão no teclado (WASD ou setas) ou no controle para entrar."
-                : "Aperte um botão no teclado (WASD ou setas) ou no controle para entrar. Até 2 teclados e 4 controles."
+              ? "Aperte para entrar · ○/B ou Esc volta ao menu."
               : alOcc().length < 2
                 ? vs
                   ? "Confirme (OK) para escolher o oponente da IA, ou deixe um segundo jogador entrar."
@@ -10175,7 +11039,9 @@ updOpt();
       function exitLobby() {
         AL.open = false;
         $("alobby").style.display = "none";
+        holdMenuPad();
         showMenu("Quinhas Ball Fighters", "");
+        hSig = "";
       }
       function versusStart() {
         const occ = AL.slots
@@ -10300,6 +11166,11 @@ updOpt();
             si = AL.slots.findIndex((s) => s.dev === dv);
           if (c.any) aUnlock();
           if (si < 0) {
+            /* B/○ fora do slot sai do lobby — antes de "any", senão B entrava de novo e nunca voltava */
+            if (ed("bk")) {
+              exitLobby();
+              continue;
+            }
             if (AL.gr <= 0 && ed("any")) {
               const e = AL.slots.findIndex((s) => s.t === "empty");
               if (e >= 0 && e < AL.max) {
@@ -10379,6 +11250,7 @@ updOpt();
               AL.slots[si] = alEmpty();
               sfxUI("back");
               alRender();
+              if (!AL.slots.some((x) => x.t === "human")) exitLobby();
             }
           } else if (ed("bk")) {
             s.ready = false;

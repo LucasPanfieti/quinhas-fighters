@@ -1,0 +1,15 @@
+---
+description: Cuidados com assets, sprites e scripts de tools
+globs: tools/**,assets/**,char-src/**
+alwaysApply: false
+---
+
+# Assets e tools
+
+- `assets/` é o que vai para produção. `char-src/` é fonte local (gitignored): leia se precisar, não altere sem pedido.
+- Sprites: um frame por pose, em `assets/spr/<id>/<pose>.webp`. Pose nova **não** reescala as antigas. Escala vem de `HM` (altura em metros) → `scOf`. O Quinhas está fechado: não recorte de novo.
+- Recorte com chroma key: preservar roupa e contorno vale mais que apagar toda a borda. Mostre antes e depois.
+- `tools/*.py` precisam de Pillow e numpy. Não instale pacote sem avisar. Os caminhos nos scripts são absolutos da máquina do autor (`R='C:/Users/...'`): confira antes de rodar.
+- `tools/out/*` é lixo de teste, exceto `*_poses.json` (versionados). Antes de apagar, liste e deixe o autor decidir.
+- Mudou um asset em uso: suba o `?v=` em `index.html`.
+- Imagem pesada vai em `webp`. Evite vídeo e arquivos grandes: o jogo publica em GitHub Pages.

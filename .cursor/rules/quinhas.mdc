@@ -1,0 +1,27 @@
+---
+description: Identidade, referências e limites do Quinhas Ball Fighters. Vale em toda tarefa.
+alwaysApply: true
+---
+
+# Quinhas Ball Fighters
+
+Jogo de luta 2D de navegador, desenho anime, visual bonito e compacto. UI em português. HTML, CSS e JavaScript puros: `index.html` (UI + engine) e `assets/`. Sem framework, bundler nem build.
+
+- **Versus** (1–2 jogadores): luta no chão, referência Street Fighter, Mortal Kombat e Injustice.
+- **Arena** (2–4): plataformas, estoque e blast zone, referência Brawlhalla.
+- **Arcade**: planejado, **não existe no código**. Não trate como pronto (ver `docs/roadmap.md`).
+- Celular, PC (teclado e mouse) e controle são cidadãos de primeira classe. Todo fluxo de UI e de input se testa nos três.
+
+## Antes de mexer
+
+1. Leia `.cursor/skills/quinhas-fighters/SKILL.md`. Ele aponta a skill certa para a tarefa.
+2. Decisões do autor estão em `.cursor/skills/quinhas-fighters/decisions.md`. Não reabra sem pedido.
+3. O código manda. Se `DOCS.md` ou `docs/` discordarem do `index.html`, corrija o doc na mesma alteração.
+
+## Limites
+
+- Preserve o que funciona. Mudança pedida é mudança feita: não refatore, renomeie nem "melhore" o que ninguém pediu.
+- Não instale dependências, não crie build step e não parta `index.html` em módulos sem o autor pedir.
+- Não faça commit, push nem publicação sem pedido explícito.
+- Servir por HTTP (`python -m http.server 8765`). `file://` quebra imagem.
+- Não toque em `char-src/` (fonte local, gitignored) nem apague assets sem confirmar que são lixo.

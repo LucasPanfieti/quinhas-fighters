@@ -27,12 +27,21 @@ No celular: analógico à esquerda, botões à direita (gire na horizontal).
 
 ## Modo Arena (2–4 lutadores)
 
-Menu → **Arena · até 4**. Aperte um botão no teclado (WASD ou setas — máx. 2 teclados) ou em qualquer controle (até 4) para entrar num slot; slots livres podem virar IA. Stock de 3 vidas no mapa **Ilhas do Céu**: perde vida quem zera o HP ou cai fora do mapa. Na Arena o pulo no teclado é `W` / ↑ (de novo no ar = pulo duplo); no controle só ✕/A (stick ↑ não pula). `K` / Num 5 / L1·LB = especial (em breve). ↓ atravessa as plataformas. A tela Controles tem abas Versus e Arena. Detalhes em [DOCS.md](DOCS.md) §14.1.
+Menu → **Arena · 2-4 jogadores**. No computador, aperta um botão no teclado (máx. 2) ou no controle (até 4) para entrar num slot; no celular, escolhe quantos inimigos (1–3) e o personagem. Stock de 3 vidas no mapa **Ilhas do Céu**. Pulo no teclado: `W` / ↑ (de novo no ar = pulo duplo). No controle, só ✕/A (stick ↑ não pula). `K` / Num 5 / L1·LB = especial (em breve). ↓ atravessa as plataformas. Detalhes em [DOCS.md](DOCS.md) §14.1.
 
 ## Documentação
 
-Tudo o que importa para entender ou modificar o jogo (arquitetura, roster, combate, input, áudio, tools) está em **[DOCS.md](DOCS.md)**.
+| Arquivo | Para quê |
+| --- | --- |
+| [DOCS.md](DOCS.md) | Referência técnica longa |
+| [docs/architecture.md](docs/architecture.md) | Estrutura do código |
+| [docs/mechanics.md](docs/mechanics.md) | Golpes, Versus, Arena, IA |
+| [docs/controls.md](docs/controls.md) | Teclado, controle, celular |
+| [docs/visual-identity.md](docs/visual-identity.md) | Cor, fonte, componentes |
+| [docs/roadmap.md](docs/roadmap.md) | O que ainda não existe |
+| [.cursor/skills/quinhas-fighters/SKILL.md](.cursor/skills/quinhas-fighters/SKILL.md) | Entrada das skills do agente |
+| [.cursor/skills/quinhas-fighters/decisions.md](.cursor/skills/quinhas-fighters/decisions.md) | Decisões de design já aprovadas |
 
 ## Versão
 
-**v1.4.0** — ver `#tver` / `#ver` em `index.html`.
+**v1.5.0** — ver `#tver` / `#ver` em `index.html`.

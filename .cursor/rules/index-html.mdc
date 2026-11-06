@@ -1,0 +1,19 @@
+---
+description: Convenções ao editar index.html (engine, UI e CSS do jogo)
+globs: index.html
+alwaysApply: false
+---
+
+# Editando `index.html`
+
+O arquivo tem ~11,5 mil linhas: CSS no topo, HTML dos overlays, depois um `<script>` único. Mapa de símbolos em `docs/architecture.md`.
+
+- **Local certo.** Ache a função existente (`Grep`) e altere ali. Não duplique lógica de menu, input ou dica. Versus e Arena têm caminhos separados (`F`/`step`/`begin` x `AF`/`stepArena`/`beginArena`): mudar um não pode vazar no outro.
+- **Escopo global.** O script usa `const`/`let` de nível superior em ordem. Referenciar um símbolo antes de sua declaração dá erro de TDZ no boot. Se a nova função roda no carregamento, use `try/catch` como `hintTick` faz com `selInfo`.
+- **Menu e input.** Toda ação de menu passa por `press(k)` (teclado e pad) e pelo clique. Confirmar é `uiConfirm`, voltar é `uiBack`/`selStackBack`. Nova tela precisa entrar em `scr()` e em `LS` para o foco por teclado e controle funcionar.
+- **Dica de botão.** Nunca escreva "Y" ou "Enter" fixo na UI. Use `gI(...)`, `buildHints`, `padKind`.
+- **Estado visual por atributo.** A UI usa `dataset`/atributos (`data-c1`, `data-cpu`, `data-m`) e classes (`.gf`, `.pin`). Siga isso em vez de estilos inline.
+- **CSS.** Variáveis em `:root` (`--ink --dusk --ember --bone --blue --neon --neon2`). Responsivo por media query e unidades `clamp`/`dvh`. Respeite `env(safe-area-inset-*)`. Não crie scroll no celular.
+- **Cache de asset.** Mudou imagem existente: suba o `?v=N` da URL no `SPR`/HTML.
+- **Sem dependências.** Nada de CDN novo. A única externa é a fonte do Google Fonts que já existe.
+- **Depois de editar:** `python .cursor/skills/quinhas-qa/scripts/check_syntax.py`, e rode o jogo.

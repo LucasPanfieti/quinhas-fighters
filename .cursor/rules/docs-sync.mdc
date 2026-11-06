@@ -1,0 +1,15 @@
+---
+description: Como manter documentação, regras e skills alinhadas ao código
+globs: DOCS.md,README.md,docs/**,.cursor/**
+alwaysApply: false
+---
+
+# Documentação viva
+
+- Documente **o que existe no código**. Item planejado vai em `docs/roadmap.md` marcado como planejado, nunca em `docs/mechanics.md`.
+- Cite símbolos (`AF.hurt`, `aiTune`, `ARENA.surf`), não números de linha: linha envelhece a cada edição.
+- Número que aparece no doc (dano, alcance, altura, cor) vem do código. Releia o trecho antes de copiar.
+- Quem muda o código atualiza o doc **na mesma alteração**: comportamento em `docs/mechanics.md`, input em `docs/controls.md`, visual em `docs/visual-identity.md`, estrutura em `docs/architecture.md`, decisão do autor em `decisions.md`.
+- `DOCS.md` é a referência técnica longa; `docs/` é o resumo por assunto. Se divergirem, o código decide e os dois se corrigem.
+- Regra com mais de ~50 linhas ou skill com mais de 500 vira arquivo de referência (`reference.md`) apontado a um nível.
+- Texto em português, direto, sem enfeite.
